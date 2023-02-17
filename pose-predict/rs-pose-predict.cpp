@@ -50,6 +50,10 @@ bool is_rotating = false;
 bool is_forward = false;
 bool is_stop = false;
 bool is_waypoint_0_half = false;
+bool is_waypoint_1_half = false;
+bool is_waypoint_2_half = false;
+bool is_waypoint_3_half = false;
+bool is_waypoint_4_half = false;
 
 inline rs2_quaternion quaternion_exp(rs2_vector v)
 {
@@ -111,7 +115,7 @@ static void send_command(std::string message)
     }
 }
 
-static bool approximately(float current, float expected, float precision)
+static inline bool approximately(float current, float expected, float precision)
 {
     return (current > (expected - precision)) && (current < (expected + precision));
 }
@@ -195,7 +199,7 @@ int main(int argc, char * argv[]) try
             }
 
             // go to bottom left
-            else if(waypointToVisit == 1 && is_stop == false && is_waypoint_0_half == false && approximately(currentXinches, waypointX, precision) && 
+            else if(waypointToVisit == 1 && is_stop == false && is_waypoint_1_half == false && approximately(currentXinches, waypointX, precision) && 
                 approximately(currentZinches, waypointZ, precision)
                 ) 
             {
@@ -213,15 +217,15 @@ int main(int argc, char * argv[]) try
                 ++waypointToVisit;
                 */
             }
-
             else if(waypointToVisit == 1 && is_stop && is_rotating == false)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(2000));
                 is_stop = false;
                 send_command("Z");
                 is_rotating = true;
+                is_waypoint_1_half = true;
             }
-            else if(waypointToVisit == 1 && is_rotating && !approximately(pose_data.rotation.y, 0.0f, 0.05))
+            else if(waypointToVisit == 1 && is_rotating && is_waypoint_1_half && !approximately(pose_data.rotation.y, 0.0f, 0.05))
             {
                 // do nothing. robot is rotating
             }
@@ -237,7 +241,7 @@ int main(int argc, char * argv[]) try
             }
 
             // go to top left
-            else if(waypointToVisit == 2 && approximately(currentXinches, waypointX, precision) && 
+            else if(waypointToVisit == 2 && is_stop == false && is_waypoint_2_half == false && approximately(currentXinches, waypointX, precision) && 
                 approximately(currentZinches, waypointZ, precision))
             {
                 std::cout << "reached top left attraction" << std::endl;
@@ -253,15 +257,15 @@ int main(int argc, char * argv[]) try
                 ++waypointToVisit;
                 */
             } 
-
             else if(waypointToVisit == 2 && is_stop && is_rotating == false)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(2000));
                 is_stop = false;
                 send_command("Z");
                 is_rotating = true;
+                is_waypoint_2_half = true;
             }
-            else if(waypointToVisit == 2 && is_rotating && !approximately(pose_data.rotation.y, -0.707f, 0.05))
+            else if(waypointToVisit == 2 && is_rotating && is_waypoint_2_half && !approximately(pose_data.rotation.y, -0.707f, 0.05))
             {
                 // do nothing. robot is rotating
             }
@@ -277,7 +281,7 @@ int main(int argc, char * argv[]) try
             }
 
             // go to bottom right corner
-            else if(waypointToVisit == 3 && approximately(currentXinches, waypointX, precision) && 
+            else if(waypointToVisit == 3 && is_stop == false && is_waypoint_3_half == false && approximately(currentXinches, waypointX, precision) && 
                 approximately(currentZinches, waypointZ, precision))
             {
                 std::cout << "reached top right recycling area" << std::endl;
@@ -294,15 +298,15 @@ int main(int argc, char * argv[]) try
                 ++waypointToVisit;
                 */
             }
-
             else if(waypointToVisit == 3 && is_stop && is_rotating == false)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(2000));
                 is_stop = false;
                 send_command("Z");
                 is_rotating = true;
+                is_waypoint_3_half = true;
             }
-            else if(waypointToVisit == 3 && is_rotating && !approximately(pose_data.rotation.y, -0.999f, 0.05))
+            else if(waypointToVisit == 3 && is_rotating && is_waypoint_3_half && !approximately(pose_data.rotation.y, -0.999f, 0.05))
             {
                 // do nothing. robot is rotating
             }
@@ -317,7 +321,7 @@ int main(int argc, char * argv[]) try
                 waypointToVisit++;
             }
 
-            else if(waypointToVisit == 4 && approximately(currentXinches, waypointX, precision) && 
+            else if(waypointToVisit == 4 && is_stop == false && is_waypoint_4_half == false && approximately(currentXinches, waypointX, precision) && 
                 approximately(currentZinches, waypointZ, precision))
             {
                 std::cout << "reached bottom right recycling area" << std::endl;
@@ -343,6 +347,12 @@ int main(int argc, char * argv[]) try
                 currentZinches << " (inches) "
                 << "Next waypoint (" << waypointToVisit << "): ( " << waypointX << " , " << waypointZ << " )"
                 << "   \r";
+
+                is_waypoint_0_half = false;
+                is_waypoint_1_half = false;
+                is_waypoint_2_half = false;
+                is_waypoint_3_half = false;
+                is_waypoint_4_half = false;
             }
         }
     };
