@@ -1,6 +1,7 @@
 #ifndef ROBOT_HPP
 #define ROBOT_HPP
 #include "waypoints.hpp"
+#include "task.hpp"
 using namespace std;
 
 #define DEBUG true
@@ -26,8 +27,8 @@ public:
   
   // setters
   void setCurrentXY(double x, double y) {
-    destination.setX(x);
-    destination.setY(y);
+    currentLocation.setX(x);
+    currentLocation.setY(y);
   }
   
   void setState(RobotState newState) {
@@ -36,6 +37,16 @@ public:
 
   void setWaypoint(Waypoint way){
     
+  }
+
+  void setTask(Task task)
+  {
+    
+  }
+
+  Task getTask()
+  {
+    return task;
   }
   
   void run() {
@@ -109,13 +120,13 @@ public:
     
 private:
   RobotState state = IDLE;
-  Task task;
+  Task task; // current task robot must complete
   // start and end times would be good for detecting if a
   // path finished sooner or later than expected.
-  double start_time;
-  double end_time;
+  //double start_time;
+  //double end_time;
   Waypoint currentLocation;
-  Waypoint currentPosition;
+  Waypoint currentPosition; // (gyro) orientation
   
 };
 

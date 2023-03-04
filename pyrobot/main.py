@@ -24,6 +24,12 @@ def main():
                 global y_quaternion
                 y_quaternion = pose_data.rotation.y
                 print("y_quaternion: {}".format( y_quaternion))
+                w = pose_data.rotation.w
+                x = -1.0 * pose_data.rotation.z
+                y = pose_data.rotation.x
+                z = -1.0 * pose_data.rotation.y
+
+                yaw = math.atan2(2.0 * (w * z + x * y), 1.0 - 2.0 * (y * y + z * z))
                 #print("Frame #{}".format(pose.frame_number))
                 #print("Position: {}".format(data.translation))
                 #print("Velocity: {}".format(data.velocity))

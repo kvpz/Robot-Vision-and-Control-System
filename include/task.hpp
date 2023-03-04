@@ -3,11 +3,29 @@
 
 // go to 
 
+enum Status {
+	     NOTSTARTED, COMPLETE, INPROGRESS
+};
+
 class Task
 {
 public:
-  Task(){}
+  Task(){ Status = INPROGRESS; }
 
+  void setDestination(double x, double y)
+  {
+    destination.setX(x);
+    destination.setY(y);
+  }
+
+  bool getStatus()
+  {
+    if(status == INPROGRESS || status == NOTSTARTED)
+      return false;
+    else
+      return true;
+  }
+  
   class Behavior {
     
   };
@@ -17,7 +35,7 @@ private:
   Waypoint destination;
   
   double expected_duration;
-  std::string status;
+  Status status;
   
 };
 

@@ -44,6 +44,10 @@ double rotation_correction(double degrees_actually_rotated, double target, bool 
   return total_rotation;
 }
 
+
+/*
+  This function corrects the robots orientation until it has reached the desired orientation.
+ */
 void rotation_correction_until(double degrees_actually_rotated, double degrees_to_rotate, bool cw)
 {  
   while(approximately(degrees_actually_rotated, degrees_to_rotate, 1.2, true) == false) {

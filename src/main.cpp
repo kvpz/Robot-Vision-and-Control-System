@@ -3,6 +3,7 @@
 #include "includes.hpp"
 #include <boost/asio.hpp>
 #include "robot.hpp"
+#include "task.hpp"
 
 #define DEBUG false
 
@@ -366,8 +367,15 @@ Waypoint w1(120, 35);
 int main(int argc, char * argv[]) try
 {
   Robot robot;
-  robot.setCurrentXY(120, 30);
-  
+  robot.setCurrentXY(120, 30); // assuming x,y are front of robot (camera location)
+
+
+  // first task is to drop chips
+  Task task1;
+  task1.setDestination(30, 15);  
+  robot.setTask(task1);
+
+  // Setup T265 connection
     std::string serial_t265_str;
     
     if (!device_with_streams({ RS2_STREAM_POSE }, serial_t265_str))
@@ -431,8 +439,17 @@ int main(int argc, char * argv[]) try
     while(1) {
       RobotState new_state;
       // check if robot has reached its destination
-      //if(std::fabs(robot.getX() - w1.getX()) < 1.5){
-      if(generic) {
+      // check if task completed
+      if(robot.getTask().getStatus()) {
+	// status completed
+	// load next task
+	
+      }
+      else {
+	robot.run();
+      }
+      
+      if(std::fabs(robot.getX() - w1.getX()) < 1.5){
 	new_state = STOP;
 	
 	//robot.setState(STOP);
@@ -444,6 +461,7 @@ int main(int argc, char * argv[]) try
 
 
       // execute actions if new state is requested
+      // or exeuct
       if(robot.getState() != new_state) {
 	robot.setState(new_state);
 	robot.run();
