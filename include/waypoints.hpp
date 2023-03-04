@@ -42,9 +42,16 @@ std::vector<std::pair<double,double>> waypoints({
 class Waypoint
 {
 public:
-  Waypoint(double x, double y, double angle);
+  Waypoint() = default;
+  Waypoint(double x, double y) : _x(x), _y(y){}
+
+  inline double getX() { return _x; }
+  inline double getY() { return _y; }
+
+  void setX(double x) { _x = x; }
+  void setY(double y) { _y = y; }
 private:
-  
+  double _x, _y;
 };
 
 

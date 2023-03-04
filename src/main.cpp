@@ -2,6 +2,7 @@
 // Copyright(c) 2019 Intel Corporation. All Rights Reserved.
 #include "includes.hpp"
 #include <boost/asio.hpp>
+#include "robot.hpp"
 
 #define DEBUG false
 
@@ -360,8 +361,13 @@ void hardcoded_travel(int iterations)
   print_info();
 }
 
+Waypoint w1(120, 35);
+
 int main(int argc, char * argv[]) try
 {
+  Robot robot;
+  robot.setCurrentXY(120, 30);
+  
     std::string serial_t265_str;
     
     if (!device_with_streams({ RS2_STREAM_POSE }, serial_t265_str))
@@ -408,13 +414,10 @@ int main(int argc, char * argv[]) try
     // The pipeline captures the samples from the device and delivers them
     // to the frame callback. 
     rs2::pipeline_profile profiles = pipe.start(cfg, callback);
-
     
     double distance_to_destination = 8.0;
     double degrees_to_rotate = 0.0;
     double degrees_actually_rotated = 0.0;
-
-
 
     /*
     // go to coordinates test
@@ -426,17 +429,35 @@ int main(int argc, char * argv[]) try
 
     int iterations = 0;
     while(1) {
-      hardcoded_travel(iterations);
-      ++iterations;
+      RobotState new_state;
+      // check if robot has reached its destination
+      //if(std::fabs(robot.getX() - w1.getX()) < 1.5){
+      if(generic) {
+	new_state = STOP;
+	
+	//robot.setState(STOP);
+      }
+      else {
+	new_state = MOVE_FORWARD;
+	//robot.setState(MOVE_FORWARD);
+      }
+
+
+      // execute actions if new state is requested
+      if(robot.getState() != new_state) {
+	robot.setState(new_state);
+	robot.run();
+      }
+
+      // if robot has reached its destination, check what task it has to perform
+      // check if robot has reached pose correction waypoint
+      // set the robot's next destination if it has completed its task
+      // set the next action the robot is supposed to perform
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     
-    while(true) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
     
-    
-    //rotate_360_CW_time();
-    //straight_x_feet_time();
     return EXIT_SUCCESS;
 }
 catch (const rs2::error & e)

@@ -5,8 +5,8 @@
 
 #define SLEEP_TIME 250
 #define INCHES_IN_METER 39.3701
+#define DEBUG true
 
-static void move_forward(double distance);
 static void stop();
 static void send_command(std::string message);
 static inline bool approximately(float current, float expected, float precision, bool isGyro);
@@ -81,15 +81,16 @@ static void send_command(std::string message)
 static inline bool approximately(double current, double expected, double precision, bool isGyro)
 {
 
-  if(isGyro) {
-    std::cout << "Gyro current:  " << current << std::endl;
-    std::cout << "Gyro expected: " << expected << std::endl;
+  if(DEBUG){
+    if(isGyro) {
+      std::cout << "Gyro current:  " << current << std::endl;
+      std::cout << "Gyro expected: " << expected << std::endl;
+    }
+    else {
+      std::cout << "accelerometer current:  " << current << std::endl;
+      std::cout << "accelerometer expected: " << expected << std::endl;
+    }
   }
-  else {
-    std::cout << "accelerometer current:  " << current << std::endl;
-    std::cout << "accelerometer expected: " << expected << std::endl;
-  }
-    
   return (current > (expected - precision)) && (current < (expected + precision));
 }
 

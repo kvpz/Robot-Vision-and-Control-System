@@ -7,7 +7,7 @@ INCLUDE = -I$(RSHEADERS) -I$(PROJHEADERS)
 
 ALL: main.x
 
-main.x: ./src/main.cpp
+main.x: ./src/main.cpp $(PROJHEADERS)/.
 	@echo "building target main.x"
 	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 $(INCLUDE) -L$(USRLIBS) -lrealsense2 -o main.x
 
