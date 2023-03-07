@@ -36,13 +36,6 @@ void print_info()
   std::cout << "\n" << std::endl;
 }
 
-
-
-static double robotAngleToPoint(const Robot& robot, double x, double y)
-{
-  return angleToPoint(robot.getX(), robot.getY(), x, y, robot.getOrientation());
-}
-
 int main() try
 {
   Robot robot;
@@ -151,10 +144,6 @@ int main() try
           // ^ or do nothing.
           // execute task updater procedure
           ROBOTASKS::TaskOperations::travel_task_updater(robot, currentTask, nextRobotState);
-          double angleToDest = robotAngleToPoint(robot, 
-            currentTask.getDestination().getX(), 
-            currentTask.getDestination().getY());
-          std::cout << "angle to dest: " << angleToDest << std::endl;
         }
         else if(currentTask.getStatus() == SUSPENDED) {
           // if new task assumed to be CORRECTPATH
@@ -165,7 +154,7 @@ int main() try
         }
       }
       else if(currentTask.getTaskType() == CORRECTPATH) {
-        //correctpath_task_updater(robot, task, nextRobotState);
+        ROBOTASKS::TaskOperations::correctpath_task_updater(robot, task, nextRobotState);
         std::cout << "correcting path" << std::endl;
       }   
 
@@ -179,7 +168,7 @@ int main() try
       robot.printStatus();
 
       //print_info();
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));			  
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));			  
     }
 	
     

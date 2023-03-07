@@ -1,7 +1,7 @@
 #ifndef COMMS_HPP
 #define COMMS_HPP
 #include "includes.hpp"
-#define DEBUG_NOMCU true
+#define DEBUG_NOMCU false
 #define COMMSDEBUG false
 
 class Comms
@@ -17,11 +17,12 @@ public:
     {
 
         if(DEBUG_NOMCU) {
-            std::cout << "send command F" << std::endl;
+            std::cout << "(send command) message: " << message << std::endl;
         }
         else {  
-            if(COMMSDEBUG)
-                std::cout << "(RELEASE) Serial message: " << message << std::endl;
+            if(COMMSDEBUG) {
+                std::cout << "(send_command) Serial message: " << message << std::endl;
+            }
             boost::asio::io_service io;
             boost::asio::serial_port serial(io, serial_port_name);//"/dev/ttyACM0");
 

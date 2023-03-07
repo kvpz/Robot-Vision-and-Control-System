@@ -8,13 +8,7 @@ namespace ROBOTASKS
     class TaskOperations 
     {
     public:
-        /*
-        Check TRAVEL task requirements
 
-        Return:
-        (1) path correction task
-        (2) 
-        */
         static void travel_task_updater(const Robot& robot, Task& task, RobotState& robotState)
         {
             double destX = task.getDestination().getX();
@@ -23,31 +17,36 @@ namespace ROBOTASKS
             double robotY = robot.getY();
 
             // check where robot is relative to waypoint
-            RobotPoseToWaypoint rposetoway = robotPositionRelativeToWaypoint(robotX, robotY, destX, destY);
+            //RobotPoseToWaypoint rposetoway = robot.robotPositionRelativeToWaypoint(robotX, robotY, destX, destY);
+            RobotPoseToWaypoint rposetoway = robot.isRobotOnPath(robotX, robotY, destX, destY);
+
             if(DEBUG_TSKOPS) {
                 std::cout << "(travel_task_updater) robot pose relative to waypoint: " 
                 << printRobotPoseToWaypoint(rposetoway) << std::endl;
             }
+            
             // assign robot a task depending on where it is relative to waypoint
             switch(rposetoway) {
             case NEAR:
-                // stop robot
                 task.setStatus(COMPLETE);
                 robotState = STOP;
                 break;
             case BEFORE_LEFT:
-                // correct position CW
+                task.setStatus(SUSPENDED);
                 robotState = ROTATE_CW;
                 break;
             case BEFORE_RIGHT:
-                // correct position CCW
+                task.setStatus(SUSPENDED);
                 robotState = ROTATE_CCW;
                 break;
             case AFTER_LEFT:
             case AFTER_RIGHT:
             case ON_PATH:
-                // correct position by moving backward
                 //robot.setState(MOVE_BACKWARD);
+                robotState = MOVE_FORWARD;
+            case OFF_PATH:
+                task.setStatus(SUSPENDED);
+                robotState = STOP;
                 break;
             }
             
@@ -60,6 +59,10 @@ namespace ROBOTASKS
             std::cout << std::endl;
         }
 
+        static void correctpath_task_updater(const Robot& robot, Task& task, RobotState& robotState)
+        {
+            
+        }
         /*
         double rotation_correction(double degrees_actually_rotated, double target, bool cw)
         {

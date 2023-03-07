@@ -10,7 +10,7 @@ using namespace ROBOTASKS;
 
 enum RobotPoseToWaypoint {
 			  NEAR, BEFORE_LEFT, BEFORE_RIGHT,
-			  AFTER_LEFT, AFTER_RIGHT, ON_PATH
+			  AFTER_LEFT, AFTER_RIGHT, ON_PATH, OFF_PATH
 };
 
 static std::string printRobotPoseToWaypoint(RobotPoseToWaypoint r) {
@@ -27,6 +27,8 @@ static std::string printRobotPoseToWaypoint(RobotPoseToWaypoint r) {
       return "AFTER_RIGHT";
     case ON_PATH:
       return "ON_PATH";
+    case OFF_PATH:
+      return "OFF_PATH";
   }
 }
 
@@ -40,44 +42,6 @@ static std::string printRobotPoseToWaypoint(RobotPoseToWaypoint r) {
    (5) before the waypoint but off to the right
    (6) near the waypoint
 */
-RobotPoseToWaypoint robotPositionRelativeToWaypoint(double robotX, double robotY, double destX, double destY)
-{
-  RobotPoseToWaypoint result = ON_PATH;
-  // check if robot position (x,y) approximately near position expected by task
-  bool isYapproxnear = approximately(robotY, destY, 1.5, false);
-  bool isXapproxnear = approximately(robotX, destX, 1.5, false);
-  // only if current y is less than 
-  if(isYapproxnear && isXapproxnear) {
-    // near the waypoint
-    result = NEAR;
-  }
-  else if(robotY < destY && robotX < destX) {
-    // before waypoint and off to the left
-    result = BEFORE_LEFT;
-  }
-  else if(robotY < destY && robotX > destX) {
-    // before waypoint and off to the right
-    result = BEFORE_RIGHT;
-  }
-  else if(robotY > destY && robotX < destX) {
-    // ahead of waypoint and to the left
-    result = AFTER_LEFT;
-  }
-  else if(robotY > destY && robotX > destX) {
-    // ahead of waypoint and to the right
-    result = AFTER_RIGHT;
-  }
-  else { // robotY > destY
-    // ahead of waypoint but on path
-    result = ON_PATH;
-  }
-  
-  std::cout << "====== robotPostitionRelativeToWaypoint ======\n";
-  std::cout << "result: " << result << "\n";
-  std::cout << "==============================================\n" << std::endl;
-
-  return result;
-}
 
 enum RobotState {
     MOVE_FORWARD,
@@ -88,6 +52,26 @@ enum RobotState {
     ROTATE_CCW,
     STOP
 };
+
+static std::string RobotStateToString(RobotState state) 
+{
+  switch(state) {
+    case MOVE_FORWARD:
+      return "MOVE_FORWARD";
+    case MOVE_BACKWARD:
+      return "MOVE_BACKWARD";
+    case MOVE_LEFT:
+      return "MOVE_LEFT";
+    case MOVE_RIGHT:
+      return "MOVE_RIGHT";
+    case ROTATE_CW:
+      return "ROTATE_CW";
+    case ROTATE_CCW:
+      return "ROTATE_CCW";
+    case STOP:
+      return "STOP";
+  }
+}
 
 class Robot {
 public:
@@ -153,6 +137,11 @@ public:
     }
   }
 
+  double robotAngleToPoint(const Robot& robot, double x, double y) const
+  {
+    return angleToPoint(robot.getX(), robot.getY(), x, y, robot.getOrientation());
+  }
+
   void move_forward()
   {
     comport->send_command("F");
@@ -198,7 +187,6 @@ public:
   {
     comport->send_command("S");
   }
-
   
   void go_to_destination(double x_robot, double y_robot, double x_destination, double y_destination, double robot_current_angle)
   {
@@ -251,10 +239,92 @@ public:
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
   }
 
+  RobotPoseToWaypoint isRobotOnPath(double robotX, double robotY, double destX, double destY) const
+  {
+    RobotPoseToWaypoint result = ON_PATH;
+    // check if robot position (x,y) approximately near destination
+    bool isYapproxnear = approximately(robotY, destY, 1.5, false);
+    bool isXapproxnear = approximately(robotX, destX, 1.5, false);
+
+    double angleToDest = robotAngleToPoint(*this, destX, destY);
+
+    if(isYapproxnear && isXapproxnear) {
+      // near the waypoint
+      result = NEAR;
+    }
+    else if (angleToDest < 1.0) { // robotY > destY && robotX == destX
+      // detect if drifting from path
+      result = ON_PATH;
+    }
+    else {
+      result = OFF_PATH;
+    }    
+    
+    if(ROBOTDEBUG) {
+      std::cout << "\n====== robotPostitionRelativeToWaypoint ======\n";
+      std::cout << "result: " << printRobotPoseToWaypoint(result) << "\n";
+      std::cout << "(isRobotOnPath) angle to dest: " << angleToDest << "\n";
+      std::cout << "==============================================\n" << std::endl;
+    }
+
+    return result;
+  }
+
+  RobotPoseToWaypoint robotPositionRelativeToWaypoint(double robotX, double robotY, double destX, double destY) const
+  {
+    RobotPoseToWaypoint result = ON_PATH;
+    // check if robot position (x,y) approximately near destination
+    bool isYapproxnear = approximately(robotY, destY, 1.5, false);
+    bool isXapproxnear = approximately(robotX, destX, 1.5, false);
+
+    double angleToDest = robotAngleToPoint(*this, destX, destY);
+    std::cout << "angle to dest: " << angleToDest << std::endl;
+
+    if(angleToDest < (90.0 - 1.0)) {
+      
+    }
+    else if (angleToDest > (90.0 + 1.0)) {
+      
+    }
+
+    if(isYapproxnear && isXapproxnear) {
+      // near the waypoint
+      result = NEAR;
+    }
+    else if (angleToDest < 1.0) { // robotY > destY && robotX == destX
+      // detect if drifting from path
+      result = ON_PATH;
+    }
+    else if(robotY < destY && robotX < destX) {
+      // before waypoint and off to the left
+      result = BEFORE_LEFT;
+    }
+    else if(robotY < destY && robotX > destX) {
+      // before waypoint and off to the right
+      result = BEFORE_RIGHT;
+    }
+    else if(robotY > destY && robotX < destX) {
+      // ahead of waypoint and to the left
+      result = AFTER_LEFT;
+    }
+    else if(robotY > destY && robotX > destX) {
+      // ahead of waypoint and to the right
+      result = AFTER_RIGHT;
+    }
+    
+    if(ROBOTDEBUG) {
+      std::cout << "\n====== robotPostitionRelativeToWaypoint ======\n";
+      std::cout << "result: " << printRobotPoseToWaypoint(result) << "\n";
+      std::cout << "==============================================\n" << std::endl;
+    }
+
+    return result;
+  }
+
   void printStatus()
   {
     std::cout << "\n====== Robot Status ======\n";
-    std::cout << "State: " << state << "\n";
+    std::cout << "State: " << RobotStateToString(state) << "\n";
     std::cout << "current location: ("
 	      << currentLocation.getX() << ", "
 	      << currentLocation.getY() << ")\n";
