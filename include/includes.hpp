@@ -13,7 +13,8 @@
 #include "example-utils.hpp"
 
 #include <boost/asio.hpp>
-#include <boost/progress.hpp>
+#include <boost/timer/timer.hpp>
+//#include <boost/progress.hpp>
 #include "waypoints.hpp"
 #include "robot_specs.hpp"
 #include "utility.hpp"

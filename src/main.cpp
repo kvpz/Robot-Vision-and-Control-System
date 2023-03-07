@@ -2,10 +2,13 @@
 // Copyright(c) 2019 Intel Corporation. All Rights Reserved.
 #include "includes.hpp"
 #include <boost/asio.hpp>
+#include <stack>
 #include "robot.hpp"
 #include "task.hpp"
+#include "taskoperations.hpp"
+using namespace ROBOTASKS;
 
-#define DEBUG false
+#define DEBUG true
 
 std::string serial_line_read;
 
@@ -22,237 +25,9 @@ bool right_chips_deployed = false;
 
 bool is_third_destination = false;
 
-void serial_read_func()
-{
-    // setup async serial read
-  boost::asio::io_context io_context;
-  boost::asio::serial_port serial_read(io_context, "/dev/ttyACM0");
-  
-  // CONFIGURE NON-BLOCKING READS
-  boost::asio::serial_port_base::flow_control flow_control(boost::asio::serial_port_base::flow_control::none);
-  boost::asio::serial_port_base::parity parity(boost::asio::serial_port_base::parity::none);
-  boost::asio::serial_port_base::stop_bits stop_bits(boost::asio::serial_port_base::stop_bits::one);
-  boost::asio::serial_port_base::character_size char_size(8);
-  
-  boost::asio::streambuf buffer;
-  //char data[1024];
-  //std::string data;
-  //boost::asio::async_read_until(serial_read, boost::asio::dynamic_buffer(data, sizeof(data)), '\n', //buffer, '\n',
-  boost::asio::async_read_until(serial_read, buffer, '\n',
-				//[data](const boost::system::error_code& error, size_t bytes_transferred) {
-				[&](const boost::system::error_code& error, size_t bytes_transferred) {
-				  if(!error) {
-				    std::istream input_stream(&buffer);
-				    std::string line;
-				    //std::string line2;
+Waypoint w1(120, 35);
 
-				    std::getline(input_stream, line);
-				    //serial_line_read = line;
-				    std::cout << line;
-				    
-				    //std::getline(input_stream, line);
-				    //serial_line_read = line;
-				    
-				    //std::cout << "in async_read_until callback" << std::endl;
-				    //std::cout << "Received: " << line << std::endl;
-				  }
-				  else {
-				    std::cerr << "Error: " << error.message() << std::endl;
-				  }
-				});
-  io_context.run();
-}
-
-double rotation_correction(double degrees_actually_rotated, double target, bool cw)
-{
-  double total_rotation = 0.0;
-  pre_action_angle = yaw_to_degrees(yaw, current_angle_quaternion);//convert_quaternions_to_degrees(current_angle_quaternion);
-  if(degrees_actually_rotated < target) {
-    //std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    if(cw)
-      rotate_CW(std::fabs(90.0 - degrees_actually_rotated), ROBOT_360_ROTATE_TIME_MILLISEC);
-    else
-      rotate_CCW(std::fabs(90.0 - degrees_actually_rotated), ROBOT_360_ROTATE_TIME_MILLISEC);
-  }
-  else {
-    if(cw)
-      rotate_CW(std::fabs(90.0 - degrees_actually_rotated), ROBOT_360_ROTATE_TIME_MILLISEC);
-    else
-      rotate_CCW(std::fabs(90.0 - degrees_actually_rotated), ROBOT_360_ROTATE_TIME_MILLISEC);
-  }
-
-  std::this_thread::sleep_for(std::chrono::milliseconds(100));
-  post_action_angle = yaw_to_degrees(yaw, current_angle_quaternion); //convert_quaternions_to_degrees(current_angle_quaternion);
-  
-  total_rotation = std::fabs(post_action_angle - pre_action_angle);
-  std::cout << "rotation_correction: " << total_rotation << " (total rotation)" << std::endl;
-  return total_rotation;
-}
-
-void rotation_correction_until(double degrees_actually_rotated, double degrees_to_rotate, bool cw)
-{  
-  while(approximately(degrees_actually_rotated, degrees_to_rotate, 1.2, true) == false) {
-    pre_action_angle = yaw_to_degrees(yaw, current_angle_quaternion); //convert_quaternions_to_degrees(current_angle_quaternion);
-    double total_degrees_rotated = rotation_correction(degrees_actually_rotated, degrees_to_rotate, cw);
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    post_action_angle = yaw_to_degrees(yaw, current_angle_quaternion); //convert_quaternions_to_degrees(current_angle_quaternion);
-    degrees_actually_rotated += std::fabs(post_action_angle - pre_action_angle);
-    
-    // if overshoot, then break out of while loop
-    if(degrees_actually_rotated > degrees_to_rotate){
-      break;
-    }
-  }
-}
-
-void first_destination()
-{
-  double distance_to_destination = 10.0;
-  // move forward to first destination
-  move_forward(distance_to_destination, ROBOT_SPEED_CM_PER_SEC);
-  std::cout << "Distance traveled (odometry): ";
-  //serial_read_func();
-  std::cout << "Raw odometry data: ";
-  //serial_read_func();
-}
-
-void first_destination_pose()
-{
-  double degrees_to_rotate = 90.0;
-  double degrees_actually_rotated = 0.0;
-  // rotate CCW 90 degrees
-  pre_action_angle = yaw_to_degrees(yaw, current_angle_quaternion); //convert_quaternions_to_degrees(current_angle_quaternion);
-  rotate_CCW(degrees_to_rotate, ROBOT_360_ROTATE_TIME_MILLISEC);
-
-  std::this_thread::sleep_for(std::chrono::milliseconds(100));
-  post_action_angle = yaw_to_degrees(yaw, current_angle_quaternion); //convert_quaternions_to_degrees(current_angle_quaternion);
-  degrees_actually_rotated = std::fabs(post_action_angle - pre_action_angle);
-  
-  std::cout << "post_action_angle (" << post_action_angle
-	    << ")- pre_action_angle (" << pre_action_angle << ") : "
-	    << degrees_actually_rotated << "\n" << std::endl;
-  
-  // verify robot rotated 90 degrees
-  // if robot rotated less than 90 degrees, fix    
-  // if robot rotated more than 90 degrees, fix
-  rotation_correction_until(degrees_actually_rotated, degrees_to_rotate, false);
-}
-
-void second_destination()
-{
-  double distance_to_destination = 8.0;
-  // go forward to bottom left corner of map
-  distance_to_destination = 95.0;
-  move_forward(distance_to_destination, ROBOT_SPEED_CM_PER_SEC);
-  std::cout << "Distance traveled (odometry): ";
-  //serial_read_func();
-  std::cout << "Raw odometry data: ";
-  //serial_read_func();
-}
-
-void second_destination_pose()
-{
-  double degrees_to_rotate = 90.0;
-  double degrees_actually_rotated = 0.0;
-
-  // rotate CW 90 degrees
-  pre_action_angle = yaw_to_degrees(yaw, current_angle_quaternion); //convert_quaternions_to_degrees(current_angle_quaternion);
-
-  if(is_third_destination)
-    degrees_to_rotate = 90.0 - (90.0 - pre_action_angle);
-  
-  rotate_CW(degrees_to_rotate, ROBOT_360_ROTATE_TIME_MILLISEC);
-  std::this_thread::sleep_for(std::chrono::milliseconds(200));
-  post_action_angle = yaw_to_degrees(yaw, current_angle_quaternion); //convert_quaternions_to_degrees(current_angle_quaternion);
-  
-  degrees_actually_rotated = std::fabs(pre_action_angle - post_action_angle);
-
-  if(quadrant_identifier(post_action_angle) > quadrant_identifier(pre_action_angle)) {
-    // example: quadrant 4
-    //degrees_actually_rotated = std::fabs(post_action_angle - 180.0);
-    degrees_actually_rotated = pre_action_angle + 360.0 - post_action_angle;
-    std::cout << "post_action_angle (" << post_action_angle
-	      << ")- pre_action_angle (" << pre_action_angle << ") : "
-	      << degrees_actually_rotated << "\n" << std::endl;
-  }
-  
-  
-  // verify robot rotated 90 degrees
-  rotation_correction_until(degrees_actually_rotated, degrees_to_rotate, true);
-
-  std::this_thread::sleep_for(std::chrono::milliseconds(200));
-  send_command("R");
-  std::this_thread::sleep_for(std::chrono::milliseconds((long)(16.0 / ROBOT_SPEED_CM_PER_SEC * 1000.0)));
-  send_command("S");
-  std::this_thread::sleep_for(std::chrono::milliseconds(200));
-  
-  if(right_chips_deployed == false) {
-    
-    send_command("4");
-    std::this_thread::sleep_for(std::chrono::milliseconds(4000));
-    send_command("3");
-    right_chips_deployed = true;
-  }
-  else if(left_chips_deployed == false){
-    
-    send_command("1");
-    std::this_thread::sleep_for(std::chrono::milliseconds(4000));
-    send_command("2");
-    left_chips_deployed = true;
-  }
-}
-
-void third_destination()
-{
-  double distance_to_destination = 8.0;
-  // go forward to top left corner of map
-  distance_to_destination = 70.0;
-  move_forward(distance_to_destination, ROBOT_SPEED_CM_PER_SEC);
-  std::cout << "Distance traveled (odometry): ";
-  //serial_read_func();
-  std::cout << "Raw odometry data: ";
-  //serial_read_func();
-}
-
-void third_destination_pose()
-{
-  is_third_destination = true;
-  second_destination_pose();
-  is_third_destination = false;
-}
-
-void fourth_destination()
-{
-  double distance_to_destination = 10.0;
-  // go forward to bottom left corner of map
-  distance_to_destination = 160.0;
-  move_forward(distance_to_destination, ROBOT_SPEED_CM_PER_SEC);
-  std::cout << "Distance traveled (odometry): ";
-  //serial_read_func();
-  std::cout << "Raw odometry data: ";
-  //serial_read_func();
-}
-
-void fourth_destination_pose()
-{
-  second_destination_pose();
-}
-
-void fifth_destination()
-{
-  third_destination();
-}
-
-void fifth_destination_pose()
-{
-  second_destination_pose();
-}
-
-void sixth_destination()
-{
-  fourth_destination();
-}
+std::stack<Task> taskStack;
 
 void print_info()
 {
@@ -261,120 +36,35 @@ void print_info()
   std::cout << "\n" << std::endl;
 }
 
-void temp_test()
-{
-  move_forward(10.0, ROBOT_SPEED_CM_PER_SEC);
-  std::cout << "Distance traveled (odometry): ";
-  //serial_read_func();
-  std::cout << "Raw odometry data: ";
-  //serial_read_func();
-  std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-  double degrees_actually_rotated = 0.0;
-  
-  while(1) {
-    pre_action_angle = yaw_to_degrees(yaw, current_angle_quaternion);
-    rotate_CW(45.0, ROBOT_360_ROTATE_TIME_MILLISEC);
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-    post_action_angle = yaw_to_degrees(yaw, current_angle_quaternion);
-    degrees_actually_rotated = std::fabs(pre_action_angle - post_action_angle);
-    //print_info();
-  
-  }
-  
-  
-  rotate_CCW(360.0, ROBOT_360_ROTATE_TIME_MILLISEC);
+
+static double robotAngleToPoint(const Robot& robot, double x, double y)
+{
+  return angleToPoint(robot.getX(), robot.getY(), x, y, robot.getOrientation());
 }
 
-void hardcoded_travel(int iterations)
-{
-    /*
-  // forward backward warmup
-  std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-  move_forward(distance_to_destination, ROBOT_SPEED_CM_PER_SEC);
-  std::cout << "Distance traveled (odometry): ";
-  serial_read_func();
-  std::cout << "Raw odometry data: ";
-  serial_read_func();
-  std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-  std::cout << "Distance traveled (odometry): " << serial_line_read << std::endl;
-  print_info();
-  
-  move_backward(distance_to_destination, ROBOT_SPEED_CM_PER_SEC);
-  std::cout << "Distance traveled (odometry): ";
-  serial_read_func();
-  std::cout << "Raw odometry data: ";
-  serial_read_func();
-  std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-  print_info();
-  */
-  std::cout << "first destination (iteration #" << iterations << ")" << std::endl;
-  first_destination();
-  std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
-  print_info();
-
-  first_destination_pose();
-  std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
-  print_info();
-
-  if(iterations > 0) {
-    std::cout << "second destination (iteration #" << iterations << ")" << std::endl;
-    second_destination();
-    std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
-    print_info();
-  }
-  
-  std::cout << "second destination (iteration #" << iterations << ")" << std::endl;
-  second_destination();
-  std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
-  print_info();
-  
-  
-  second_destination_pose();
-  std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
-  print_info();
-
-  std::cout << "third destination (iteration #" << iterations << ")" << std::endl;
-  third_destination();
-  std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
-  print_info();
-  
-  third_destination_pose();
-  std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
-  print_info();
-
-  std::cout << "fourth destination (iteration #" << iterations << ")" << std::endl;
-  fourth_destination();
-  std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
-  print_info();
-  
-  fourth_destination_pose();
-  std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
-  print_info();
-
-  std::cout << "fifth destination (iteration #" << iterations << ")" << std::endl;
-  fifth_destination();
-  std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
-  print_info();
-  
-  fifth_destination_pose();
-  std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_TIME));
-  print_info();
-}
-
-Waypoint w1(120, 35);
-
-int main(int argc, char * argv[]) try
+int main() try
 {
   Robot robot;
   robot.setCurrentXY(120, 30); // assuming x,y are front of robot (camera location)
 
+  // second task is rotate ccw
+  Task task2(TRAVEL, "task two");
+  task2.setDestination(30, 25);
+  task2.setStatus(NOTSTARTED);
+  task2.setDesiredRobotYawPose(180);
+  taskStack.push(task2);
+  robot.setTask(task2, "task two");
 
-  // first task is to drop chips
-  Task task1;
-  task1.setDestination(30, 15);  
-  robot.setTask(task1);
+  // first task is move forward a bit
+  Task task(TRAVEL, "task one");
+  task.setDestination(120, 40);
+  task.setStatus(INPROGRESS);
+  taskStack.push(task);
+  robot.setTask(task, "task one");
 
+
+  
   // Setup T265 connection
     std::string serial_t265_str;
     
@@ -404,9 +94,13 @@ int main(int argc, char * argv[]) try
 
             current_angle_quaternion = pose_data.rotation.y;
 
-            current_x = pose_data.translation.x;
+            current_x = pose_data.translation.x * 100.0 + 121.0;
             current_y = pose_data.translation.z;
-
+            if(current_y < 0.0)
+              current_y = std::fabs(current_y) * 100.0 + 30.0;
+            else
+              current_y = 30.0 - (current_y * 100.0);
+	    
             double w = pose_data.rotation.w;
             double x = -1.0 * pose_data.rotation.z;
             double y = pose_data.rotation.x;
@@ -415,6 +109,11 @@ int main(int argc, char * argv[]) try
             //double pitch = -asin(2.0 * (x * z - w * y)) * (180.0 / M_PI);
             //double roll = atan((2.0 * (w*x + y*z)) /  (w*w - x*x - y*y + z*z)) * (180.0 / M_PI);
             yaw = atan((2.0 * (w*z + x*y)) /  (w*w + x*x - y*y - z*z)) * (180.0 / M_PI);
+
+            robot.setCurrentXY(current_x, current_y);
+
+            //robot.setOrientation(yaw);
+            robot.setOrientation(convert_quaternions_to_degrees(current_angle_quaternion));
         }
     };
 
@@ -422,10 +121,6 @@ int main(int argc, char * argv[]) try
     // The pipeline captures the samples from the device and delivers them
     // to the frame callback. 
     rs2::pipeline_profile profiles = pipe.start(cfg, callback);
-    
-    double distance_to_destination = 8.0;
-    double degrees_to_rotate = 0.0;
-    double degrees_actually_rotated = 0.0;
 
     /*
     // go to coordinates test
@@ -435,46 +130,54 @@ int main(int argc, char * argv[]) try
     std::cout << "destination reached" << std::endl;
     */
 
-    int iterations = 0;
     while(1) {
-      RobotState new_state;
-      // check if robot has reached its destination
-      // check if task completed
-      if(robot.getTask().getStatus()) {
-	// status completed
-	// load next task
-	
+      if(taskStack.empty())
+        break;
+      Task& currentTask = taskStack.top();
+      RobotState nextRobotState;
+
+      if(task.getTaskType() == TRAVEL) {
+
+        if(currentTask.getStatus() == COMPLETE) {
+          taskStack.pop();
+        }
+        else if(currentTask.getStatus() == NOTSTARTED) {
+          currentTask.setStatus(INPROGRESS);
+          // do what is necessary to initialize the task
+          // destination (x,y), 
+        }
+        else if(currentTask.getStatus() == INPROGRESS) {
+          //	travel_task_updater(robot, task, nextRobotState);
+          // ^ or do nothing.
+          // execute task updater procedure
+          ROBOTASKS::TaskOperations::travel_task_updater(robot, currentTask, nextRobotState);
+        }
+        else if(currentTask.getStatus() == SUSPENDED) {
+          // if new task assumed to be CORRECTPATH
+          Task newTask(CORRECTPATH, "correctpath");
+          newTask.setDestination(currentTask.getDestination().getX(),
+            currentTask.getDestination().getY());
+          taskStack.push(newTask);
+        }
       }
-      else {
-	robot.run();
-      }
-      
-      if(std::fabs(robot.getX() - w1.getX()) < 1.5){
-	new_state = STOP;
-	
-	//robot.setState(STOP);
-      }
-      else {
-	new_state = MOVE_FORWARD;
-	//robot.setState(MOVE_FORWARD);
+      else if(currentTask.getTaskType() == CORRECTPATH) {
+        //correctpath_task_updater(robot, task, nextRobotState);
+        std::cout << "correcting path" << std::endl;
+      }   
+
+      // change robot behavior if a new state assigned by task scheduler
+      if(robot.getState() != nextRobotState) {
+        robot.setState(nextRobotState);
+        robot.run();
       }
 
-
-      // execute actions if new state is requested
-      // or exeuct
-      if(robot.getState() != new_state) {
-	robot.setState(new_state);
-	robot.run();
-      }
-
-      // if robot has reached its destination, check what task it has to perform
-      // check if robot has reached pose correction waypoint
-      // set the robot's next destination if it has completed its task
-      // set the next action the robot is supposed to perform
-
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      // robot status (DEBUG)
+      robot.printStatus();
+      std::cout << "angle to dest: " << robotAngleToPoint(robot, current_x, current_y) << std::endl;
+      //print_info();
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));			  
     }
-    
+	
     
     return EXIT_SUCCESS;
 }
@@ -488,3 +191,32 @@ catch (const std::exception& e)
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
 }
+
+// compare general task requirement to robot's current state
+// (1) if robot is not near destination, keep traveling to location
+// (2) check if robot has dropped chips if [RED/GREEN]CHIPDROP task
+// (3) check if robot has recycled objects if RECYCLING task
+
+// check status of travel task and decide on robot state
+	  
+// robot has already been assigned a state
+
+// TRAVEL Subtasks
+// (1) if robot potentially stuck, undo travel
+// (2) if robot not following path (subtask), correct path
+// (2.1) set state STOP
+// (2.2) set state rotate_CW if current angle larger than expected
+// (2.3) set state rotate_CCW if current angle smaller than expected
+// path following is checked every t time or x distance. Path is not being
+// followed if orientation angle is much different than the previous reading.
+// (subtask)
+
+// if CHIPDROP task
+// CHIPDROP Subtasks
+// (1) if robot not in correct orientation, orient robot
+// (2) if robot has rotated and is not near position of attraction, orient robot
+// (3) 
+
+// if RECYCLE task
+// Verify the pincers are open. 
+

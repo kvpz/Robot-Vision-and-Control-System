@@ -1,44 +1,70 @@
 #ifndef TASK_HPP
 #define TASK_HPP
 
-// go to 
-
-enum Status {
-	     NOTSTARTED, COMPLETE, INPROGRESS
-};
-
-class Task
+namespace ROBOTASKS 
 {
-public:
-  Task(){ Status = INPROGRESS; }
-
-  void setDestination(double x, double y)
-  {
-    destination.setX(x);
-    destination.setY(y);
-  }
-
-  bool getStatus()
-  {
-    if(status == INPROGRESS || status == NOTSTARTED)
-      return false;
-    else
-      return true;
-  }
-  
-  class Behavior {
-    
+  enum Status {
+        NOTSTARTED, COMPLETE, INPROGRESS, SUSPENDED
   };
-  
-private:
-  size_t priority;
-  Waypoint destination;
-  
-  double expected_duration;
-  Status status;
-  
-};
 
+  enum TaskType {
+          TRAVEL, CHIPDROP, RECYCLE, GRASP, STACKPED,
+          CORRECTPATH, ROTATE
+  };
+
+  class Task
+  {
+  public:
+    Task() {};
+    Task(TaskType ttype, std::string name)
+      : status(NOTSTARTED), taskType(ttype), nameid(name)
+    {
+    }
+
+    // setters
+    void setDestination(double x, double y)
+    {
+      destination.setX(x);
+      destination.setY(y);
+    }
+
+    void setStatus(Status s)
+    {
+      status = s;
+    }
+
+    void setDesiredRobotYawPose(double y)
+    {
+      desiredRobotYawPose = y;
+    }
+    
+    // getters
+    Status getStatus() const
+    {
+      return status;
+    }
+
+    Waypoint getDestination() const { return destination; } 
+    
+    TaskType getTaskType() const
+    {
+      return taskType;
+    }
+
+    inline std::string getName() { return nameid; }
+    
+    inline double getDesiredRobotYawPose() { return desiredRobotYawPose; }
+    
+  private:
+    size_t priority;
+    Waypoint destination;
+    double desiredRobotYawPose; // angle
+    double expected_duration;
+    Status status;
+    TaskType taskType;
+    std::string nameid;
+  };
+}
 #endif
 
 /*
