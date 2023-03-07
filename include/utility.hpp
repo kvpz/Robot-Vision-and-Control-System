@@ -84,6 +84,15 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
   double theta = 0.0;
   double distance = 0.0;
 
+  if(UTILITYDEBUG) {
+    std::cout << "(angleToPoint) x_destination: " << x_destination << "\n";
+    std::cout << "(angleToPoint) y_destination: " << y_destination << "\n";
+    std::cout << "(angleToPoint) x_robot: " << x_robot << "\n";
+    std::cout << "(angleToPoint) y_robot: " << y_robot << "\n";
+    std::cout << "(angleToPoint) y_diff: " << y_diff << "\n";
+    std::cout << "(angleToPoint) x_diff: " << x_diff << "\n";
+    std::cout << "(angleToPoint) y_diff / x_diff: " << y_diff / x_diff << std::endl;
+  }
 
   beta = atan(y_diff / x_diff) * 180.0 / (M_PI); // erroneos
   

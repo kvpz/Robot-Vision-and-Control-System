@@ -151,6 +151,10 @@ int main() try
           // ^ or do nothing.
           // execute task updater procedure
           ROBOTASKS::TaskOperations::travel_task_updater(robot, currentTask, nextRobotState);
+          double angleToDest = robotAngleToPoint(robot, 
+            currentTask.getDestination().getX(), 
+            currentTask.getDestination().getY());
+          std::cout << "angle to dest: " << angleToDest << std::endl;
         }
         else if(currentTask.getStatus() == SUSPENDED) {
           // if new task assumed to be CORRECTPATH
@@ -173,7 +177,7 @@ int main() try
 
       // robot status (DEBUG)
       robot.printStatus();
-      std::cout << "angle to dest: " << robotAngleToPoint(robot, current_x, current_y) << std::endl;
+
       //print_info();
       std::this_thread::sleep_for(std::chrono::milliseconds(100));			  
     }
