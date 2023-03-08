@@ -1,6 +1,7 @@
 #ifndef TASKOPERATIONS_HPP
 #define TASKOPERATIONS_HPP
 #include "robot.hpp"
+#include "task.hpp"
 #define DEBUG_TSKOPS true
 
 namespace ROBOTASKS 
@@ -9,14 +10,13 @@ namespace ROBOTASKS
     {
     public:
 
-        static void travel_task_updater(const Robot& robot, Task& task, RobotState& robotState)
+        static void travel_task_updater(Robot& robot, Task& task, RobotState& robotState)
         {
             double destX = task.getDestination().getX();
             double destY = task.getDestination().getY();
             double robotX = robot.getX();
             double robotY = robot.getY();
 
-            // check where robot is relative to waypoint
             //RobotPoseToWaypoint rposetoway = robot.robotPositionRelativeToWaypoint(robotX, robotY, destX, destY);
             RobotPoseToWaypoint rposetoway = robot.isRobotOnPath(robotX, robotY, destX, destY);
 
@@ -50,19 +50,46 @@ namespace ROBOTASKS
                 break;
             }
             
+
+            printTaskInfo(task);
+        }
+
+        static void correctpath_task_updater(Robot& robot, Task& task, RobotState& robotState)
+        {
+            double destX = task.getDestination().getX();
+            double destY = task.getDestination().getY();
+            double robotX = robot.getX();
+            double robotY = robot.getY();
+            
+            RobotPoseToWaypoint rposetoway = robot.isRobotOnPath(robotX, robotY, destX, destY);
+
+            printTaskInfo(task);
+        }
+
+    private:
+        static void printTaskInfo(Task& task)
+        {
             // print status of this type of task
-            std::cout << "\n====== Travel Task Updater ======\n";
-            std::cout << "Task destination (X,Y): (" << destX << ", " << destY << ")\n";
+            switch(task.getTaskType()) {
+                case TRAVEL:
+                    std::cout << "\n====== Travel Task Updater ======\n";
+                    break;
+                case CORRECTPATH:
+                    std::cout << "\n====== CorrectPath Task Updater ======\n";
+                    break;  
+            }
+
+            std::cout << "Task destination (X,Y): (" << task.getDestination().getX() 
+                    << ", " << task.getDestination().getY() << ")\n";
             std::cout << "Task status: " << task.getStatus() << "\n";
             std::cout << "Task name: " << task.getName() << "\n";
             std::cout << "=================================\n";
             std::cout << std::endl;
         }
+    };
 
-        static void correctpath_task_updater(const Robot& robot, Task& task, RobotState& robotState)
-        {
-            
-        }
+}
+
         /*
         double rotation_correction(double degrees_actually_rotated, double target, bool cw)
         {
@@ -106,8 +133,4 @@ namespace ROBOTASKS
             }
         }
         */
-    };
-
-}
-
 #endif

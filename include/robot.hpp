@@ -10,7 +10,7 @@ using namespace ROBOTASKS;
 
 enum RobotPoseToWaypoint {
 			  NEAR, BEFORE_LEFT, BEFORE_RIGHT,
-			  AFTER_LEFT, AFTER_RIGHT, ON_PATH, OFF_PATH
+			  AFTER_LEFT, AFTER_RIGHT, ON_PATH, OFF_PATH, NONE
 };
 
 static std::string printRobotPoseToWaypoint(RobotPoseToWaypoint r) {
@@ -29,6 +29,8 @@ static std::string printRobotPoseToWaypoint(RobotPoseToWaypoint r) {
       return "ON_PATH";
     case OFF_PATH:
       return "OFF_PATH";
+    case NONE:
+      return "NONE";
   }
 }
 
@@ -78,6 +80,7 @@ public:
   Robot()
   { 
     comport = new Comms("/dev/ttyACM0");
+    robotPoseToWaypoint = NONE;
   }
 
   // getters
@@ -96,22 +99,24 @@ public:
     state = newState;
   }
 
+/*
   void setTask(Task& t, std::string name)
   {
     task = *(new Task(t.getTaskType(), name));
   }
-
+*/
   void setOrientation(double o)
   {
     currentOrientation = o;
   }
   
+  /*
   const Task getTask() 
   {
     return task;
   }
-  
-  void run() {
+  */
+  void run(Task& task) {
     switch (state) {
     case MOVE_FORWARD:
       move_forward(); 
@@ -239,7 +244,7 @@ public:
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
   }
 
-  RobotPoseToWaypoint isRobotOnPath(double robotX, double robotY, double destX, double destY) const
+  RobotPoseToWaypoint isRobotOnPath(double robotX, double robotY, double destX, double destY)
   {
     RobotPoseToWaypoint result = ON_PATH;
     // check if robot position (x,y) approximately near destination
@@ -261,12 +266,13 @@ public:
     }    
     
     if(ROBOTDEBUG) {
-      std::cout << "\n====== robotPostitionRelativeToWaypoint ======\n";
+      std::cout << "\n====== isRobotOnPath ======\n";
       std::cout << "result: " << printRobotPoseToWaypoint(result) << "\n";
       std::cout << "(isRobotOnPath) angle to dest: " << angleToDest << "\n";
-      std::cout << "==============================================\n" << std::endl;
+      std::cout << "=============================\n" << std::endl;
     }
 
+    robotPoseToWaypoint = result;
     return result;
   }
 
@@ -278,7 +284,6 @@ public:
     bool isXapproxnear = approximately(robotX, destX, 1.5, false);
 
     double angleToDest = robotAngleToPoint(*this, destX, destY);
-    std::cout << "angle to dest: " << angleToDest << std::endl;
 
     if(angleToDest < (90.0 - 1.0)) {
       
@@ -315,6 +320,7 @@ public:
     if(ROBOTDEBUG) {
       std::cout << "\n====== robotPostitionRelativeToWaypoint ======\n";
       std::cout << "result: " << printRobotPoseToWaypoint(result) << "\n";
+      std::cout << "angle to dest: " << angleToDest << std::endl;
       std::cout << "==============================================\n" << std::endl;
     }
 
@@ -328,14 +334,15 @@ public:
     std::cout << "current location: ("
 	      << currentLocation.getX() << ", "
 	      << currentLocation.getY() << ")\n";
-    std::cout << "current orientation (yaw): " << currentOrientation;
-    std::cout << "\n==========================\n";
+    std::cout << "current orientation (yaw): " << currentOrientation << "\n";
+    std::cout << "robot pose relative to waypoint: " << printRobotPoseToWaypoint(robotPoseToWaypoint) << "\n";
+    std::cout << "==========================\n";
     std::cout << std::endl;
   }
   
 private:
   RobotState state = STOP;
-  Task task; // current task robot must complete
+  //Task task; // current task robot must complete
   // start and end times would be good for detecting if a
   // path finished sooner or later than expected.
   Waypoint currentLocation;
@@ -343,6 +350,7 @@ private:
   double velocity;
   double currentAngle; // relative to starting position
   Comms* comport;
+  RobotPoseToWaypoint robotPoseToWaypoint = NONE;
 };
 
 #endif

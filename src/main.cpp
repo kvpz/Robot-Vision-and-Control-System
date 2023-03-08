@@ -10,8 +10,6 @@ using namespace ROBOTASKS;
 
 #define DEBUG true
 
-std::string serial_line_read;
-
 double current_angle_quaternion = 0.0;
 
 double current_x = 0.0;
@@ -20,13 +18,6 @@ double pre_action_angle = 0.0;
 double post_action_angle = 0.0;
 double yaw = 0.0;
 
-bool left_chips_deployed = false;
-bool right_chips_deployed = false;
-
-bool is_third_destination = false;
-
-Waypoint w1(120, 35);
-
 std::stack<Task> taskStack;
 
 void print_info()
@@ -34,6 +25,33 @@ void print_info()
   std::cout << "current angle: " << yaw_to_degrees(yaw, current_angle_quaternion) << std::endl;
   std::cout << "current coordinate: ( " << current_x * 100 << ", " << current_y * 100 << " )" << std::endl;
   std::cout << "\n" << std::endl;
+}
+
+void travelTaskSuspendedState(Task& task) 
+{
+      // if new task assumed to be CORRECTPATH
+      Task newTask(CORRECTPATH, "correctpath");
+      newTask.setDestination(task.getDestination().getX(),
+        task.getDestination().getY());
+      taskStack.push(newTask);
+}
+
+void travelTaskManager(Task& task, Robot& robot, RobotState& nextRobotState)
+{
+  switch(task.getStatus()) {
+    case NOTSTARTED:
+      task.setStatus(INPROGRESS);
+      break;  
+    case INPROGRESS:
+      ROBOTASKS::TaskOperations::travel_task_updater(robot, task, nextRobotState);
+      break;
+    case SUSPENDED:
+      travelTaskSuspendedState(task);
+      break;
+    case COMPLETE:
+      taskStack.pop();
+      break;
+  }
 }
 
 int main() try
@@ -47,14 +65,14 @@ int main() try
   task2.setStatus(NOTSTARTED);
   task2.setDesiredRobotYawPose(180);
   taskStack.push(task2);
-  robot.setTask(task2, "task two");
+  //robot.setTask(task2, "task two");
 
   // first task is move forward a bit
   Task task(TRAVEL, "task one");
   task.setDestination(120, 40);
   task.setStatus(INPROGRESS);
   taskStack.push(task);
-  robot.setTask(task, "task one");
+  //robot.setTask(task, "task one");
 
 
   
@@ -123,35 +141,17 @@ int main() try
     std::cout << "destination reached" << std::endl;
     */
 
+    int taskCounter = 0;
     while(1) {
       if(taskStack.empty())
         break;
+
       Task& currentTask = taskStack.top();
       RobotState nextRobotState;
 
       if(task.getTaskType() == TRAVEL) {
 
-        if(currentTask.getStatus() == COMPLETE) {
-          taskStack.pop();
-        }
-        else if(currentTask.getStatus() == NOTSTARTED) {
-          currentTask.setStatus(INPROGRESS);
-          // do what is necessary to initialize the task
-          // destination (x,y), 
-        }
-        else if(currentTask.getStatus() == INPROGRESS) {
-          //	travel_task_updater(robot, task, nextRobotState);
-          // ^ or do nothing.
-          // execute task updater procedure
-          ROBOTASKS::TaskOperations::travel_task_updater(robot, currentTask, nextRobotState);
-        }
-        else if(currentTask.getStatus() == SUSPENDED) {
-          // if new task assumed to be CORRECTPATH
-          Task newTask(CORRECTPATH, "correctpath");
-          newTask.setDestination(currentTask.getDestination().getX(),
-            currentTask.getDestination().getY());
-          taskStack.push(newTask);
-        }
+        
       }
       else if(currentTask.getTaskType() == CORRECTPATH) {
         ROBOTASKS::TaskOperations::correctpath_task_updater(robot, task, nextRobotState);
@@ -161,7 +161,7 @@ int main() try
       // change robot behavior if a new state assigned by task scheduler
       if(robot.getState() != nextRobotState) {
         robot.setState(nextRobotState);
-        robot.run();
+        robot.run(currentTask);
       }
 
       // robot status (DEBUG)
