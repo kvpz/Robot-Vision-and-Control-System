@@ -41,10 +41,14 @@ static double convert_quaternions_to_degrees(double val)
 
 static int quadrant_identifier(double angle)
 {
-  if(angle > 0.0 && angle < 90.0)         return 1;
-  else if(angle > 90.0 && angle < 180.0)  return 2;
-  else if(angle > 180.0 && angle < 270.0) return 3;
-  else                                    return 4;
+  double result;
+  if(angle > 0.0 && angle < 90.0)         result = 1;
+  else if(angle > 90.0 && angle < 180.0)  result = 2;
+  else if(angle > 180.0 && angle < 270.0) result = 3;
+  else                                    result = 4;
+
+  //std::cout << "(quadrant_identifier(yaw)) xy-quadrant: " << result << "\n" << std::endl;
+  return result;
 }
 
 static int quadrant_identifier(double yaw, double quat_y)
@@ -55,8 +59,7 @@ static int quadrant_identifier(double yaw, double quat_y)
   else if(yaw > 0.0 && std::fabs(quat_y))            result = 3;
   else                                               result = 4;
 
-  std::cout << "(quadrant_identifier) xy-quadrant: " << result << "\n" << std::endl;
-
+  //std::cout << "(quadrant_identifier(yaw, quat)) xy-quadrant: " << result << "\n" << std::endl;
   return result;
 }
 

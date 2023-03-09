@@ -22,13 +22,6 @@ double yaw = 0.0;
 
 std::stack<Task> taskStack;
 
-void print_info()
-{
-  std::cout << "current angle: " << yaw_to_degrees(yaw, current_angle_quaternion) << std::endl;
-  std::cout << "current coordinate: ( " << current_x * 100 << ", " << current_y * 100 << " )" << std::endl;
-  std::cout << "\n" << std::endl;
-}
-
 void travelTaskSuspendedState(Task& task) 
 {
   // if new task assumed to be CORRECTPATH
@@ -115,13 +108,13 @@ int main() try
               current_y = y_offset - (pose_data.translation.z * 100.0);
             
             robot.setCurrentXY(current_x, current_y);
-            robot.setOrientation(convert_quaternions_to_degrees(current_angle_quaternion));
-            //double w = pose_data.rotation.w;
-            //double x = -1.0 * pose_data.rotation.z;
-            //double y = pose_data.rotation.x;
-            //double z = -1.0 * pose_data.rotation.y;
-            //yaw = atan((2.0 * (w*z + x*y)) /  (w*w + x*x - y*y - z*z)) * (180.0 / M_PI);
-            //robot.setOrientation(yaw);
+
+            double w = pose_data.rotation.w;
+            double x = -1.0 * pose_data.rotation.z;
+            double y = pose_data.rotation.x;
+            double z = -1.0 * pose_data.rotation.y;
+            yaw = atan((2.0 * (w*z + x*y)) /  (w*w + x*x - y*y - z*z)) * (180.0 / M_PI);
+            robot.setOrientation(yaw_to_degrees(yaw, pose_data.rotation.y));
         }
     };
 
