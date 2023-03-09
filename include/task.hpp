@@ -14,7 +14,7 @@ namespace ROBOTASKS
           CORRECTPATH, ROTATE
   };
 
-  std::string statusToString(Status status) 
+  static std::string statusToString(Status status) 
   {
     switch(status) {
       case NOTSTARTED:
@@ -64,7 +64,6 @@ namespace ROBOTASKS
     inline double getDesiredRobotYawPose() { return desiredRobotYawPose; }
     
   private:
-    size_t priority;
     Waypoint destination;
     double desiredRobotYawPose; // angle
     double expected_duration;
