@@ -49,10 +49,15 @@ static int quadrant_identifier(double angle)
 
 static int quadrant_identifier(double yaw, double quat_y)
 {
-  if(yaw > 0.0 && std::fabs(quat_y) < 0.707)         return 1;
-  else if(yaw < 0.0 && std::fabs(quat_y) < 0.707)    return 2;
-  else if(yaw > 0.0 && std::fabs(quat_y))            return 3;
-  else                                               return 4;
+  int result;
+  if(yaw > 0.0 && std::fabs(quat_y) < 0.707)         result = 1;
+  else if(yaw < 0.0 && std::fabs(quat_y) < 0.707)    result = 2;
+  else if(yaw > 0.0 && std::fabs(quat_y))            result = 3;
+  else                                               result = 4;
+
+  std::cout << "(quadrant_identifier) xy-quadrant: " << result << "\n" << std::endl;
+
+  return result;
 }
 
 /* 
@@ -61,7 +66,7 @@ static int quadrant_identifier(double yaw, double quat_y)
 static double yaw_to_degrees(double yaw, double quat_y)
 {
   int quadrant = quadrant_identifier(yaw, quat_y);
-  std::cout << "(yaw_to_degrees) xy-quadrant: " << quadrant << std::endl;
+
   switch(quadrant) {
   case 1:
     return 90.0 - yaw;
@@ -91,7 +96,9 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
     std::cout << "(angleToPoint) y_robot: " << y_robot << "\n";
     std::cout << "(angleToPoint) y_diff: " << y_diff << "\n";
     std::cout << "(angleToPoint) x_diff: " << x_diff << "\n";
-    std::cout << "(angleToPoint) y_diff / x_diff: " << y_diff / x_diff << std::endl;
+    std::cout << "(angleToPoint) y_diff / x_diff: " << y_diff / x_diff << "\n";
+    std::cout << "(angleToPoint) beta: " << beta << "\n";
+    std::cout << "(angleToPoint) current_angle: " << robot_current_angle << std::endl;
   }
 
   beta = atan(y_diff / x_diff) * 180.0 / (M_PI); // erroneos
@@ -113,8 +120,7 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
     beta = beta + 270.0;
   }
 
-  std::cout << "(angleToPoint) beta: " << beta << std::endl;
-  std::cout << "(angleToPoint) current_angle: " << robot_current_angle << std::endl;
+
   theta = beta - robot_current_angle;
 
   return theta;

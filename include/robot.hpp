@@ -34,17 +34,6 @@ static std::string printRobotPoseToWaypoint(RobotPoseToWaypoint r) {
   }
 }
 
-/* 
-   Check the current position of the robot relative to the destination.
-   The robot's position relative to the waypoint:
-   (1) before the waypoint
-   (2) ahead of the waypoint
-   (3) aligned with the waypoint
-   (4) before the waypoint but off to the left
-   (5) before the waypoint but off to the right
-   (6) near the waypoint
-*/
-
 enum RobotState {
     MOVE_FORWARD,
     MOVE_BACKWARD,
@@ -88,7 +77,7 @@ public:
   inline double getY() const { return currentLocation.getY(); }
   inline RobotState getState() const { return state; }
   inline double getOrientation() const { return currentOrientation; }
-
+  inline double angleToDestination() const { return angleToDest; }
   // setters
   void setCurrentXY(double x, double y) {
     currentLocation.setX(x);
@@ -248,16 +237,17 @@ public:
   {
     RobotPoseToWaypoint result = ON_PATH;
     // check if robot position (x,y) approximately near destination
-    bool isYapproxnear = approximately(robotY, destY, 1.5, false);
-    bool isXapproxnear = approximately(robotX, destX, 1.5, false);
+    bool isYapproxnear = approximately(robotY, destY, 3.0, false);
+    bool isXapproxnear = approximately(robotX, destX, 3.0, false);
+    double angleToDestTolerance = 1.0;
 
-    double angleToDest = robotAngleToPoint(*this, destX, destY);
+    angleToDest = robotAngleToPoint(*this, destX, destY);
 
     if(isYapproxnear && isXapproxnear) {
       // near the waypoint
       result = NEAR;
     }
-    else if (angleToDest < 1.0) { // robotY > destY && robotX == destX
+    else if (angleToDest < angleToDestTolerance && angleToDest > -1.0*angleToDestTolerance) { // robotY > destY && robotX == destX
       // detect if drifting from path
       result = ON_PATH;
     }
@@ -276,14 +266,14 @@ public:
     return result;
   }
 
-  RobotPoseToWaypoint robotPositionRelativeToWaypoint(double robotX, double robotY, double destX, double destY) const
+  RobotPoseToWaypoint robotPositionRelativeToWaypoint(double robotX, double robotY, double destX, double destY)
   {
     RobotPoseToWaypoint result = ON_PATH;
     // check if robot position (x,y) approximately near destination
     bool isYapproxnear = approximately(robotY, destY, 1.5, false);
     bool isXapproxnear = approximately(robotX, destX, 1.5, false);
 
-    double angleToDest = robotAngleToPoint(*this, destX, destY);
+    angleToDest = robotAngleToPoint(*this, destX, destY);
 
     if(angleToDest < (90.0 - 1.0)) {
       
@@ -351,6 +341,7 @@ private:
   double currentAngle; // relative to starting position
   Comms* comport;
   RobotPoseToWaypoint robotPoseToWaypoint = NONE;
+  double angleToDest;
 };
 
 #endif

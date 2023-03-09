@@ -1,5 +1,7 @@
 #ifndef TASK_HPP
 #define TASK_HPP
+#include <iostream>
+#include "waypoints.hpp"
 
 namespace ROBOTASKS 
 {
@@ -11,6 +13,22 @@ namespace ROBOTASKS
           TRAVEL, CHIPDROP, RECYCLE, GRASP, STACKPED,
           CORRECTPATH, ROTATE
   };
+
+  std::string statusToString(Status status) 
+  {
+    switch(status) {
+      case NOTSTARTED:
+        return "NOTSTARTED";
+      case COMPLETE:
+        return "COMPLETE";
+      case INPROGRESS:
+        return "INPROGRESS";
+      case SUSPENDED:
+        return "SUSPENDED";
+      default:
+        return "ERROR";
+    }
+  }
 
   class Task
   {
@@ -39,20 +57,10 @@ namespace ROBOTASKS
     }
     
     // getters
-    Status getStatus() const
-    {
-      return status;
-    }
-
+    Status getStatus() const { return status; }
     Waypoint getDestination() const { return destination; } 
-    
-    TaskType getTaskType() const
-    {
-      return taskType;
-    }
-
+    TaskType getTaskType() const { return taskType; }
     inline std::string getName() { return nameid; }
-    
     inline double getDesiredRobotYawPose() { return desiredRobotYawPose; }
     
   private:

@@ -9,6 +9,8 @@
 using namespace ROBOTASKS;
 
 #define DEBUG true
+double x_offset = 120.0;
+double y_offset = 30.0;
 
 double current_angle_quaternion = 0.0;
 
@@ -29,11 +31,11 @@ void print_info()
 
 void travelTaskSuspendedState(Task& task) 
 {
-      // if new task assumed to be CORRECTPATH
-      Task newTask(CORRECTPATH, "correctpath");
-      newTask.setDestination(task.getDestination().getX(),
-        task.getDestination().getY());
-      taskStack.push(newTask);
+  // if new task assumed to be CORRECTPATH
+  Task newTask(CORRECTPATH, "correctpath");
+  newTask.setDestination(task.getDestination().getX(),
+    task.getDestination().getY());
+  taskStack.push(newTask);
 }
 
 void travelTaskManager(Task& task, Robot& robot, RobotState& nextRobotState)
@@ -57,7 +59,7 @@ void travelTaskManager(Task& task, Robot& robot, RobotState& nextRobotState)
 int main() try
 {
   Robot robot;
-  robot.setCurrentXY(120, 30); // assuming x,y are front of robot (camera location)
+  robot.setCurrentXY(120, 30); // x,y are front of robot (camera location)
 
   // second task is rotate ccw
   Task task2(TRAVEL, "task two");
@@ -68,10 +70,10 @@ int main() try
   //robot.setTask(task2, "task two");
 
   // first task is move forward a bit
-  Task task(TRAVEL, "task one");
-  task.setDestination(120, 40);
-  task.setStatus(INPROGRESS);
-  taskStack.push(task);
+  Task task1(TRAVEL, "task one");
+  task1.setDestination(120, 40);
+  task1.setStatus(INPROGRESS);
+  taskStack.push(task1);
   //robot.setTask(task, "task one");
 
 
@@ -105,43 +107,30 @@ int main() try
 
             current_angle_quaternion = pose_data.rotation.y;
 
-            current_x = pose_data.translation.x * 100.0 + 121.0;
-            current_y = pose_data.translation.z;
-            if(current_y < 0.0)
-              current_y = std::fabs(current_y) * 100.0 + 30.0;
+            current_x = pose_data.translation.x * 100.0 + x_offset;
+
+            if(pose_data.translation.z < 0.0)
+              current_y = std::fabs(pose_data.translation.z) * 100.0 + y_offset;
             else
-              current_y = 30.0 - (current_y * 100.0);
-	    
-            double w = pose_data.rotation.w;
-            double x = -1.0 * pose_data.rotation.z;
-            double y = pose_data.rotation.x;
-            double z = -1.0 * pose_data.rotation.y;
-
-            //double pitch = -asin(2.0 * (x * z - w * y)) * (180.0 / M_PI);
-            //double roll = atan((2.0 * (w*x + y*z)) /  (w*w - x*x - y*y + z*z)) * (180.0 / M_PI);
-            yaw = atan((2.0 * (w*z + x*y)) /  (w*w + x*x - y*y - z*z)) * (180.0 / M_PI);
-
+              current_y = y_offset - (pose_data.translation.z * 100.0);
+            
             robot.setCurrentXY(current_x, current_y);
-
-            //robot.setOrientation(yaw);
             robot.setOrientation(convert_quaternions_to_degrees(current_angle_quaternion));
+            //double w = pose_data.rotation.w;
+            //double x = -1.0 * pose_data.rotation.z;
+            //double y = pose_data.rotation.x;
+            //double z = -1.0 * pose_data.rotation.y;
+            //yaw = atan((2.0 * (w*z + x*y)) /  (w*w + x*x - y*y - z*z)) * (180.0 / M_PI);
+            //robot.setOrientation(yaw);
         }
     };
 
-    // Start the pipeline streaming according to the configuration.
-    // The pipeline captures the samples from the device and delivers them
-    // to the frame callback. 
+    // start T265 data pipeline
     rs2::pipeline_profile profiles = pipe.start(cfg, callback);
 
-    /*
-    // go to coordinates test
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-    std::cout << "going to destination" << std::endl;
-    go_to_destination(122.0, 23.5, 62.0, 92.0, yaw_to_degrees(yaw, current_angle_quaternion));
-    std::cout << "destination reached" << std::endl;
-    */
+    // allow time for camera to initialize
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));			  
 
-    int taskCounter = 0;
     while(1) {
       if(taskStack.empty())
         break;
@@ -149,13 +138,11 @@ int main() try
       Task& currentTask = taskStack.top();
       RobotState nextRobotState;
 
-      if(task.getTaskType() == TRAVEL) {
-
-        
+      if(currentTask.getTaskType() == TRAVEL) {
+        travelTaskManager(currentTask, robot, nextRobotState);
       }
       else if(currentTask.getTaskType() == CORRECTPATH) {
-        ROBOTASKS::TaskOperations::correctpath_task_updater(robot, task, nextRobotState);
-        std::cout << "correcting path" << std::endl;
+        ROBOTASKS::TaskOperations::correctpath_task_updater(robot, currentTask, nextRobotState);
       }   
 
       // change robot behavior if a new state assigned by task scheduler
