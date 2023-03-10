@@ -56,7 +56,7 @@ void Robot::move_backward(double distance, double robot_speed_per_sec)
     if(ROBOTDEBUG) std::cout << "move backward" << std::endl;
     comport->send_command("B");
     //std::cout << "Sleep duration: " << (long)(distance / robot_speed_per_sec * 1000.0) << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds((long)(distance / robot_speed_per_sec * 1000.0)));
+    //std::this_thread::sleep_for(std::chrono::milliseconds((long)(distance / robot_speed_per_sec * 1000.0)));
     stop();
 }
 
@@ -65,8 +65,7 @@ void Robot::rotate_CW(double degrees) //, double robot_speed)
     if(ROBOTDEBUG) std::cout << "rotate_CW ( " << degrees << " )" << std::endl;
     comport->send_command("C");
     //std::cout << "Sleep duration: " << (long)((ROBOT_360_ROTATE_TIME_MILLISEC / 360.0) * degrees) << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds((long)((ROBOT_360_ROTATE_TIME_MILLISEC / 360.0) * degrees)));
-    stop();
+    //std::this_thread::sleep_for(std::chrono::milliseconds((long)((ROBOT_360_ROTATE_TIME_MILLISEC / 360.0) * degrees)));
 }
 
 void Robot::rotate_CCW(double degrees) //, double robot_speed)
@@ -74,8 +73,7 @@ void Robot::rotate_CCW(double degrees) //, double robot_speed)
     if(ROBOTDEBUG) std::cout << "rotate_CCW ( " << degrees << " )" << std::endl;
     comport->send_command("Z");
     //std::cout << "Sleep duration: " << (long)((ROBOT_360_ROTATE_TIME_MILLISEC / 360.0) * degrees) << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds((long)((ROBOT_360_ROTATE_TIME_MILLISEC / 360.0) * degrees)));
-    stop();
+    //std::this_thread::sleep_for(std::chrono::milliseconds((long)((ROBOT_360_ROTATE_TIME_MILLISEC / 360.0) * degrees)));
 }
 
 void Robot::stop()
@@ -140,7 +138,7 @@ RobotPoseToWaypoint Robot::isRobotOnPath(double robotX, double robotY, double de
     // check if robot position (x,y) approximately near destination
     bool isYapproxnear = approximately(robotY, destY, 3.0, false);
     bool isXapproxnear = approximately(robotX, destX, 3.0, false);
-    double angleToDestTolerance = 1.0;
+    double angleToDestTolerance = 10.0;
 
     angleToDest = robotAngleToPoint(*this, destX, destY);
 
@@ -148,7 +146,8 @@ RobotPoseToWaypoint Robot::isRobotOnPath(double robotX, double robotY, double de
         // near the waypoint
         result = NEAR;
     }
-    else if (angleToDest < angleToDestTolerance && angleToDest > -1.0*angleToDestTolerance) { // robotY > destY && robotX == destX
+    else if (angleToDest < angleToDestTolerance && angleToDest > -1.0*angleToDestTolerance
+            && (!(robotX < (destX - 2.5)) || !(robotX > (destX + 2.5)))) { // robotY > destY && robotX == destX
         // detect if drifting from path
         result = ON_PATH;
     }
