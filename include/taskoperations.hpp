@@ -82,7 +82,7 @@ namespace ROBOTASKS
             double destY = task.getDestination().getY();
             double robotX = robot.getX();
             double robotY = robot.getY();
-            double angleToDestTolerance = 1.0;
+            double angleToDestTolerance = 10.0;
             RobotPoseToWaypoint rposetoway = robot.isRobotOnPath(robotX, robotY, destX, destY);
 
             // assign robot a task depending on orientation relative to waypoint

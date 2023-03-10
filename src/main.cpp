@@ -54,6 +54,12 @@ int main() try
   Robot robot;
   robot.setCurrentXY(120, 30); // x,y are front of robot (camera location)
 
+  //Task task3(TRAVEL, "task three");
+  //task3.setDestination(15, 50);
+  //task3.setStatus(NOTSTARTED);
+  //task3.setDesiredRobotYawPose(90);
+  //taskStack.push(task3);
+
   // second task is rotate ccw
   Task task2(TRAVEL, "task two");
   task2.setDestination(30, 25);
@@ -148,7 +154,9 @@ int main() try
       robot.printStatus();
 
       //print_info();
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));			  
+      std::this_thread::sleep_for(std::chrono::milliseconds(300));			
+
+      std::cout << "\n\n(main loop) task stack size: " << taskStack.size() << "\n\n" << std::endl;
     }
 	
     
@@ -193,3 +201,11 @@ catch (const std::exception& e)
 // if RECYCLE task
 // Verify the pincers are open. 
 
+/*
+  Notes:
+  Testing Results #1:
+  sampling: 400 ms
+  angle to destination tolerance: 4 degrees
+
+
+*/  

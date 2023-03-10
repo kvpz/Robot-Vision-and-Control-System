@@ -1,8 +1,8 @@
 #ifndef COMMS_HPP
 #define COMMS_HPP
 #include "includes.hpp"
-#define DEBUG_NOMCU true
-#define COMMSDEBUG false
+#define DEBUG_NOMCU false
+#define COMMSDEBUG true
 
 class Comms
 {
