@@ -2,11 +2,9 @@
 #define UTILTY_HPP
 #include "includes.hpp"
 #include "robot_specs.hpp"
+#include "task.hpp"
 
-#define SLEEP_TIME 250
-#define INCHES_IN_METER 39.3701
 #define UTILITYDEBUG false
-
 
 // *********************************
 // Math related functions
@@ -92,18 +90,6 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
   double theta = 0.0;
   double distance = 0.0;
 
-  if(UTILITYDEBUG) {
-    std::cout << "(angleToPoint) x_destination: " << x_destination << "\n";
-    std::cout << "(angleToPoint) y_destination: " << y_destination << "\n";
-    std::cout << "(angleToPoint) x_robot: " << x_robot << "\n";
-    std::cout << "(angleToPoint) y_robot: " << y_robot << "\n";
-    std::cout << "(angleToPoint) y_diff: " << y_diff << "\n";
-    std::cout << "(angleToPoint) x_diff: " << x_diff << "\n";
-    std::cout << "(angleToPoint) y_diff / x_diff: " << y_diff / x_diff << "\n";
-    std::cout << "(angleToPoint) beta: " << beta << "\n";
-    std::cout << "(angleToPoint) current_angle: " << robot_current_angle << std::endl;
-  }
-
   beta = atan(y_diff / x_diff) * 180.0 / (M_PI); // erroneos
   
   if(x_diff > 0.0 && y_diff > 0.0){
@@ -123,8 +109,19 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
     beta = beta + 270.0;
   }
 
-
   theta = beta - robot_current_angle;
+
+  if(UTILITYDEBUG) {
+    std::cout << "(angleToPoint) x_destination: " << x_destination << "\n";
+    std::cout << "(angleToPoint) y_destination: " << y_destination << "\n";
+    std::cout << "(angleToPoint) x_robot: " << x_robot << "\n";
+    std::cout << "(angleToPoint) y_robot: " << y_robot << "\n";
+    std::cout << "(angleToPoint) y_diff: " << y_diff << "\n";
+    std::cout << "(angleToPoint) x_diff: " << x_diff << "\n";
+    std::cout << "(angleToPoint) y_diff / x_diff: " << y_diff / x_diff << "\n";
+    std::cout << "(angleToPoint) beta: " << beta << "\n";
+    std::cout << "(angleToPoint) current_angle: " << robot_current_angle << std::endl;
+  }
 
   return theta;
 }
