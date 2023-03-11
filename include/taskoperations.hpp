@@ -16,7 +16,7 @@ namespace ROBOTASKS
             double destY = task.getDestination().getY();
             double robotX = robot.getX();
             double robotY = robot.getY();
-            double angleToDestTolerance = 1.0;
+            //double angleToDestTolerance = 1.0;
 
             //RobotPoseToWaypoint rposetoway = robot.robotPositionRelativeToWaypoint(robotX, robotY, destX, destY);
             RobotPoseToWaypoint rposetoway = robot.isRobotOnPath(robotX, robotY, destX, destY);
@@ -65,7 +65,8 @@ namespace ROBOTASKS
                 break;
             case ON_PATH:
                 task.setStatus(COMPLETE);
-                robotState = MOVE_FORWARD;
+                //robotState = MOVE_FORWARD;
+		robotState = STOP;
                 break;
             case OFF_PATH:
                 task.setStatus(INPROGRESS);

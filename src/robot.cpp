@@ -7,7 +7,8 @@ Robot::Robot()
     state = STOP;
 }
 
-void Robot::run(Task& task) {
+void Robot::run() //Task& task) {
+{
     switch (state) {
     case MOVE_FORWARD:
       move_forward(); 
@@ -25,7 +26,7 @@ void Robot::run(Task& task) {
       rotate_CCW(); 
       break;
     case MOVE_BACKWARD:
-
+      move_backward();
       break;
     case STOP:
       stop();
@@ -90,6 +91,7 @@ RobotPoseToWaypoint Robot::isRobotOnPath(double robotX, double robotY, double de
     else if (angleToDest < angleToDestTolerance && angleToDest > -1.0*angleToDestTolerance
             && (!(robotX < (destX - 2.5)) || !(robotX > (destX + 2.5)))) { // robotY > destY && robotX == destX
         // detect if drifting from path
+      std::cout << "\n(EXPERIMENTAL) condition\n" << std::endl;
         result = ON_PATH;
     }
     else {

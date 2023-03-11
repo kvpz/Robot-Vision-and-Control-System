@@ -4,14 +4,15 @@
 #include "robot_specs.hpp"
 #include "task.hpp"
 
-#define UTILITYDEBUG false
+#define UTILITYDEBUG true
+#define APPROXDEBUG false
 
 // *********************************
 // Math related functions
 // *********************************
 static inline bool approximately(double current, double expected, double precision, bool isGyro)
 {
-  if(UTILITYDEBUG){
+  if(UTILITYDEBUG && APPROXDEBUG){
     if(isGyro) {
       std::cout << "(approximately) Gyro current:  " << current << std::endl;
       std::cout << "(approximately) Gyro expected: " << expected << std::endl;
@@ -99,6 +100,7 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
   theta = beta - robot_current_angle;
 
   if(UTILITYDEBUG) {
+    std::cout << "\n=============================================\n";
     std::cout << "(angleToPoint) x_destination: " << x_destination << "\n";
     std::cout << "(angleToPoint) y_destination: " << y_destination << "\n";
     std::cout << "(angleToPoint) x_robot: " << x_robot << "\n";
@@ -107,7 +109,8 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
     std::cout << "(angleToPoint) x_diff: " << x_diff << "\n";
     std::cout << "(angleToPoint) y_diff / x_diff: " << y_diff / x_diff << "\n";
     std::cout << "(angleToPoint) beta: " << beta << "\n";
-    std::cout << "(angleToPoint) current_angle: " << robot_current_angle << std::endl;
+    std::cout << "(angleToPoint) current_angle: " << robot_current_angle << "\n";
+    std::cout << "=============================================" << std::endl;
   }
 
   return theta;

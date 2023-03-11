@@ -5,11 +5,15 @@
     },
     "2": {
         "type": "travel",
-        "endpoint": {"x": 30, "y": 50, "yaw": 90 }
+        "endpoint": {"x": 240, "y": 120, "yaw": 90 }
     },
     "3": {
         "type": "travel",
-        "endpoint": {"x": 15, "y": 35, "yaw": 90 }
+        "endpoint": {"x": 25, "y": 100, "yaw": 90 }
+    },
+    "4": {
+        "type": "travel",
+        "endpoint": {"x": 180, "y": 100, "yaw": 90 }
     }
 
 }

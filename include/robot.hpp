@@ -69,7 +69,7 @@ static std::string RobotStateToString(RobotState state)
 class Robot {
 public:
   Robot();
-  void run(Task&);
+  void run();
   double robotAngleToPoint(const Robot&, double x, double y) const;
   void move_forward();
   void move_backward();

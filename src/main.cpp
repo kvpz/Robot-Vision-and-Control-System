@@ -62,7 +62,9 @@ void correctionTaskManager(Task& task, Robot& robot, RobotState& nextRobotState)
       //correction task cannot be suspended.
       break;
     case COMPLETE:
+      nextRobotState = STOP;
       task_queue.pop();
+      task_queue.top().setStatus(INPROGRESS);
       break;
   }
 }
@@ -91,6 +93,14 @@ void importTasksFromJSON()
   for(auto v = task_vector.rbegin(); v != task_vector.rend(); ++v){
     task_queue.push(*v);
     ROBOTASKS::Task::printTaskInfo(task_queue.top());
+  }
+}
+
+void updateRobotState(Robot& robot, Task& task, RobotState nextRobotState)
+{
+  if(robot.getState() != nextRobotState) {
+    robot.setState(nextRobotState);
+    robot.run();
   }
 }
 
@@ -162,29 +172,30 @@ int main() try
         break;
 
       Task& currentTask = task_queue.top();
-      RobotState nextRobotState = STOP;
+      RobotState nextRobotState;
 
       if(currentTask.getTaskType() == TRAVEL) {
         travelTaskManager(currentTask, robot, nextRobotState);
+        // change robot behavior if a new state assigned by task scheduler
+	updateRobotState(robot, currentTask, nextRobotState);
       }
       else if(currentTask.getTaskType() == CORRECTPATH) {
         correctionTaskManager(currentTask, robot, nextRobotState);
         //ROBOTASKS::TaskOperations::correctpath_task_updater(robot, currentTask, nextRobotState);
+        // change robot behavior if a new state assigned by task scheduler
+	updateRobotState(robot, currentTask, nextRobotState);
       }   
-
-      // change robot behavior if a new state assigned by task scheduler
-      if(robot.getState() != nextRobotState) {
-        robot.setState(nextRobotState);
-        robot.run(currentTask);
-      }
 
       // robot status (DEBUG)
       robot.printStatus();
 
       //print_info();
-      std::this_thread::sleep_for(std::chrono::milliseconds(300));			
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));			
 
-      std::cout << "\n\n(main loop) task stack size: " << task_queue.size() << "\n\n" << std::endl;
+      std::cout << "=========== Main Loop ============\n";
+      std::cout << "task stack size: " << task_queue.size() << "\n";
+      std::cout << "current task type: " << taskTypeToString(currentTask.getTaskType()) << "\n";
+      std::cout << "==================================" << std::endl;
     }
 	
     
