@@ -50,12 +50,10 @@ namespace ROBOTASKS
                 task.setStatus(SUSPENDED);
                 robotState = STOP;
                 break;
-            case AFTER_LEFT:
-            case AFTER_RIGHT:
-                break;
             }
 
             /*
+            // This is an attempt to get the robot oriented when reach endpoint
             // set robot pose at endpoint
             if(rposetoway == NEAR) {
                 if(approximately(robot.getOrientation(), task.getEndpointOrientation(), 3.0, false)) {
@@ -96,7 +94,7 @@ namespace ROBOTASKS
             case OFF_PATH:
                 task.setStatus(INPROGRESS);
                 if(correcting_position == false) {
-                    if(robot.angleToDestination() > angleToDestTolerance)
+                    if(robot.getAngleToDestination() > angleToDestTolerance)
                         robotState = ROTATE_CCW;
                     else
                         robotState = ROTATE_CW;
@@ -105,9 +103,6 @@ namespace ROBOTASKS
                 else {
                     correcting_position = true;
                 }
-                break;
-            case AFTER_LEFT:
-            case AFTER_RIGHT:
                 break;
             }
 

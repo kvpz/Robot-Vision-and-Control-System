@@ -34,7 +34,7 @@ void Robot::run() //Task& task) {
     }
   }
 
-double Robot::robotAngleToPoint(const Robot& robot, double x, double y) const
+double Robot::getRobotAngleToPoint(const Robot& robot, double x, double y) const
 {
     return angleToPoint(robot.getX(), robot.getY(), x, y, robot.getOrientation());
 }
@@ -82,7 +82,7 @@ RobotPoseToWaypoint Robot::isRobotOnPath(double robotX, double robotY, double de
     bool isXapproxnear = approximately(robotX, destX, 3.0, false);
     double angleToDestTolerance = 10.0;
 
-    angleToDest = robotAngleToPoint(*this, destX, destY);
+    angleToDest = getRobotAngleToPoint(*this, destX, destY);
 
     if(isYapproxnear && isXapproxnear) {
         // near the waypoint
@@ -106,57 +106,6 @@ RobotPoseToWaypoint Robot::isRobotOnPath(double robotX, double robotY, double de
     }
 
     robotPoseToWaypoint = result;
-    return result;
-}
-
-RobotPoseToWaypoint Robot::robotPositionRelativeToWaypoint(double robotX, double robotY, double destX, double destY)
-{
-    RobotPoseToWaypoint result = ON_PATH;
-    // check if robot position (x,y) approximately near destination
-    bool isYapproxnear = approximately(robotY, destY, 1.5, false);
-    bool isXapproxnear = approximately(robotX, destX, 1.5, false);
-
-    angleToDest = robotAngleToPoint(*this, destX, destY);
-
-    if(angleToDest < (90.0 - 1.0)) {
-        
-    }
-    else if (angleToDest > (90.0 + 1.0)) {
-        
-    }
-
-    if(isYapproxnear && isXapproxnear) {
-        // near the waypoint
-        result = NEAR;
-    }
-    else if (angleToDest < 1.0) { // robotY > destY && robotX == destX
-        // detect if drifting from path
-        result = ON_PATH;
-    }
-    else if(robotY < destY && robotX < destX) {
-        // before waypoint and off to the left
-        result = BEFORE_LEFT;
-    }
-    else if(robotY < destY && robotX > destX) {
-        // before waypoint and off to the right
-        result = BEFORE_RIGHT;
-    }
-    else if(robotY > destY && robotX < destX) {
-        // ahead of waypoint and to the left
-        result = AFTER_LEFT;
-    }
-    else if(robotY > destY && robotX > destX) {
-        // ahead of waypoint and to the right
-        result = AFTER_RIGHT;
-    }
-
-    if(ROBOTDEBUG) {
-        std::cout << "\n====== robotPostitionRelativeToWaypoint ======\n";
-        std::cout << "result: " << printRobotPoseToWaypoint(result) << "\n";
-        std::cout << "angle to dest: " << angleToDest << std::endl;
-        std::cout << "==============================================\n" << std::endl;
-    }
-
     return result;
 }
 

@@ -11,6 +11,8 @@ public:
     Comms(std::string portname)
     {
         serial_port_name = portname;
+        boost::asio::io_service io;
+        serial = new boost::asio::serial_port(io, serial_port_name);//"/dev/ttyACM0");
     }
 
     void send_command(std::string message) 
@@ -23,18 +25,14 @@ public:
             if(COMMSDEBUG) {
                 std::cout << "(send_command) Serial message: " << message << std::endl;
             }
-            boost::asio::io_service io;
-            boost::asio::serial_port serial(io, serial_port_name);//"/dev/ttyACM0");
 
             // Set the baud rate, character size, flow control, and parity options.
-            serial.set_option(boost::asio::serial_port_base::baud_rate(115200));
-            serial.set_option(boost::asio::serial_port_base::character_size(8));
-            serial.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
-            serial.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
-            serial.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
-
-            boost::asio::write(serial, boost::asio::buffer(message.c_str(), message.size()));
-
+            serial->set_option(boost::asio::serial_port_base::baud_rate(115200));
+            serial->set_option(boost::asio::serial_port_base::character_size(8));
+            serial->set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
+            serial->set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
+            serial->set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
+            boost::asio::write(*serial, boost::asio::buffer(message.c_str(), message.size()));
         }
     }
 
@@ -83,6 +81,7 @@ public:
     }
 private:
     std::string serial_port_name;
+    boost::asio::serial_port* serial;
 };
 
 #endif

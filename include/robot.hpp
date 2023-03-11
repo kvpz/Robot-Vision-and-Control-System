@@ -9,22 +9,13 @@ using namespace ROBOTASKS;
 #define ROBOTDEBUG true
 
 enum RobotPoseToWaypoint {
-			  NEAR, BEFORE_LEFT, BEFORE_RIGHT,
-			  AFTER_LEFT, AFTER_RIGHT, ON_PATH, OFF_PATH, NONE
+			  NEAR, ON_PATH, OFF_PATH, NONE
 };
 
 static std::string printRobotPoseToWaypoint(RobotPoseToWaypoint r) {
   switch(r) {
     case NEAR:
       return "NEAR";
-    case BEFORE_LEFT:
-      return "BEFORE_LEFT";
-    case BEFORE_RIGHT:
-      return "BEFORE_RIGHT";
-    case AFTER_LEFT:
-      return "AFTER_LEFT";
-    case AFTER_RIGHT:
-      return "AFTER_RIGHT";
     case ON_PATH:
       return "ON_PATH";
     case OFF_PATH:
@@ -70,7 +61,7 @@ class Robot {
 public:
   Robot();
   void run();
-  double robotAngleToPoint(const Robot&, double x, double y) const;
+  double getRobotAngleToPoint(const Robot&, double x, double y) const;
   void move_forward();
   void move_backward();
   void move_left();
@@ -79,7 +70,6 @@ public:
   void rotate_CCW(); 
   void stop();
   RobotPoseToWaypoint isRobotOnPath(double robotX, double robotY, double destX, double destY);
-  RobotPoseToWaypoint robotPositionRelativeToWaypoint(double robotX, double robotY, double destX, double destY);
   void printStatus();
 
   // getters (inlined)
@@ -87,7 +77,7 @@ public:
   inline double getY() const { return currentLocation.getY(); }
   inline RobotState getState() const { return state; }
   inline double getOrientation() const { return currentOrientation; }
-  inline double angleToDestination() const { return angleToDest; }
+  inline double getAngleToDestination() const { return angleToDest; }
   inline bool isNearEndpoint() const { return nearEndpoint; }
 
   // setters (inlined)

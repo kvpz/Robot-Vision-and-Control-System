@@ -94,7 +94,7 @@ void importTasksFromJSON()
   }
 }
 
-void updateRobotState(Robot& robot, Task& task, RobotState nextRobotState)
+void updateRobotState(Robot& robot, RobotState nextRobotState)
 {
   if(robot.getState() != nextRobotState) {
     robot.setState(nextRobotState);
@@ -175,13 +175,13 @@ int main() try
       if(currentTask.getTaskType() == TRAVEL) {
         travelTaskManager(currentTask, robot, nextRobotState);
         // change robot behavior if a new state assigned by task scheduler
-	updateRobotState(robot, currentTask, nextRobotState);
+	      updateRobotState(robot, nextRobotState);
       }
       else if(currentTask.getTaskType() == CORRECTPATH) {
         correctionTaskManager(currentTask, robot, nextRobotState);
         //ROBOTASKS::TaskOperations::correctpath_task_updater(robot, currentTask, nextRobotState);
         // change robot behavior if a new state assigned by task scheduler
-	updateRobotState(robot, currentTask, nextRobotState);
+	      updateRobotState(robot, nextRobotState);
       }   
 
       // robot status (DEBUG)
