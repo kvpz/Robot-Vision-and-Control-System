@@ -18,8 +18,12 @@ namespace ROBOTASKS
             double robotY = robot.getY();
             //double angleToDestTolerance = 1.0;
 
+            RobotPoseToWaypoint rposetoway;
             //RobotPoseToWaypoint rposetoway = robot.robotPositionRelativeToWaypoint(robotX, robotY, destX, destY);
-            RobotPoseToWaypoint rposetoway = robot.isRobotOnPath(robotX, robotY, destX, destY);
+            if(robot.isNearEndpoint() == false)
+                rposetoway = robot.isRobotOnPath(robotX, robotY, destX, destY);
+            else
+                rposetoway = NEAR;
 
             if(DEBUG_TSKOPS) {
                 std::cout << "(travel_task_updater) robot pose relative to waypoint: " 
@@ -29,8 +33,9 @@ namespace ROBOTASKS
             // assign robot a task depending on orientation relative to waypoint
             switch(rposetoway) {
             case NEAR:
-                task.setStatus(COMPLETE);
+                //task.setStatus(COMPLETE);
                 robotState = STOP;
+                robot.setIsNearEndpoint(true);
                 break;
             case ON_PATH:
                 task.setStatus(INPROGRESS);
@@ -43,6 +48,18 @@ namespace ROBOTASKS
             case AFTER_LEFT:
             case AFTER_RIGHT:
                 break;
+            }
+
+            // set robot pose at endpoint
+            if(rposetoway == NEAR) {
+                if(approximately(robot.getOrientation(), task.getEndpointOrientation(), 3.0, false)) {
+                    robotState = STOP;
+                    task.setStatus(COMPLETE);
+                }
+                else {
+                    robotState = ROTATE_CW;
+                }
+
             }
 
             Task::printTaskInfo(task);

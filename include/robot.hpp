@@ -88,6 +88,7 @@ public:
   inline RobotState getState() const { return state; }
   inline double getOrientation() const { return currentOrientation; }
   inline double angleToDestination() const { return angleToDest; }
+  inline bool isNearEndpoint() const { return nearEndpoint; }
 
   // setters (inlined)
   void setCurrentXY(double x, double y) {
@@ -104,6 +105,8 @@ public:
     currentOrientation = o;
   }
   
+  void setIsNearEndpoint(bool b) { nearEndpoint = b; }
+
 private:
   RobotState state = STOP;
   Waypoint currentLocation;
@@ -113,6 +116,7 @@ private:
   Comms* comport;
   RobotPoseToWaypoint robotPoseToWaypoint = NONE;
   double angleToDest;
+  bool nearEndpoint = false;
 };
 
 #endif
