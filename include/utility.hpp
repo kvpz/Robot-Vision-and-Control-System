@@ -78,7 +78,7 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
   double beta = 0.0;
   double theta = 0.0;
 
-  beta = atan(y_diff / x_diff) * 180.0 / (M_PI); // erroneos
+  beta = atan(y_diff / x_diff) * 180.0 / (M_PI); 
   
   if(x_diff > 0.0 && y_diff > 0.0){
     // first quadrant
@@ -94,10 +94,21 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
   }
   else {
     // fourth quadrant
-    beta = beta + 270.0;
+    beta = beta + 360.0;
   }
 
   theta = beta - robot_current_angle;
+
+  if(theta < 0.0) {
+    if(std::fabs(theta) > 180.0) {
+      theta = 360 + theta;
+    }
+  }
+  else if(theta > 0.0) {
+    if(theta > 180.0) {
+      theta = theta - 360.0;
+    }
+  }
 
   if(UTILITYDEBUG) {
     std::cout << "\n=============================================\n";

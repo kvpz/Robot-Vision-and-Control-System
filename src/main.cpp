@@ -88,7 +88,7 @@ void importTasksFromJSON()
   }
 
   // insert tasks 
-  for(auto v = task_vector.rbegin(); v != task_vector.rend(); ++v){
+  for(auto v = task_vector.begin(); v != task_vector.end(); ++v){
     task_queue.push(*v);
     ROBOTASKS::Task::printTaskInfo(task_queue.top());
   }
