@@ -2,11 +2,9 @@
 #define UTILTY_HPP
 #include "includes.hpp"
 #include "robot_specs.hpp"
+#include "task.hpp"
 
-#define SLEEP_TIME 250
-#define INCHES_IN_METER 39.3701
 #define UTILITYDEBUG false
-
 
 // *********************************
 // Math related functions
@@ -27,21 +25,9 @@ static inline bool approximately(double current, double expected, double precisi
   return (current > (expected - precision)) && (current < (expected + precision));
 }
 
-static double convert_quaternions_to_degrees(double val)
-{
-  //std::cout << "convert_to_degrees : " << 270 - 2.0 * std::abs(std::acos(val)) * 180.0 / M_PI  << std::endl;
-  double alpha = 270 - 2.0 * std::acos(val) * 180 / M_PI;
-  if (alpha < 0 ){
-    alpha = 360 +  alpha;
-    return alpha;
-  }
-
-  return alpha;
-}
-
 static int quadrant_identifier(double angle)
 {
-  double result;
+  int result;
   if(angle > 0.0 && angle < 90.0)         result = 1;
   else if(angle > 90.0 && angle < 180.0)  result = 2;
   else if(angle > 180.0 && angle < 270.0) result = 3;
@@ -90,19 +76,6 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
   double y_diff = y_destination - y_robot;
   double beta = 0.0;
   double theta = 0.0;
-  double distance = 0.0;
-
-  if(UTILITYDEBUG) {
-    std::cout << "(angleToPoint) x_destination: " << x_destination << "\n";
-    std::cout << "(angleToPoint) y_destination: " << y_destination << "\n";
-    std::cout << "(angleToPoint) x_robot: " << x_robot << "\n";
-    std::cout << "(angleToPoint) y_robot: " << y_robot << "\n";
-    std::cout << "(angleToPoint) y_diff: " << y_diff << "\n";
-    std::cout << "(angleToPoint) x_diff: " << x_diff << "\n";
-    std::cout << "(angleToPoint) y_diff / x_diff: " << y_diff / x_diff << "\n";
-    std::cout << "(angleToPoint) beta: " << beta << "\n";
-    std::cout << "(angleToPoint) current_angle: " << robot_current_angle << std::endl;
-  }
 
   beta = atan(y_diff / x_diff) * 180.0 / (M_PI); // erroneos
   
@@ -123,8 +96,19 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
     beta = beta + 270.0;
   }
 
-
   theta = beta - robot_current_angle;
+
+  if(UTILITYDEBUG) {
+    std::cout << "(angleToPoint) x_destination: " << x_destination << "\n";
+    std::cout << "(angleToPoint) y_destination: " << y_destination << "\n";
+    std::cout << "(angleToPoint) x_robot: " << x_robot << "\n";
+    std::cout << "(angleToPoint) y_robot: " << y_robot << "\n";
+    std::cout << "(angleToPoint) y_diff: " << y_diff << "\n";
+    std::cout << "(angleToPoint) x_diff: " << x_diff << "\n";
+    std::cout << "(angleToPoint) y_diff / x_diff: " << y_diff / x_diff << "\n";
+    std::cout << "(angleToPoint) beta: " << beta << "\n";
+    std::cout << "(angleToPoint) current_angle: " << robot_current_angle << std::endl;
+  }
 
   return theta;
 }

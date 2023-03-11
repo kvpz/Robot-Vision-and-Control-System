@@ -61,6 +61,8 @@ static std::string RobotStateToString(RobotState state)
       return "ROTATE_CCW";
     case STOP:
       return "STOP";
+    default:
+      return "error";
   }
 }
 
@@ -70,12 +72,12 @@ public:
   void run(Task&);
   double robotAngleToPoint(const Robot&, double x, double y) const;
   void move_forward();
-  void move_forward(double distance, double robot_speed_per_sec);
-  void move_backward(double distance, double robot_speed_per_sec);
-  void rotate_CW(double degrees); //, double robot_speed)
-  void rotate_CCW(double degrees); //, double robot_speed)
+  void move_backward();
+  void move_left();
+  void move_right();
+  void rotate_CW(); 
+  void rotate_CCW(); 
   void stop();
-  void go_to_destination(double x_robot, double y_robot, double x_destination, double y_destination, double robot_current_angle);
   RobotPoseToWaypoint isRobotOnPath(double robotX, double robotY, double destX, double destY);
   RobotPoseToWaypoint robotPositionRelativeToWaypoint(double robotX, double robotY, double destX, double destY);
   void printStatus();

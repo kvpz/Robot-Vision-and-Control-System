@@ -4,6 +4,7 @@ Robot::Robot()
 { 
     comport = new Comms("/dev/ttyACM0");
     robotPoseToWaypoint = NONE;
+    state = STOP;
 }
 
 void Robot::run(Task& task) {
@@ -12,16 +13,16 @@ void Robot::run(Task& task) {
       move_forward(); 
       break;
     case MOVE_LEFT:
-      //move_left();
+      move_left();
       break;
     case MOVE_RIGHT:
-
+        move_right();
       break;
     case ROTATE_CW:
-      rotate_CW(task.getDesiredRobotYawPose()); 
+      rotate_CW(); 
       break;
     case ROTATE_CCW:
-      rotate_CCW(task.getDesiredRobotYawPose()); 
+      rotate_CCW(); 
       break;
     case MOVE_BACKWARD:
 
@@ -42,94 +43,34 @@ void Robot::move_forward()
     comport->send_command("F");
 }
 
-void Robot::move_forward(double distance, double robot_speed_per_sec)
-{
-    if(ROBOTDEBUG) std::cout << "move forward" << std::endl;
-    comport->send_command("F");
-    //std::cout << "Sleep duration: " << (long)(distance / robot_speed_per_sec * 1000.0) << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds((long)(distance / robot_speed_per_sec * 1000.0)));
-    stop();
-}
-
-void Robot::move_backward(double distance, double robot_speed_per_sec)
-{
-    if(ROBOTDEBUG) std::cout << "move backward" << std::endl;
-    comport->send_command("B");
-    //std::cout << "Sleep duration: " << (long)(distance / robot_speed_per_sec * 1000.0) << std::endl;
-    //std::this_thread::sleep_for(std::chrono::milliseconds((long)(distance / robot_speed_per_sec * 1000.0)));
-    stop();
-}
-
-void Robot::rotate_CW(double degrees) //, double robot_speed)
-{
-    if(ROBOTDEBUG) std::cout << "rotate_CW ( " << degrees << " )" << std::endl;
-    comport->send_command("C");
-    //std::cout << "Sleep duration: " << (long)((ROBOT_360_ROTATE_TIME_MILLISEC / 360.0) * degrees) << std::endl;
-    //std::this_thread::sleep_for(std::chrono::milliseconds((long)((ROBOT_360_ROTATE_TIME_MILLISEC / 360.0) * degrees)));
-}
-
-void Robot::rotate_CCW(double degrees) //, double robot_speed)
-{
-    if(ROBOTDEBUG) std::cout << "rotate_CCW ( " << degrees << " )" << std::endl;
-    comport->send_command("Z");
-    //std::cout << "Sleep duration: " << (long)((ROBOT_360_ROTATE_TIME_MILLISEC / 360.0) * degrees) << std::endl;
-    //std::this_thread::sleep_for(std::chrono::milliseconds((long)((ROBOT_360_ROTATE_TIME_MILLISEC / 360.0) * degrees)));
-}
-
 void Robot::stop()
 {
     comport->send_command("S");
 }
 
-void Robot::go_to_destination(double x_robot, double y_robot, double x_destination, double y_destination, double robot_current_angle)
-{   
-    double x_diff = x_destination - x_robot;
-    double y_diff = y_destination - y_robot;
-    double beta = 0.0;
-    double theta = 0.0;
-    double distance = 0.0;
+void Robot::rotate_CW()
+{
+    comport->send_command("C");
+}
 
-    beta = atan(y_diff / x_diff) * 180.0 / (M_PI);
+void Robot::rotate_CCW()
+{
+    comport->send_command("Z");
+}
 
-    if(x_diff > 0.0 && y_diff > 0.0){
-        // first quadrant
+void Robot::move_backward()
+{
+    comport->send_command("B");
+}
 
-    }
-    else if(x_diff < 0.0 && y_diff > 0.0) {
-        // second quadrant
-        beta = beta + 180.0;
-    }
-    else if(x_diff < 0.0 && y_diff < 0.0) {
-        // third quadrant
-        beta = beta + 180.0;
-    }
-    else {
-        // fourth quadrant
-        beta = beta + 270.0;
-    }
+void Robot::move_left()
+{
+    comport->send_command("L");
+}
 
-    theta = beta - robot_current_angle;
-    distance = sqrt(x_diff * x_diff + y_diff * y_diff);
-    std::cout << "robot current angle:  " << robot_current_angle << std::endl;
-    std::cout << "distance: " << distance << std::endl;
-    std::cout << "x2 - x1: " << x_diff << std::endl;
-    std::cout << "y2 - y1: " << y_diff << std::endl;
-    std::cout << "beta: " << beta << std::endl;
-    std::cout << "theta: " << theta << std::endl;
-
-    if(theta < 0.0) {
-        // go clockwise
-        rotate_CW(theta); //, ROBOT_360_ROTATE_TIME_MILLISEC);
-    }
-    else {
-        // go counterclockwise
-        rotate_CCW(theta); //, ROBOT_360_ROTATE_TIME_MILLISEC);
-    }
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-
-    move_forward(distance, ROBOT_SPEED_CM_PER_SEC);
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+void Robot::move_right()
+{
+    comport->send_command("R");
 }
 
 RobotPoseToWaypoint Robot::isRobotOnPath(double robotX, double robotY, double destX, double destY)

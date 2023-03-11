@@ -98,24 +98,24 @@ int main(int argc, char * argv[]) try
         std::lock_guard<std::mutex> lock(mutex);
         if (rs2::pose_frame fp = frame.as<rs2::pose_frame>()) {
             rs2_pose pose_data = fp.get_pose_data();
-	    current_angle_quaternion = pose_data.rotation.y;
+        current_angle_quaternion = pose_data.rotation.y;
 
-	    current_x = pose_data.translation.x;
-	    current_y = pose_data.translation.z;
-	    double currentXinches = pose_data.translation.x * INCHES_IN_METER;
+        current_x = pose_data.translation.x;
+        current_y = pose_data.translation.z;
+        double currentXinches = pose_data.translation.x * INCHES_IN_METER;
 
-	    double w = pose_data.rotation.w;
-	    double x = -1.0 * pose_data.rotation.z;
-	    double y = pose_data.rotation.x;
-	    double z = -1.0 * pose_data.rotation.y;
+        double w = pose_data.rotation.w;
+        double x = -1.0 * pose_data.rotation.z;
+        double y = pose_data.rotation.x;
+        double z = -1.0 * pose_data.rotation.y;
 
-	    current_w_rotation_quaternion = pose_data.rotation.w;
-	    current_z_rotation_quaternion = pose_data.rotation.z;
-	    current_x_rotation_quaternion = pose_data.rotation.x;
-	    current_y_rotation_quaternion = pose_data.rotation.y;
+        current_w_rotation_quaternion = pose_data.rotation.w;
+        current_z_rotation_quaternion = pose_data.rotation.z;
+        current_x_rotation_quaternion = pose_data.rotation.x;
+        current_y_rotation_quaternion = pose_data.rotation.y;
 
-	    yaw = atan((2.0 * (w*z + x*y)) /  (w*w + x*x - y*y - z*z)) * (180.0 / M_PI);
-	}
+        yaw = atan((2.0 * (w*z + x*y)) /  (w*w + x*x - y*y - z*z)) * (180.0 / M_PI);
+	    }
     };
 
     // Start the pipeline streaming according to the configuration.
