@@ -25,21 +25,9 @@ static inline bool approximately(double current, double expected, double precisi
   return (current > (expected - precision)) && (current < (expected + precision));
 }
 
-static double convert_quaternions_to_degrees(double val)
-{
-  //std::cout << "convert_to_degrees : " << 270 - 2.0 * std::abs(std::acos(val)) * 180.0 / M_PI  << std::endl;
-  double alpha = 270 - 2.0 * std::acos(val) * 180 / M_PI;
-  if (alpha < 0 ){
-    alpha = 360 +  alpha;
-    return alpha;
-  }
-
-  return alpha;
-}
-
 static int quadrant_identifier(double angle)
 {
-  double result;
+  int result;
   if(angle > 0.0 && angle < 90.0)         result = 1;
   else if(angle > 90.0 && angle < 180.0)  result = 2;
   else if(angle > 180.0 && angle < 270.0) result = 3;
@@ -88,7 +76,6 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
   double y_diff = y_destination - y_robot;
   double beta = 0.0;
   double theta = 0.0;
-  double distance = 0.0;
 
   beta = atan(y_diff / x_diff) * 180.0 / (M_PI); // erroneos
   

@@ -2,33 +2,33 @@
 // Copyright(c) 2019 Intel Corporation. All Rights Reserved.
 #include "includes.hpp"
 #include <boost/asio.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <iostream>
 #include <stack>
+#include <vector>
+#include <utility>
 #include "robot.hpp"
 #include "task.hpp"
 #include "taskoperations.hpp"
+
 using namespace ROBOTASKS;
 
 #define DEBUG true
+
+// xy offset from (0,0) xy base values initiated at startup of T265
 double x_offset = 120.0;
 double y_offset = 30.0;
 
-double current_angle_quaternion = 0.0;
-
-double current_x = 0.0;
-double current_y = 0.0;
-double pre_action_angle = 0.0;
-double post_action_angle = 0.0;
-double yaw = 0.0;
-
-std::stack<Task> taskStack;
+std::stack<Task> task_queue;
 
 void travelTaskSuspendedState(Task& task) 
 {
   // if new task assumed to be CORRECTPATH
-  Task newTask(CORRECTPATH, "correctpath");
-  newTask.setDestination(task.getDestination().getX(),
-    task.getDestination().getY());
-  taskStack.push(newTask);
+  Task newTask(CORRECTPATH);
+  newTask.setEndpoint(task.getDestination().getX(),
+    task.getDestination().getY(), task.getEndpointOrientation());
+  task_queue.push(newTask);
 }
 
 void travelTaskManager(Task& task, Robot& robot, RobotState& nextRobotState)
@@ -44,33 +44,64 @@ void travelTaskManager(Task& task, Robot& robot, RobotState& nextRobotState)
       travelTaskSuspendedState(task);
       break;
     case COMPLETE:
-      taskStack.pop();
+      task_queue.pop();
       break;
+  }
+}
+
+void correctionTaskManager(Task& task, Robot& robot, RobotState& nextRobotState)
+{
+  switch(task.getStatus()) {
+    case NOTSTARTED:
+      task.setStatus(INPROGRESS);
+      break;  
+    case INPROGRESS:
+      ROBOTASKS::TaskOperations::correctpath_task_updater(robot, task, nextRobotState);
+      break;
+    case SUSPENDED:
+      //correction task cannot be suspended.
+      break;
+    case COMPLETE:
+      task_queue.pop();
+      break;
+  }
+}
+
+/*
+  importTasksFromJson
+
+  Read tasks from a json file. All tasks in the file are assumed to be in order.
+*/
+void importTasksFromJSON()
+{
+  boost::property_tree::ptree pt;
+  boost::property_tree::read_json("tasks.json", pt);
+  std::vector<Task> task_vector;
+
+  for (const auto& taskkey : pt) {
+    Task task(taskTypeToEnum(taskkey.second.get_child("type").get_value<std::string>()));
+    double endpoint_x = taskkey.second.get_child("endpoint").get_child("x").get_value<double>();
+    double endpoint_y = taskkey.second.get_child("endpoint").get_child("y").get_value<double>();
+    double endpoint_orientation = taskkey.second.get_child("endpoint").get_child("yaw").get_value<double>();
+    task.setEndpoint(endpoint_x, endpoint_y, endpoint_orientation);
+    task_vector.push_back(task);
+  }
+
+  // insert tasks 
+  for(auto v = task_vector.rbegin(); v != task_vector.rend(); ++v){
+    task_queue.push(*v);
+    ROBOTASKS::Task::printTaskInfo(task_queue.top());
   }
 }
 
 int main() try
 {
-  Robot robot;
-  robot.setCurrentXY(120, 30); // x,y are front of robot (camera location)
+    Robot robot;
+    robot.setCurrentXY(x_offset, y_offset); // x,y are front of robot (camera location)
+    
+    // load tasks from JSON file
+    importTasksFromJSON();
 
-  // second task is rotate ccw
-  Task task2(TRAVEL, "task two");
-  task2.setDestination(30, 25);
-  task2.setStatus(NOTSTARTED);
-  task2.setDesiredRobotYawPose(180);
-  taskStack.push(task2);
-  //robot.setTask(task2, "task two");
-
-  // first task is move forward a bit
-  Task task1(TRAVEL, "task one");
-  task1.setDestination(120, 40);
-  task1.setStatus(INPROGRESS);
-  taskStack.push(task1);
-  //robot.setTask(task, "task one");
-
-
-  
   // Setup T265 connection
     std::string serial_t265_str;
     
@@ -80,10 +111,12 @@ int main() try
     // Declare RealSense pipeline, encapsulating the actual device and sensors
     // The pipeline is used to simplify the user interaction with the device and CV modules. 
     rs2::pipeline pipe;
+
     // Create a configuration for configuring the pipeline with a non default profile
     rs2::config cfg;
     if (!serial_t265_str.empty())
         cfg.enable_device(serial_t265_str);
+
     // Add pose stream. The pose data packed as float arrays containing translation vector
     // rotation quaternion and prediction velocities and acceleration vectors
     cfg.enable_stream(RS2_STREAM_POSE, RS2_FORMAT_6DOF);
@@ -98,10 +131,10 @@ int main() try
         if (rs2::pose_frame fp = frame.as<rs2::pose_frame>()) {
             rs2_pose pose_data = fp.get_pose_data();
 
-            current_angle_quaternion = pose_data.rotation.y;
+            double current_angle_quaternion = pose_data.rotation.y;
 
-            current_x = pose_data.translation.x * 100.0 + x_offset;
-
+            double current_x = pose_data.translation.x * 100.0 + x_offset;
+            double current_y;
             if(pose_data.translation.z < 0.0)
               current_y = std::fabs(pose_data.translation.z) * 100.0 + y_offset;
             else
@@ -113,7 +146,7 @@ int main() try
             double x = -1.0 * pose_data.rotation.z;
             double y = pose_data.rotation.x;
             double z = -1.0 * pose_data.rotation.y;
-            yaw = atan((2.0 * (w*z + x*y)) /  (w*w + x*x - y*y - z*z)) * (180.0 / M_PI);
+            double yaw = atan((2.0 * (w*z + x*y)) /  (w*w + x*x - y*y - z*z)) * (180.0 / M_PI);
             robot.setOrientation(yaw_to_degrees(yaw, pose_data.rotation.y));
         }
     };
@@ -125,17 +158,18 @@ int main() try
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));			  
 
     while(1) {
-      if(taskStack.empty())
+      if (task_queue.empty())
         break;
 
-      Task& currentTask = taskStack.top();
-      RobotState nextRobotState;
+      Task& currentTask = task_queue.top();
+      RobotState nextRobotState = STOP;
 
       if(currentTask.getTaskType() == TRAVEL) {
         travelTaskManager(currentTask, robot, nextRobotState);
       }
       else if(currentTask.getTaskType() == CORRECTPATH) {
-        ROBOTASKS::TaskOperations::correctpath_task_updater(robot, currentTask, nextRobotState);
+        correctionTaskManager(currentTask, robot, nextRobotState);
+        //ROBOTASKS::TaskOperations::correctpath_task_updater(robot, currentTask, nextRobotState);
       }   
 
       // change robot behavior if a new state assigned by task scheduler

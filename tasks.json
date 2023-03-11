@@ -1,0 +1,16 @@
+{
+    "1": {
+        "type": "travel",
+        "endpoint": {"x": 120, "y": 40, "yaw": 90 }
+    },
+    "2": {
+        "type": "travel",
+        "endpoint": {"x": 30, "y": 50, "yaw": 90 }
+    },
+    "3": {
+        "type": "travel",
+        "endpoint": {"x": 15, "y": 35, "yaw": 90 }
+    }
+
+}
+

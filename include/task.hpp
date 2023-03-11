@@ -2,74 +2,66 @@
 #define TASK_HPP
 #include <iostream>
 #include "waypoints.hpp"
+#include "enums/tasktype.hpp"
+#include "enums/taskstatus.hpp"
 
 namespace ROBOTASKS 
 {
-  enum Status {
-        NOTSTARTED, COMPLETE, INPROGRESS, SUSPENDED
-  };
-
-  enum TaskType {
-          TRAVEL, CHIPDROP, RECYCLE, GRASP, STACKPED,
-          CORRECTPATH, ROTATE
-  };
-
-  static std::string statusToString(Status status) 
-  {
-    switch(status) {
-      case NOTSTARTED:
-        return "NOTSTARTED";
-      case COMPLETE:
-        return "COMPLETE";
-      case INPROGRESS:
-        return "INPROGRESS";
-      case SUSPENDED:
-        return "SUSPENDED";
-      default:
-        return "ERROR";
-    }
-  }
-
   class Task
   {
   public:
     Task() {};
-    Task(TaskType ttype, std::string name)
-      : status(NOTSTARTED), taskType(ttype), nameid(name)
+    Task(TaskType ttype)
+      : status(NOTSTARTED), taskType(ttype)
     {
     }
 
     // setters
-    void setDestination(double x, double y)
-    {
-      destination.setX(x);
-      destination.setY(y);
-    }
-
     void setStatus(Status s)
     {
       status = s;
     }
 
-    void setDesiredRobotYawPose(double y)
+    void setEndpoint(double x, double y, double orientation)
     {
-      desiredRobotYawPose = y;
+      destination.setX(x);
+      destination.setY(y);
+      endpointOrientation = orientation;
     }
     
     // getters
     Status getStatus() const { return status; }
     Waypoint getDestination() const { return destination; } 
     TaskType getTaskType() const { return taskType; }
-    inline std::string getName() { return nameid; }
-    inline double getDesiredRobotYawPose() { return desiredRobotYawPose; }
+    inline std::string getName() { return taskTypeToString(taskType); }
+    inline double getEndpointOrientation() { return endpointOrientation; }
+
+    static void printTaskInfo(ROBOTASKS::Task& task)
+    {
+        // print status of this type of task
+        switch(task.getTaskType()) {
+            case TRAVEL:
+                std::cout << "\n====== Travel Task Updater ======\n";
+                break;
+            case CORRECTPATH:
+                std::cout << "\n====== CorrectPath Task Updater ======\n";
+                break;  
+        }
+
+        std::cout << "Task destination (X,Y): (" << task.getDestination().getX() 
+                << ", " << task.getDestination().getY() << ")\n";
+        std::cout << "Task status: " << statusToString(task.getStatus()) << "\n";
+        std::cout << "Task name: " << task.getName() << "\n";
+        std::cout << "=================================\n";
+        std::cout << std::endl;
+    }
     
   private:
     Waypoint destination;
-    double desiredRobotYawPose; // angle
+    double endpointOrientation; // angle
     double expected_duration;
     Status status;
     TaskType taskType;
-    std::string nameid;
   };
 }
 #endif
