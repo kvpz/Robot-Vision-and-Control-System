@@ -8,6 +8,8 @@
 
 namespace ROBOTASKS 
 {
+    double angleToDestTolerance = 5.0;
+    
     class TaskOperations 
     {
         private: 
@@ -75,7 +77,6 @@ namespace ROBOTASKS
             double destY = task.getDestination().getY();
             double robotX = robot.getX();
             double robotY = robot.getY();
-            double angleToDestTolerance = 10.0;
             RobotPoseToWaypoint rposetoway = robot.isRobotOnPath(robotX, robotY, destX, destY);
 
             // assign robot a task depending on orientation relative to waypoint

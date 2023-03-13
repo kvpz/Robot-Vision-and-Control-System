@@ -4,25 +4,13 @@
 #include "robot_specs.hpp"
 #include "task.hpp"
 
-#define UTILITYDEBUG true
-#define APPROXDEBUG false
+#define UTILITYDEBUG false
 
 // *********************************
 // Math related functions
 // *********************************
 static inline bool approximately(double current, double expected, double precision, bool isGyro)
 {
-  if(UTILITYDEBUG && APPROXDEBUG){
-    if(isGyro) {
-      std::cout << "(approximately) Gyro current:  " << current << std::endl;
-      std::cout << "(approximately) Gyro expected: " << expected << std::endl;
-    }
-    else {
-      std::cout << "(approximately) accelerometer current:  " << current << std::endl;
-      std::cout << "(approximately) accelerometer expected: " << expected << std::endl;
-    }
-  }
-
   return (current > (expected - precision)) && (current < (expected + precision));
 }
 
