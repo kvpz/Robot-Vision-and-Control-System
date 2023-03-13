@@ -1,0 +1,43 @@
+{
+    "1": {
+        "type": "travel",
+        "endpoint": {"x": 120, "y": 40, "yaw": 90 }
+    },
+    "2": {
+        "type": "travel",
+        "endpoint": {"x": 20, "y": 40, "yaw": 90 }
+    },
+    "3": {
+        "type": "travel",
+        "endpoint": {"x": 20, "y": 90, "yaw": 90 }
+    },
+    "4": {
+        "type": "travel",
+        "endpoint": {"x": 220, "y": 90, "yaw": 90 }
+    },
+    "5": {
+        "type": "travel",
+        "endpoint": {"x": 220, "y": 40, "yaw": 90 }
+    },
+    "6": {
+        "type": "travel",
+        "endpoint": {"x": 20, "y": 40, "yaw": 90 }
+    },
+    "7": {
+        "type": "travel",
+        "endpoint": {"x": 20, "y": 90, "yaw": 90 }
+    },
+    "8": {
+        "type": "travel",
+        "endpoint": {"x": 220, "y": 90, "yaw": 90 }
+    },
+    "9": {
+        "type": "travel",
+        "endpoint": {"x": 220, "y": 40, "yaw": 90 }
+    },
+    "10": {
+        "type": "travel",
+        "endpoint": {"x": 120, "y": 40, "yaw": 90 }
+    }
+}
+
