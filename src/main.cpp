@@ -140,22 +140,42 @@ int main() try
             rs2_pose pose_data = fp.get_pose_data();
 
             double current_angle_quaternion = pose_data.rotation.y;
-
-            double current_x = pose_data.translation.x * 100.0 + x_offset;
-            double current_y;
-            if(pose_data.translation.z < 0.0)
-              current_y = std::fabs(pose_data.translation.z) * 100.0 + y_offset;
-            else
-              current_y = y_offset - (pose_data.translation.z * 100.0);
-            
-            robot.setCurrentXY(current_x, current_y);
-
+          
             double w = pose_data.rotation.w;
             double x = -1.0 * pose_data.rotation.z;
             double y = pose_data.rotation.x;
             double z = -1.0 * pose_data.rotation.y;
             double yaw = atan((2.0 * (w*z + x*y)) /  (w*w + x*x - y*y - z*z)) * (180.0 / M_PI);
             robot.setOrientation(yaw_to_degrees(yaw, pose_data.rotation.y));
+            
+            //double current_x = (pose_data.translation.x - 0.15) * 100.0 + x_offset;
+            double current_x = (pose_data.translation.x) * 100.0 + x_offset;
+
+            double current_y;
+            if(pose_data.translation.z < 0.0)
+              current_y = std::fabs(pose_data.translation.z) * 100.0 + y_offset;
+            else
+              current_y = y_offset - ((pose_data.translation.z) * 100.0);
+
+            int quadrant = quadrant_identifier(yaw, current_angle_quaternion);
+            if(quadrant == 1) {
+              current_x = current_x - 15.0 * std::cos((90.0 - yaw) * (M_PI / 180.0));
+              current_y = current_y - 15.0 * std::sin((90.0 - yaw) * (M_PI / 180.0));
+            }
+            else if(quadrant == 2) {
+              current_x = current_x + 15.0 * std::cos((90.0 + yaw) * (M_PI / 180.0));
+              current_y = current_y - 15.0 * std::sin((90.0 + yaw) * (M_PI / 180.0));
+            }
+            else if(quadrant == 3) {
+              current_x = current_x + 15.0 * std::cos((90.0 - yaw) * (M_PI / 180.0));
+              current_y = current_y + 15.0 * std::sin((90.0 - yaw) * (M_PI / 180.0));
+            }
+            else {
+              current_x = current_x - 15.0 * std::cos((90.0 + yaw) * (M_PI / 180.0));
+              current_y = current_y + 15.0 * std::sin((90.0 + yaw) * (M_PI / 180.0));
+            }
+
+            robot.setCurrentXY(current_x, current_y);
         }
     };
 
