@@ -2,8 +2,8 @@
 #define TASKTYPE_HPP
 
 enum TaskType {
-        TRAVEL, DROPPAYLOAD, RECYCLE, GRASP, STACKPED,
-        CORRECTPATH, ROTATE, NA
+        TRAVEL, DROPPAYLOAD, GRASP, STACKPED,
+        CORRECTPATH, NA
 };
 
 static std::string taskTypeToString(TaskType ttype) 
@@ -15,6 +15,12 @@ static std::string taskTypeToString(TaskType ttype)
             return "correctpath";
         case DROPPAYLOAD:
             return "droppayload";
+        case GRASP:
+            return "grasp";
+        case STACKPED:
+            return "stackped";
+        case NA:
+            return "NA";
         default:
             return "error";
     }

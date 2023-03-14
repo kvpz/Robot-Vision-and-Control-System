@@ -12,7 +12,10 @@
 
 using namespace ROBOTASKS;
 
-#define DEBUG true
+#define DEBUG_MAIN false
+
+double _180_over_PI = 180.0 / M_PI;
+double _PI_over_180 = M_PI / 180.0;
 
 // xy offset from (0,0) xy base values initiated at startup of T265
 double x_offset = 120.0;
@@ -145,12 +148,10 @@ int main() try
             double x = -1.0 * pose_data.rotation.z;
             double y = pose_data.rotation.x;
             double z = -1.0 * pose_data.rotation.y;
-            double yaw = atan((2.0 * (w*z + x*y)) /  (w*w + x*x - y*y - z*z)) * (180.0 / M_PI);
+            double yaw = atan((2.0 * (w*z + x*y)) /  (w*w + x*x - y*y - z*z)) * _180_over_PI;
             robot.setOrientation(yaw_to_degrees(yaw, pose_data.rotation.y));
             
-            //double current_x = (pose_data.translation.x - 0.15) * 100.0 + x_offset;
             double current_x = (pose_data.translation.x) * 100.0 + x_offset;
-
             double current_y;
             if(pose_data.translation.z < 0.0)
               current_y = std::fabs(pose_data.translation.z) * 100.0 + y_offset;
@@ -159,20 +160,20 @@ int main() try
 
             int quadrant = quadrant_identifier(yaw, current_angle_quaternion);
             if(quadrant == 1) {
-              current_x = current_x - 15.0 * std::cos((90.0 - yaw) * (M_PI / 180.0));
-              current_y = current_y - 15.0 * std::sin((90.0 - yaw) * (M_PI / 180.0));
+              current_x = current_x - 15.0 * std::cos((90.0 - yaw) * _PI_over_180);
+              current_y = current_y - 15.0 * std::sin((90.0 - yaw) * _PI_over_180);
             }
             else if(quadrant == 2) {
-              current_x = current_x + 15.0 * std::cos((90.0 + yaw) * (M_PI / 180.0));
-              current_y = current_y - 15.0 * std::sin((90.0 + yaw) * (M_PI / 180.0));
+              current_x = current_x + 15.0 * std::cos((90.0 + yaw) * _PI_over_180);
+              current_y = current_y - 15.0 * std::sin((90.0 + yaw) * _PI_over_180);
             }
             else if(quadrant == 3) {
-              current_x = current_x + 15.0 * std::cos((90.0 - yaw) * (M_PI / 180.0));
-              current_y = current_y + 15.0 * std::sin((90.0 - yaw) * (M_PI / 180.0));
+              current_x = current_x + 15.0 * std::cos((90.0 - yaw) * _PI_over_180);
+              current_y = current_y + 15.0 * std::sin((90.0 - yaw) * _PI_over_180);
             }
             else {
-              current_x = current_x - 15.0 * std::cos((90.0 + yaw) * (M_PI / 180.0));
-              current_y = current_y + 15.0 * std::sin((90.0 + yaw) * (M_PI / 180.0));
+              current_x = current_x - 15.0 * std::cos((90.0 + yaw) * _PI_over_180);
+              current_y = current_y + 15.0 * std::sin((90.0 + yaw) * _PI_over_180);
             }
 
             robot.setCurrentXY(current_x, current_y);
@@ -204,16 +205,15 @@ int main() try
 	      updateRobotState(robot, nextRobotState);
       }   
 
-      // robot status (DEBUG)
-      robot.printStatus();
+      std::this_thread::sleep_for(std::chrono::milliseconds(10));	
 
-      //print_info();
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));			
-
-      std::cout << "=========== Main Loop ============\n";
-      std::cout << "task stack size: " << task_queue.size() << "\n";
-      std::cout << "current task type: " << taskTypeToString(currentTask.getTaskType()) << "\n";
-      std::cout << "==================================" << std::endl;
+      if(DEBUG_MAIN) {
+        std::cout << "=========== Main Loop ============\n";
+        std::cout << "task stack size: " << task_queue.size() << "\n";
+        std::cout << "current task type: " << taskTypeToString(currentTask.getTaskType()) << "\n";
+        std::cout << "==================================" << std::endl;
+        robot.printStatus();
+      }
     }
 	
     

@@ -8,7 +8,7 @@
 
 namespace ROBOTASKS 
 {
-    double angleToDestTolerance = 5.0;
+    double angleToDestTolerance = 10.0;
     
     class TaskOperations 
     {

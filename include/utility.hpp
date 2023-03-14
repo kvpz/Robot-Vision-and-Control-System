@@ -9,7 +9,7 @@
 // *********************************
 // Math related functions
 // *********************************
-static inline bool approximately(double current, double expected, double precision, bool isGyro)
+static inline bool approximately(double current, double expected, double precision)
 {
   return (current > (expected - precision)) && (current < (expected + precision));
 }

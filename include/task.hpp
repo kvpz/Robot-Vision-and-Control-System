@@ -46,6 +46,15 @@ namespace ROBOTASKS
             case CORRECTPATH:
                 std::cout << "\n====== CorrectPath Task Updater ======\n";
                 break;  
+            case DROPPAYLOAD:
+              std::cout << "\n====== Drop Payload Task Updater ======\n";
+              break;
+            case GRASP:
+              std::cout << "\n====== Grasp Task Updater ======\n";
+              break;
+            case STACKPED: 
+              std::cout << "\n====== Stack Pedestal Task Updater ======\n";
+              break;
         }
 
         std::cout << "Task destination (X,Y): (" << task.getDestination().getX() 

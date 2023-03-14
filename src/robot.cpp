@@ -80,7 +80,7 @@ RobotPoseToWaypoint Robot::isRobotOnPath(double robotX, double robotY, double de
     // check if robot position (x,y) approximately near destination
     bool isYapproxnear = approximately(robotY, destY, 2.0, false);
     bool isXapproxnear = approximately(robotX, destX, 2.0, false);
-    double angleToDestTolerance = 5.0;
+    double angleToDestTolerance = 10.0;
 
     angleToDest = getRobotAngleToPoint(*this, destX, destY);
 

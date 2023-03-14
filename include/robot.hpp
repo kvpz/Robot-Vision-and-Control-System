@@ -23,6 +23,8 @@ static std::string printRobotPoseToWaypoint(RobotPoseToWaypoint r) {
     case NONE:
       return "NONE";
   }
+
+  return "NA";
 }
 
 enum RobotState {
