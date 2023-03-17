@@ -8,8 +8,17 @@ using namespace ROBOTASKS;
 
 #define ROBOTDEBUG true
 
-enum RobotPoseToWaypoint {
+enum RobotPoseToWaypoint
+{
 			  NEAR, ON_PATH, OFF_PATH, NONE
+};
+
+enum RobotOrientationAtEndpoint
+{
+ ORIENTED,
+ OFF_TO_LEFT,
+ OFF_TO_RIGHT,
+ NOTORIENTED // "dumb" state. robot would keep rotating in same direction until orientation achieved
 };
 
 static std::string printRobotPoseToWaypoint(RobotPoseToWaypoint r) {
@@ -64,6 +73,7 @@ public:
   Robot();
   void run();
   double getRobotAngleToPoint(const Robot&, double x, double y) const;
+  double getRobotAngleToPoseOrientation(const Robot&, double endpointOrientation) const;
   void move_forward();
   void move_backward();
   void move_left();
@@ -72,6 +82,7 @@ public:
   void rotate_CCW(); 
   void stop();
   RobotPoseToWaypoint isRobotOnPath(double robotX, double robotY, double destX, double destY);
+  RobotOrientationAtEndpoint isRobotOriented(double robotOrientation, double endpointOrientation);
   void printStatus();
 
   // getters (inlined)
@@ -79,7 +90,7 @@ public:
   inline double getY() const { return currentLocation.getY(); }
   inline RobotState getState() const { return state; }
   inline double getOrientation() const { return currentOrientation; }
-  inline double getAngleToDestination() const { return angleToDest; }
+  inline double getAngleToDestination() const { return angleToDestination; }
   inline bool isNearEndpoint() const { return nearEndpoint; }
 
   // setters (inlined)
@@ -107,8 +118,10 @@ private:
   double currentAngle; // relative to starting position
   Comms* comport;
   RobotPoseToWaypoint robotPoseToWaypoint = NONE;
-  double angleToDest;
+  RobotOrientationAtEndpoint robotOrientationAtEndpoint = NOTORIENTED;
+  double angleToDestination;
   bool nearEndpoint = false;
+  
 };
 
 #endif

@@ -3,8 +3,9 @@
 #include "robot.hpp"
 #include "task.hpp"
 #define DEBUG_TSKOPS true
-        static bool correcting_position = false;
 
+static bool correcting_position = false;
+static bool correcting_orientation = false;
 
 namespace ROBOTASKS 
 {
@@ -89,26 +90,60 @@ namespace ROBOTASKS
             case ON_PATH:
                 task.setStatus(COMPLETE);
                 //robotState = MOVE_FORWARD;
-		        robotState = STOP;
+		robotState = STOP;
                 correcting_position = false;
                 break;
             case OFF_PATH:
                 task.setStatus(INPROGRESS);
                 if(correcting_position == false) {
-                    if(robot.getAngleToDestination() > angleToDestTolerance)
+		    // decide whether to rotate CW or CCW
+                    if(robot.getAngleToDestination() > angleToDestTolerance) 
                         robotState = ROTATE_CCW;
                     else
                         robotState = ROTATE_CW;
+		    
                     correcting_position = true;
                 }
                 else {
                     correcting_position = true;
                 }
+		
                 break;
             }
 
             Task::printTaskInfo(task);
         }
+
+      static void orient_task_updater(Robot& robot, Task& task, RobotState& robotState)
+      {
+	RobotOrientationAtEndpoint robotOrientationAtEndpoint = robot.isRobotOriented(robot.getOrientation(), task.getEndpointOrientation());
+	    
+	// assign robot a task depending on orientation relative to waypoint
+	switch(robotOrientationAtEndpoint) {
+	case ORIENTED:
+	  task.setStatus(COMPLETE);
+	  robotState = STOP;
+	  correcting_orientation = false;
+	  break;
+	case OFF_TO_RIGHT:
+	  task.setStatus(INPROGRESS);
+	  robotState = ROTATE_CCW;
+	  correcting_orientation = true;
+	  break;
+	case OFF_TO_LEFT:
+	  task.setStatus(INPROGRESS);
+	  robotState = ROTATE_CW;
+	  correcting_orientation = true;
+	  break;
+	}
+
+	Task::printTaskInfo(task);
+      }
+      
+      static void dropchip_task_updater(Robot& robot, Task& task, RobotState& robotState)
+      {
+	
+      }
     };
 
 }

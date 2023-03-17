@@ -32,6 +32,18 @@ void travelTaskSuspendedState(Task& task)
   task_queue.push(newTask);
 }
 
+/*
+  When a robot has completed traveling to its endpoint, it then needs to 
+  correct its orientation so that it matches the orientation required
+  by the endpoint pose.
+ */
+void travelTaskCompleteState(Task& task)
+{
+  Task newTask(ORIENT);
+  newTask.setEndpoint(task.getDestination().getX(), task.getDestination().getY(), task.getEndpointOrientation());
+  task_queue.push(newTask);
+}
+
 void travelTaskManager(Task& task, Robot& robot, RobotState& nextRobotState)
 {
   switch(task.getStatus()) {
@@ -46,6 +58,7 @@ void travelTaskManager(Task& task, Robot& robot, RobotState& nextRobotState)
       break;
     case COMPLETE:
       task_queue.pop();
+      travelTaskCompleteState(task);
       break;
   }
 }
@@ -61,6 +74,26 @@ void correctionTaskManager(Task& task, Robot& robot, RobotState& nextRobotState)
       break;
     case SUSPENDED:
       //correction task cannot be suspended.
+      break;
+    case COMPLETE:
+      nextRobotState = STOP;
+      task_queue.pop();
+      task_queue.top().setStatus(INPROGRESS);
+      break;
+  }
+}
+
+void orientTaskManager(Task& task, Robot& robot, RobotState& nextRobotState)
+{
+    switch(task.getStatus()) {
+    case NOTSTARTED:
+      task.setStatus(INPROGRESS);
+      break;  
+    case INPROGRESS:
+      ROBOTASKS::TaskOperations::orient_task_updater(robot, task, nextRobotState);
+      break;
+    case SUSPENDED:
+      // orient task cannot be suspended.
       break;
     case COMPLETE:
       nextRobotState = STOP;
@@ -196,14 +229,18 @@ int main() try
       if(currentTask.getTaskType() == TRAVEL) {
         travelTaskManager(currentTask, robot, nextRobotState);
         // change robot behavior if a new state assigned by task scheduler
-	      updateRobotState(robot, nextRobotState);
+	updateRobotState(robot, nextRobotState);
       }
       else if(currentTask.getTaskType() == CORRECTPATH) {
         correctionTaskManager(currentTask, robot, nextRobotState);
         //ROBOTASKS::TaskOperations::correctpath_task_updater(robot, currentTask, nextRobotState);
         // change robot behavior if a new state assigned by task scheduler
-	      updateRobotState(robot, nextRobotState);
-      }   
+	updateRobotState(robot, nextRobotState);
+      }
+      else if(currentTask.getTaskType() == ORIENT) {
+	orientTaskManager(currentTask, robot, nextRobotState);
+	updateRobotState(robot, nextRobotState);
+      }
 
       std::this_thread::sleep_for(std::chrono::milliseconds(10));	
 

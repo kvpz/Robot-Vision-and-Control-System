@@ -59,6 +59,16 @@ static double yaw_to_degrees(double yaw, double quat_y)
   return 0.0;
 }
 
+/*
+  Calculate the angle from one point to another on a cartesian plane. 
+  This is done by using the point slope formula then taking the 
+  inverse tangent of the slope. The robot's orientation in the global map is known
+  so the robot's orientation is subtracted from the slope angle to obtain 'theta'. 
+  If 'theta' < 0 and abs('theta') is greater than 180, then 360 is added to theta; 
+  otherwise if 'theta' > 180 then 360 is subtracted from 'theta'. 
+
+  'theta' is returned.
+ */
 static double angleToPoint(double x_robot, double y_robot, double x_destination, double y_destination, double robot_current_angle)
 {
   double x_diff = x_destination - x_robot;
@@ -92,10 +102,10 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
       theta = 360 + theta;
     }
   }
-  else if(theta > 0.0) {
-    if(theta > 180.0) {
+  else if(theta > 180.0) {
+    //if(theta > 180.0) {
       theta = theta - 360.0;
-    }
+      //}
   }
 
   if(UTILITYDEBUG) {
@@ -113,6 +123,19 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
   }
 
   return theta;
+}
+
+/*
+  This function calculates the angle between the robots current orientation and the
+  orientation required at the endpoint. It is assumed that the robot is at the endpoint
+  when this function is called hence the name. 
+
+  The angle is calculated by 
+ */
+static double angleToEndpointOrientation(double robotOrientation, double endpointOrientation)
+{
+  // this information alone will not tell us if robot should rotate left or right
+  return robotOrientation - endpointOrientation;
 }
 
 #endif

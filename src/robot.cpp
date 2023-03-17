@@ -39,6 +39,11 @@ double Robot::getRobotAngleToPoint(const Robot& robot, double x, double y) const
     return angleToPoint(robot.getX(), robot.getY(), x, y, robot.getOrientation());
 }
 
+double Robot::getRobotAngleToPoseOrientation(const Robot& robot, double endpointOrientation) const
+{
+  return angleToEndpointOrientation(robot.getOrientation(), endpointOrientation);
+} 
+
 void Robot::move_forward()
 {
     comport->send_command("F");
@@ -78,17 +83,17 @@ RobotPoseToWaypoint Robot::isRobotOnPath(double robotX, double robotY, double de
 {
     RobotPoseToWaypoint result = ON_PATH;
     // check if robot position (x,y) approximately near destination
-    bool isYapproxnear = approximately(robotY, destY, 2.0, false);
-    bool isXapproxnear = approximately(robotX, destX, 2.0, false);
+    bool isYapproxnear = approximately(robotY, destY, 2.0);
+    bool isXapproxnear = approximately(robotX, destX, 2.0);
     double angleToDestTolerance = 10.0;
 
-    angleToDest = getRobotAngleToPoint(*this, destX, destY);
+    angleToDestination = getRobotAngleToPoint(*this, destX, destY);
 
     if(isYapproxnear && isXapproxnear) {
         // near the waypoint
         result = NEAR;
     }
-    else if (angleToDest < angleToDestTolerance && angleToDest > -1.0*angleToDestTolerance
+    else if (angleToDestination < angleToDestTolerance && angleToDestination > -1.0*angleToDestTolerance
             && (!(robotX < (destX - 2.5)) || !(robotX > (destX + 2.5)))) { // robotY > destY && robotX == destX
         // detect if drifting from path
         std::cout << "\n(EXPERIMENTAL) condition\n" << std::endl;
@@ -101,12 +106,40 @@ RobotPoseToWaypoint Robot::isRobotOnPath(double robotX, double robotY, double de
     if(ROBOTDEBUG) {
         std::cout << "\n====== isRobotOnPath ======\n";
         std::cout << "result: " << printRobotPoseToWaypoint(result) << "\n";
-        std::cout << "(isRobotOnPath) angle to dest: " << angleToDest << "\n";
+        std::cout << "(isRobotOnPath) angle to dest: " << angleToDestination << "\n";
         std::cout << "=============================\n" << std::endl;
     }
 
     robotPoseToWaypoint = result;
     return result;
+}
+
+RobotOrientationAtEndpoint Robot::isRobotOriented(double robotOrientation, double endpointOrientation)
+{
+  RobotOrientationAtEndpoint result = ORIENTED;
+  double tolerance = 5.0;
+  bool isRobotApproximatelyOriented = false;
+  
+  // robot orientation minus endpoint orientation
+  angleToDestination = getRobotAngleToPoseOrientation(*this, endpointOrientation);
+  isRobotApproximatelyOriented = std::fabs(angleToDestination) > tolerance ? false : true;
+  
+  if(angleToDestination < 0.0 && isRobotApproximatelyOriented) {
+    // rotate CCW if absolute value of difference is less than 180
+    if(std::fabs(angleToDestination) < 180.0 && std::fabs(angleToDestination) > tolerance)
+      result = OFF_TO_RIGHT;
+    else
+      result = OFF_TO_LEFT;
+  }
+  else if(angleToDestination > 0.0 && std::fabs(angleToDestination) > tolerance) {
+    // rotate CW if
+    if(std::fabs(angleToDestination) < 180.0)
+      result = OFF_TO_LEFT;
+    else
+      result = OFF_TO_RIGHT;
+  }
+
+  return result;  
 }
 
 void Robot::printStatus()
