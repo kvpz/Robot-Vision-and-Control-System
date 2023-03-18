@@ -67,6 +67,14 @@ void correctionTaskManager(Task& task, Robot& robot, RobotState& nextRobotState)
 {
   switch(task.getStatus()) {
     case NOTSTARTED:
+      // At this point the robot should be told whether it should travel 
+      // forward, backward, left, or right depending on its distance
+      // to the endpoint
+
+      if(distance(robot.getX(), task.getDestination().getX(), task.getDestination().getY(), robot.getY()) < 70.0 && robot.getAngleToDestination() > 130.0)
+          robot.setTravelDirection(MOVE_BACKWARD); //travelDirection = MOVE_BACKWARD;
+      else
+          robot.setTravelDirection(MOVE_FORWARD);//travelDirection = MOVE_FORWARD;
       task.setStatus(INPROGRESS);
       break;  
     case INPROGRESS:
@@ -119,6 +127,7 @@ void importTasksFromJSON()
     double endpoint_x = taskkey.second.get_child("endpoint").get_child("x").get_value<double>();
     double endpoint_y = taskkey.second.get_child("endpoint").get_child("y").get_value<double>();
     double endpoint_orientation = taskkey.second.get_child("endpoint").get_child("yaw").get_value<double>();
+    double endpoint_orientation_required = taskTypeToEnum(taskkey.second.get_child("endpoint_settings").get_value<std::string>());
     task.setEndpoint(endpoint_x, endpoint_y, endpoint_orientation);
     task_vector.push_back(task);
   }
@@ -229,17 +238,17 @@ int main() try
       if(currentTask.getTaskType() == TRAVEL) {
         travelTaskManager(currentTask, robot, nextRobotState);
         // change robot behavior if a new state assigned by task scheduler
-	updateRobotState(robot, nextRobotState);
+	      updateRobotState(robot, nextRobotState);
       }
       else if(currentTask.getTaskType() == CORRECTPATH) {
         correctionTaskManager(currentTask, robot, nextRobotState);
         //ROBOTASKS::TaskOperations::correctpath_task_updater(robot, currentTask, nextRobotState);
         // change robot behavior if a new state assigned by task scheduler
-	updateRobotState(robot, nextRobotState);
+	      updateRobotState(robot, nextRobotState);
       }
       else if(currentTask.getTaskType() == ORIENT) {
-	orientTaskManager(currentTask, robot, nextRobotState);
-	updateRobotState(robot, nextRobotState);
+	      orientTaskManager(currentTask, robot, nextRobotState);
+	      updateRobotState(robot, nextRobotState);
       }
 
       std::this_thread::sleep_for(std::chrono::milliseconds(10));	

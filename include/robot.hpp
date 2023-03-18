@@ -21,6 +21,17 @@ enum RobotOrientationAtEndpoint
  NOTORIENTED // "dumb" state. robot would keep rotating in same direction until orientation achieved
 };
 
+enum RobotState {
+    MOVE_FORWARD,
+    MOVE_BACKWARD,
+    MOVE_LEFT,
+    MOVE_RIGHT,
+    ROTATE_CW,
+    ROTATE_CCW,
+    STOP
+};
+
+
 static std::string printRobotPoseToWaypoint(RobotPoseToWaypoint r) {
   switch(r) {
     case NEAR:
@@ -35,16 +46,6 @@ static std::string printRobotPoseToWaypoint(RobotPoseToWaypoint r) {
 
   return "NA";
 }
-
-enum RobotState {
-    MOVE_FORWARD,
-    MOVE_BACKWARD,
-    MOVE_LEFT,
-    MOVE_RIGHT,
-    ROTATE_CW,
-    ROTATE_CCW,
-    STOP
-};
 
 static std::string RobotStateToString(RobotState state) 
 {
@@ -92,8 +93,10 @@ public:
   inline double getOrientation() const { return currentOrientation; }
   inline double getAngleToDestination() const { return angleToDestination; }
   inline bool isNearEndpoint() const { return nearEndpoint; }
+  inline RobotState getTravelDirection() { return travelDirection; }
 
   // setters (inlined)
+  void setTravelDirection(RobotState travDir) { travelDirection = travDir; }
   void setCurrentXY(double x, double y) {
     currentLocation.setX(x);
     currentLocation.setY(y);
@@ -121,7 +124,7 @@ private:
   RobotOrientationAtEndpoint robotOrientationAtEndpoint = NOTORIENTED;
   double angleToDestination;
   bool nearEndpoint = false;
-  
+  RobotState travelDirection;
 };
 
 #endif

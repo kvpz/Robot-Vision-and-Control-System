@@ -10,29 +10,26 @@ static bool correcting_orientation = false;
 namespace ROBOTASKS 
 {
     double angleToDestTolerance = 10.0;
-    
+
     class TaskOperations 
     {
-        private: 
-
+    private: 
+      
     public:
 
         static void travel_task_updater(Robot& robot, Task& task, RobotState& robotState)
         {
-            double destX = task.getDestination().getX();
-            double destY = task.getDestination().getY();
-            double robotX = robot.getX();
-            double robotY = robot.getY();
+            double destX1 = task.getDestination().getX();
+            double destY1 = task.getDestination().getY();
+            double robotX1 = robot.getX();
+            double robotY1 = robot.getY();
 
             RobotPoseToWaypoint rposetoway;
             //RobotPoseToWaypoint rposetoway = robot.robotPositionRelativeToWaypoint(robotX, robotY, destX, destY);
-            rposetoway = robot.isRobotOnPath(robotX, robotY, destX, destY);
-            /*
-            if(robot.isNearEndpoint() == false)
-                rposetoway = robot.isRobotOnPath(robotX, robotY, destX, destY);
-            else
-                rposetoway = NEAR;
-            */
+            rposetoway = robot.isRobotOnPath(robotX1, robotY1, destX1, destY1);
+
+	        robot.getRobotAngleToPoseOrientation(robot, task.getEndpointOrientation());
+	    
             if(DEBUG_TSKOPS) {
                 std::cout << "(travel_task_updater) robot pose relative to waypoint: " 
                 << printRobotPoseToWaypoint(rposetoway) << std::endl;
@@ -40,6 +37,9 @@ namespace ROBOTASKS
             
             // assign robot a task depending on orientation relative to waypoint
             switch(rposetoway) {
+	        case NONE:
+                // decide whether to move forward or backward depending on distance to endpoint
+                break;
             case NEAR:
                 task.setStatus(COMPLETE);
                 robotState = STOP;
@@ -47,7 +47,7 @@ namespace ROBOTASKS
                 break;
             case ON_PATH:
                 task.setStatus(INPROGRESS);
-                robotState = MOVE_FORWARD;
+                robotState = robot.getTravelDirection();//MOVE_FORWARD;
                 break;
             case OFF_PATH:
                 task.setStatus(SUSPENDED);
@@ -74,11 +74,11 @@ namespace ROBOTASKS
 
         static void correctpath_task_updater(Robot& robot, Task& task, RobotState& robotState)
         {
-            double destX = task.getDestination().getX();
-            double destY = task.getDestination().getY();
-            double robotX = robot.getX();
-            double robotY = robot.getY();
-            RobotPoseToWaypoint rposetoway = robot.isRobotOnPath(robotX, robotY, destX, destY);
+            double destX2 = task.getDestination().getX();
+            double destY2 = task.getDestination().getY();
+            double robotX2 = robot.getX();
+            double robotY2 = robot.getY();
+            RobotPoseToWaypoint rposetoway = robot.isRobotOnPath(robotX2, robotY2, destX2, destY2);
 
             // assign robot a task depending on orientation relative to waypoint
             switch(rposetoway) {

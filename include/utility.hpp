@@ -14,6 +14,11 @@ static inline bool approximately(double current, double expected, double precisi
   return (current > (expected - precision)) && (current < (expected + precision));
 }
 
+static inline double distance(double x1, double x2, double y1, double y2)
+{
+  return sqrt(std::pow(x2 - x1, 2.0) + std::pow(y2 - y1, 2.0));
+}
+
 static int quadrant_identifier(double angle)
 {
   int result;
