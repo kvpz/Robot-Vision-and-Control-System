@@ -1,10 +1,9 @@
 #ifndef ORIENTTASK_HPP
 #define ORIENTTASK_HPP
-//#include "robot.hpp"
 #include "task.hpp"
 #include "enums/robotOrientationAtEndpoint.hpp"
-
-//class Robot;
+#include "navigator.hpp"
+#include "map.hpp"
 
 class OrientTask : public Task
 {

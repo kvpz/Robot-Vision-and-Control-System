@@ -6,7 +6,7 @@
 #include <utility>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
-//#include "task.hpp"
+#include "task.hpp"
 #include "enums/tasktype.hpp"
 #include "enums/robotState.hpp"
 #include "map.hpp"

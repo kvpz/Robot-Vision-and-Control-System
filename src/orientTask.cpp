@@ -4,14 +4,14 @@ OrientTask::OrientTask(){}
 
 // Task subtasks
 
-void OrientTask::notStarted(Robot* robot) 
+void OrientTask::notStarted(Map* map, Navigator* navigator, RobotState& robotState) 
 {
     setStatus(INPROGRESS);
 }
 
 void OrientTask::inProgress(Map* map, Navigator* navigator, RobotState& robotState) 
 {
-    RobotOrientationAtEndpoint robotOrientationAtEndpoint = navigator->isRobotOriented(map->getRobotOrientation(), getEndpointOrientation());
+    RobotOrientationAtEndpoint robotOrientationAtEndpoint = navigator->isRobotOriented(map, getEndpointOrientation());
         
     // assign robot new state depending on its orientation relative to waypoint
     switch(robotOrientationAtEndpoint) {

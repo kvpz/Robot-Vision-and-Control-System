@@ -2,6 +2,7 @@
 #include "travelTask.hpp"
 #include "correctionTask.hpp"
 #include "orientTask.hpp"
+
 TaskManager::TaskManager() 
 { }
 
@@ -20,12 +21,13 @@ void TaskManager::executeCurrentTask(Map* map, Navigator* navigator)
         case NOTSTARTED:
             //RobotState robotState;
             task_queue.top().notStarted(map, navigator, nextRobotState);
-            
             break;  
+            
         case INPROGRESS:
             task_queue.top().inProgress(map, navigator, nextRobotState);
             //ROBOTASKS::TaskOperations::travel_task_updater(robot, task, nextRobotState);
             break;
+
         case SUSPENDED:
             task_queue.top().suspended();
             if(task_queue.top().getTaskType() == TRAVEL){

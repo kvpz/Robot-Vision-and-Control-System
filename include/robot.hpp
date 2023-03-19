@@ -141,8 +141,6 @@ private:
     //RobotState travelDirection;
 
     TaskManager* taskManager;
-    //TaskScheduler taskScheduler;
-
     Navigator* navigator;
     Map* map;
 

@@ -8,18 +8,12 @@
 #include "map.hpp"
 #include "navigator.hpp"
 
-//#include "robot.hpp"
-
-class Robot;
-
 class Task
 {
 public:
   Task();
   Task(TaskType ttype);
 
-  //virtual void notStarted(Robot* robot);
-  //virtual void inProgress(Robot* robot);
   virtual void notStarted(Map* map, Navigator* navigator, RobotState& robotState);
   virtual void inProgress(Map* map, Navigator* navigator, RobotState& robotState);
   virtual void suspended();
@@ -35,7 +29,7 @@ public:
   Waypoint getDestination() const;
   TaskType getTaskType() const;
   inline std::string getName();
-  inline double getEndpointOrientation();
+  double getEndpointOrientation();
 
   static void printTaskInfo(Task& task);
   

@@ -17,10 +17,6 @@ double _PI_over_180 = M_PI / 180.0;
 double x_offset = 120.0;
 double y_offset = 30.0;
 
-//std::stack<Task> task_queue;
-
-//TaskManager taskManager;
-
 int main() try
 {
     Robot* robot = new Robot();

@@ -1,6 +1,5 @@
 #ifndef CORRECTIONTASK_HPP
 #define CORRECTIONTASK_HPP
-//#include "robot.hpp"
 #include "task.hpp"
 #include "enums/robotPoseToWaypoint.hpp"
 #include "map.hpp"
@@ -10,9 +9,7 @@
 class CorrectionTask : public Task
 {
 public:
-    CorrectionTask(){}
-
-    // Task subtasks
+    CorrectionTask();
 
     virtual void notStarted(Map* map, Navigator* navigator, RobotState& robotState) override;
 
@@ -23,7 +20,7 @@ public:
     virtual void complete() override;
 
 private:
-    RobotState robotState; // ex. MOVE_BACKWARD
+    RobotState robotState;
     double angleToDestTolerance = 10.0;
     bool correcting_position = false;        
 

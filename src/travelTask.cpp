@@ -1,16 +1,12 @@
 #include "travelTask.hpp"
-//#include "utility.hpp"
 
 TravelTask::TravelTask(){}
-
-// Task subtasks
 
 void TravelTask::notStarted(Map* map, Navigator* navigator, RobotState& robotState)
 {
     // At this point the robot should be told whether it should travel 
     // forward, backward, left, or right depending on its distance
     // to the endpoint
-
     if(distance(map->getRobotCurrentXCoordinatePoint(), destination.getX(), destination.getY(), map->getRobotCurrentYCoordinatePoint()) < 70.0 && 
         navigator->getAngleToDestination() > 130.0) //robot->getAngleToDestination() > 130.0)
         robotState = MOVE_BACKWARD;
@@ -22,7 +18,6 @@ void TravelTask::notStarted(Map* map, Navigator* navigator, RobotState& robotSta
     setStatus(INPROGRESS);
 }
 
-//void TravelTask::inProgress(double rX, double rY, double rOrientation, double rAngleToDestination, RobotState& robotState)
 void TravelTask::inProgress(Map* map, Navigator* navigator, RobotState& robotState)
 {
     double destX1 = destination.getX(); 

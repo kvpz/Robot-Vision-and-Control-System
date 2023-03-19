@@ -1,6 +1,6 @@
 #include "task.hpp"
 
-Task::Task() {}
+Task::Task() : status(NOTSTARTED) {}
 
 Task::Task(TaskType ttype)
     : status(NOTSTARTED), taskType(ttype)
@@ -30,7 +30,7 @@ Status Task::getStatus() const { return status; }
 Waypoint Task::getDestination() const { return destination; } 
 TaskType Task::getTaskType() const { return taskType; }
 inline std::string Task::getName() { return taskTypeToString(taskType); }
-inline double Task::getEndpointOrientation() { return endpointOrientation; }
+double Task::getEndpointOrientation() { return endpointOrientation; }
 
 void Task::printTaskInfo(Task& task)
 {
