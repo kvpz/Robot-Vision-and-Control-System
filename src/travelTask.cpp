@@ -1,34 +1,38 @@
 #include "travelTask.hpp"
+//#include "utility.hpp"
 
 TravelTask::TravelTask(){}
 
 // Task subtasks
 
-void TravelTask::notStarted(Robot* robot) //override
+void TravelTask::notStarted(Map* map, Navigator* navigator, RobotState& robotState)
 {
     // At this point the robot should be told whether it should travel 
     // forward, backward, left, or right depending on its distance
     // to the endpoint
 
-    if(distance(robot->getX(), destination.getX(), destination.getY(), robot->getY()) < 70.0 && robot->getAngleToDestination() > 130.0)
-        robot->setTravelDirection(MOVE_BACKWARD); //travelDirection = MOVE_BACKWARD;
+    if(distance(map->getRobotCurrentXCoordinatePoint(), destination.getX(), destination.getY(), map->getRobotCurrentYCoordinatePoint()) < 70.0 && 
+        navigator->getAngleToDestination() > 130.0) //robot->getAngleToDestination() > 130.0)
+        robotState = MOVE_BACKWARD;
+        //robot->setTravelDirection(MOVE_BACKWARD); //travelDirection = MOVE_BACKWARD;
     else
-        robot->setTravelDirection(MOVE_FORWARD);//travelDirection = MOVE_FORWARD;
+        robotState = MOVE_FORWARD;
+        //robot->setTravelDirection(MOVE_FORWARD);//travelDirection = MOVE_FORWARD;
 
     setStatus(INPROGRESS);
 }
 
-void TravelTask::inProgress(Robot* robot) //override
+//void TravelTask::inProgress(double rX, double rY, double rOrientation, double rAngleToDestination, RobotState& robotState)
+void TravelTask::inProgress(Map* map, Navigator* navigator, RobotState& robotState)
 {
-    double destX1 = destination.getX();
+    double destX1 = destination.getX(); 
     double destY1 = destination.getY();
-    double robotX1 = robot->getX();
-    double robotY1 = robot->getY();
 
     RobotPoseToWaypoint rposetoway;
-    rposetoway = robot->isRobotOnPath(robotX1, robotY1, destX1, destY1);
+    rposetoway = navigator->isRobotOnPath(map->getRobotCurrentXCoordinatePoint(), map->getRobotCurrentYCoordinatePoint(), destX1, destY1);
 
-    robot->getRobotAngleToPoseOrientation(getEndpointOrientation());
+    // get angle required for robot to rotate until it reaches the angle required at endpoint
+    navigator->getRobotAngleToPoseOrientation(map, getEndpointOrientation());
 
     if(DEBUG_TRAVELTASK) {
         std::cout << "(travel_task_updater) robot pose relative to waypoint: " 
@@ -47,7 +51,7 @@ void TravelTask::inProgress(Robot* robot) //override
         break;
     case ON_PATH:
         setStatus(INPROGRESS);
-        robotState = robot->getTravelDirection();
+        //robotState = robot->getTravelDirection();
         break;
     case OFF_PATH:
         setStatus(SUSPENDED);

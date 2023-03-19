@@ -1,5 +1,5 @@
-#ifndef WAYPOINTS_H
-#define WAYPOINTS_H
+#ifndef WAYPOINT_H
+#define WAYPOINT_H
 
 
 class Waypoint

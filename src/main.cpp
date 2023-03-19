@@ -6,7 +6,7 @@
 #include "robot.hpp"
 //#include "task.hpp"
 #include "taskmanager.hpp"
-//#include "includes.hpp"
+#include "example-utils.hpp"
 
 #define DEBUG_MAIN false
 
@@ -27,7 +27,7 @@ int main() try
     robot->setCurrentXY(x_offset, y_offset); // x,y are front of robot (camera location)
     
     // load tasks from JSON file
-    robot->getTaskManager().importTasksFromJSON();
+    robot->getTaskManager()->importTasksFromJSON();
 
     // Setup T265 connection
     std::string serial_t265_str;
@@ -105,25 +105,11 @@ int main() try
     while(1) {
       if(!robot->hasTasks())
         break;
-      //if (task_queue.empty())
-      //  break;
-
-      //Task& currentTask = task_queue.top();
-      //RobotState nextRobotState;
 
       robot->executeCurrentTask();
 
       std::this_thread::sleep_for(std::chrono::milliseconds(10));	
 
-      /*
-      if(DEBUG_MAIN) {
-        std::cout << "=========== Main Loop ============\n";
-        std::cout << "task stack size: " << task_queue.size() << "\n";
-        std::cout << "current task type: " << taskTypeToString(currentTask.getTaskType()) << "\n";
-        std::cout << "==================================" << std::endl;
-        robot.printStatus();
-      }
-      */
     }
 	
     
@@ -176,3 +162,13 @@ catch (const std::exception& e)
 
 
 */  
+
+      /*
+      if(DEBUG_MAIN) {
+        std::cout << "=========== Main Loop ============\n";
+        std::cout << "task stack size: " << task_queue.size() << "\n";
+        std::cout << "current task type: " << taskTypeToString(currentTask.getTaskType()) << "\n";
+        std::cout << "==================================" << std::endl;
+        robot.printStatus();
+      }
+      */

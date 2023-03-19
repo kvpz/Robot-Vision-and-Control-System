@@ -1,8 +1,8 @@
 #ifndef COMMS_HPP
 #define COMMS_HPP
-#include "includes.hpp"
 #define DEBUG_NOMCU false
 #define COMMSDEBUG true
+#include <boost/asio.hpp>
 
 class Comms
 {

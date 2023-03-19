@@ -3,9 +3,10 @@
 
 #include "robot.hpp"
 #include "task.hpp"
-#include "utility.hpp"
 #include "enums/robotPoseToWaypoint.hpp"
 #include "enums/robotState.hpp"
+#include "navigator.hpp"
+#include "map.hpp"
 
 #define DEBUG_TRAVELTASK false
 
@@ -18,9 +19,9 @@ public:
 
     // Task subtasks
 
-    virtual void notStarted(Robot* robot) override;
+    virtual void notStarted(Map* map, Navigator* navigator, RobotState& robotState) override;
 
-    virtual void inProgress(Robot* robot) override;
+    virtual void inProgress(Map* map, Navigator* navigator, RobotState& robotState) override;
 
     virtual void suspended() override;
 
@@ -37,6 +38,8 @@ public:
 
 private:
     RobotState robotState; // ex. MOVE_BACKWARD
+    RobotPoseToWaypoint rPoseToWaypoint;
+
 };
 
 #endif

@@ -1,18 +1,21 @@
 #ifndef ROBOT_HPP
 #define ROBOT_HPP
-#include "waypoints.hpp"
+#include "waypoint.hpp"
 #include "taskmanager.hpp"
 //#include "task.hpp"
 #include "comms.hpp"
 #include "enums/robotPoseToWaypoint.hpp"
 #include "enums/robotState.hpp"
 #include "enums/robotOrientationAtEndpoint.hpp"
+//#include "utility.hpp"
+#include "map.hpp"
+#include "navigator.hpp"
 
 using namespace std;
 
 #define ROBOTDEBUG true
 
-class TaskManager;
+//class TaskManager;
 
 class Robot {
 public:
@@ -22,6 +25,8 @@ public:
         robotPoseToWaypoint = NONE;
         state = STOP;
         taskManager = new TaskManager();
+        navigator = new Navigator();
+        map = new Map();
     }
 
     //void run();
@@ -52,16 +57,6 @@ public:
         }
     }
 
-    double getRobotAngleToPoint(double x, double y) const 
-    {
-          return angleToPoint(getX(), getY(), x, y, currentOrientation);
-    }
-
-    double getRobotAngleToPoseOrientation(double endpointOrientation) const 
-    {
-        return angleToEndpointOrientation(currentOrientation, endpointOrientation);
-    }
-
     void move_forward() { comport->send_command("F"); }
     void move_backward() { comport->send_command("B"); }
     void move_left() { comport->send_command("L"); }
@@ -70,119 +65,42 @@ public:
     void rotate_CCW() { comport->send_command("Z"); }
     void stop() { comport->send_command("S"); }
 
-    RobotPoseToWaypoint isRobotOnPath(double robotX, double robotY, double destX, double destY) 
-    {
-        RobotPoseToWaypoint result = ON_PATH;
-        // check if robot position (x,y) approximately near destination
-        bool isYapproxnear = approximately(robotY, destY, 2.0);
-        bool isXapproxnear = approximately(robotX, destX, 2.0);
-        double angleToDestTolerance = 10.0;
-
-        angleToDestination = getRobotAngleToPoint(destX, destY);
-
-        if(isYapproxnear && isXapproxnear) {
-            // near the waypoint
-            result = NEAR;
-        }
-        else if (angleToDestination < angleToDestTolerance && angleToDestination > -1.0*angleToDestTolerance
-                && (!(robotX < (destX - 2.5)) || !(robotX > (destX + 2.5)))) 
-        { // robotY > destY && robotX == destX
-            // detect if drifting from path
-            std::cout << "\n(EXPERIMENTAL) condition\n" << std::endl;
-            result = ON_PATH;
-        }
-        else {
-            result = OFF_PATH;
-        }    
-
-        if(ROBOTDEBUG) {
-            std::cout << "\n====== isRobotOnPath ======\n";
-            std::cout << "result: " << printRobotPoseToWaypoint(result) << "\n";
-            std::cout << "(isRobotOnPath) angle to dest: " << angleToDestination << "\n";
-            std::cout << "=============================\n" << std::endl;
-        }
-
-        robotPoseToWaypoint = result;
-        return result;
-    }
-
-    RobotOrientationAtEndpoint isRobotOriented(double robotOrientation, double endpointOrientation) 
-    {
-        RobotOrientationAtEndpoint result = ORIENTED;
-        double tolerance = 5.0;
-        bool isRobotApproximatelyOriented = false;
-
-        // robot orientation minus endpoint orientation
-        angleToDestination = getRobotAngleToPoseOrientation(endpointOrientation);
-        isRobotApproximatelyOriented = std::fabs(angleToDestination) > tolerance ? false : true;
-
-        if(angleToDestination < 0.0 && isRobotApproximatelyOriented) {
-          // rotate CCW if absolute value of difference is less than 180
-          if(std::fabs(angleToDestination) < 180.0 && std::fabs(angleToDestination) > tolerance)
-            result = OFF_TO_RIGHT;
-          else
-            result = OFF_TO_LEFT;
-        }
-        else if(angleToDestination > 0.0 && std::fabs(angleToDestination) > tolerance) {
-          // rotate CW if
-          if(std::fabs(angleToDestination) < 180.0)
-            result = OFF_TO_LEFT;
-          else
-            result = OFF_TO_RIGHT;
-        }
-
-        return result;  
-    }
-
     void printStatus() 
     {
         std::cout << "\n====== Robot Status ======\n";
         std::cout << "State: " << RobotStateToString(state) << "\n";
         std::cout << "current location: ("
-                << currentLocation.getX() << ", "
-                << currentLocation.getY() << ")\n";
-        std::cout << "current orientation (yaw): " << currentOrientation << "\n";
+                << map->getRobotCurrentXCoordinatePoint() << ", "
+                << map->getRobotCurrentYCoordinatePoint() << ")\n";
+        std::cout << "current orientation (yaw): " << map->getRobotOrientation() << "\n";
         std::cout << "robot pose relative to waypoint: " << printRobotPoseToWaypoint(robotPoseToWaypoint) << "\n";
         std::cout << "==========================\n";
         std::cout << std::endl;
     }
 
     // getters (inlined)
-    inline double getX() const { return currentLocation.getX(); }
-    inline double getY() const { return currentLocation.getY(); }
+    inline double getX() const { return map->getRobotCurrentXCoordinatePoint(); }
+    inline double getY() const { return map->getRobotCurrentXCoordinatePoint(); }
     inline RobotState getState() const { return state; }
-    inline double getOrientation() const { return currentOrientation; }
-    inline double getAngleToDestination() const { return angleToDestination; }
+    inline double getOrientation() const { return map->getRobotOrientation(); }
+    inline double getAngleToDestination() const { return navigator->getAngleToDestination(); }
+    inline TaskManager* getTaskManager() const { return taskManager; }
+    inline bool hasTasks() const { return taskManager->hasTasks(); }
+    // map related functions
     inline bool isNearEndpoint() const { return nearEndpoint; }
-    inline RobotState getTravelDirection() { return travelDirection; }
+    inline RobotState getTravelDirection() { return state; } //travelDirection; }
+
+    inline Map* getMap() { return map; }
+    inline Navigator* getNavigator() { return navigator; }
 
     // setters (inlined)
-    void setTravelDirection(RobotState travDir) { travelDirection = travDir; }
+    void setTravelDirection(RobotState travDir) { state = travDir; } //travelDirection = travDir; }
 
-    void setCurrentXY(double x, double y) 
-    {
-      currentLocation.setX(x);
-      currentLocation.setY(y);
-    }
-    
     void setState(RobotState newState) 
     {
       state = newState;
     }
-
-    void setOrientation(double o)
-    {
-      currentOrientation = o;
-    }
     
-    void setIsNearEndpoint(bool b) { nearEndpoint = b; }
-
-    void executeCurrentTask()
-    {
-      taskManager->executeCurrentTask(this);
-      updateRobotState(taskManager->getNextRobotState());
-    }
-
     void updateRobotState(RobotState nextRobotState)
     {
         if(state != nextRobotState) {
@@ -191,31 +109,44 @@ public:
         }
     }
 
-    TaskManager& getTaskManager()
+    void setCurrentXY(double x, double y) 
     {
-      return *taskManager;
+      map->setRobotCurrentCoordinate(x,y);
     }
 
-    bool hasTasks() 
+    void setOrientation(double o)
     {
-      return taskManager->hasTasks();
+      map->setRobotOrientation(o);
+    }
+    
+    void setIsNearEndpoint(bool b) { nearEndpoint = b; }
+
+    void executeCurrentTask()
+    {
+      taskManager->executeCurrentTask(map, navigator);
+      updateRobotState(taskManager->getNextRobotState());
     }
 
 private:
     RobotState state = STOP;
     RobotState nextRobotState;
-    Waypoint currentLocation;
-    double currentOrientation; // (gyro) orientation
-    double velocity;
-    double currentAngle; // relative to starting position
+
     Comms* comport;
     RobotPoseToWaypoint robotPoseToWaypoint = NONE;
     RobotOrientationAtEndpoint robotOrientationAtEndpoint = NOTORIENTED;
-    double angleToDestination;
     bool nearEndpoint = false;
-    RobotState travelDirection;
+
+    //Waypoint currentLocation;
+    //double currentOrientation; // (gyro) orientation
+    //RobotState travelDirection;
 
     TaskManager* taskManager;
+    //TaskScheduler taskScheduler;
+
+    Navigator* navigator;
+    Map* map;
+
+
 };
 
 

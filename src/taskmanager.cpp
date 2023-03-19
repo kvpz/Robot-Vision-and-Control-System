@@ -1,16 +1,29 @@
 #include "taskmanager.hpp"
-
+#include "travelTask.hpp"
+#include "correctionTask.hpp"
+#include "orientTask.hpp"
 TaskManager::TaskManager() 
 { }
 
-void TaskManager::executeCurrentTask(Robot* robot) 
+/*
+    robot info required to be passed to all notStarted:
+    - current x and y position
+    - angle to destination
+    
+    robot info required to be passed to all inProgress:
+    - current x and y position
+    - 
+*/
+void TaskManager::executeCurrentTask(Map* map, Navigator* navigator) 
 {
     switch(task_queue.top().getStatus()) {
         case NOTSTARTED:
-            task_queue.top().notStarted(robot);
+            //RobotState robotState;
+            task_queue.top().notStarted(map, navigator, nextRobotState);
+            
             break;  
         case INPROGRESS:
-            task_queue.top().inProgress(robot);
+            task_queue.top().inProgress(map, navigator, nextRobotState);
             //ROBOTASKS::TaskOperations::travel_task_updater(robot, task, nextRobotState);
             break;
         case SUSPENDED:

@@ -9,9 +9,9 @@ void OrientTask::notStarted(Robot* robot)
     setStatus(INPROGRESS);
 }
 
-void OrientTask::inProgress(Robot* robot) 
+void OrientTask::inProgress(Map* map, Navigator* navigator, RobotState& robotState) 
 {
-    RobotOrientationAtEndpoint robotOrientationAtEndpoint = robot->isRobotOriented(robot->getOrientation(), getEndpointOrientation());
+    RobotOrientationAtEndpoint robotOrientationAtEndpoint = navigator->isRobotOriented(map->getRobotOrientation(), getEndpointOrientation());
         
     // assign robot new state depending on its orientation relative to waypoint
     switch(robotOrientationAtEndpoint) {

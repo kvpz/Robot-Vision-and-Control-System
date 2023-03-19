@@ -4,18 +4,18 @@ CorrectionTask::CorrectionTask(){}
 
 // Task subtasks
 
-void CorrectionTask::notStarted(Robot* robot) override
+void CorrectionTask::notStarted(Map* map, Navigator* navigator, RobotState& robotState)
 {
     setStatus(INPROGRESS);
 }
 
-void CorrectionTask::inProgress(Robot* robot) override
+void CorrectionTask::inProgress(Map* map, Navigator* navigator, RobotState& robotState)
 {
     double destX2 = destination.getX();
     double destY2 = destination.getY();
-    double robotX2 = robot->getX();
-    double robotY2 = robot->getY();
-    RobotPoseToWaypoint rposetoway = robot->isRobotOnPath(robotX2, robotY2, destX2, destY2);
+    double robotX2 = map->getRobotCurrentXCoordinatePoint();
+    double robotY2 = map->getRobotCurrentYCoordinatePoint();
+    RobotPoseToWaypoint rposetoway = navigator->isRobotOnPath(robotX2, robotY2, destX2, destY2);
 
     // assign robot a task depending on orientation relative to waypoint
     switch(rposetoway) {
@@ -34,7 +34,7 @@ void CorrectionTask::inProgress(Robot* robot) override
         setStatus(INPROGRESS);
         if(correcting_position == false) {
             // decide whether to rotate CW or CCW
-            if(robot->getAngleToDestination() > angleToDestTolerance) 
+            if(navigator->getAngleToDestination() > angleToDestTolerance) 
                 robotState = ROTATE_CCW;
             else
                 robotState = ROTATE_CW;
@@ -49,13 +49,13 @@ void CorrectionTask::inProgress(Robot* robot) override
     }
 }
 
-void CorrectionTask::suspended() override
+void CorrectionTask::suspended()
 {
     //correction task cannot be suspended.
 
 }
 
-void CorrectionTask::complete() override
+void CorrectionTask::complete()
 {
     //nextRobotState = STOP;
     //task_queue.pop();

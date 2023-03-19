@@ -7,8 +7,8 @@ Task::Task(TaskType ttype)
 {
 }
 
-void Task::notStarted(Robot* robot){}
-void Task::inProgress(Robot* robot){}
+void Task::notStarted(Map* map, Navigator* navigator, RobotState& robotState){}
+void Task::inProgress(Map* map, Navigator* navigator, RobotState& robotState){}
 void Task::suspended(){}
 void Task::complete(){}
 

@@ -1,9 +1,13 @@
 #ifndef TASK_HPP
 #define TASK_HPP
 #include <iostream>
-#include "waypoints.hpp"
+#include "waypoint.hpp"
 #include "enums/tasktype.hpp"
 #include "enums/taskstatus.hpp"
+#include "enums/robotState.hpp"
+#include "map.hpp"
+#include "navigator.hpp"
+
 //#include "robot.hpp"
 
 class Robot;
@@ -14,8 +18,10 @@ public:
   Task();
   Task(TaskType ttype);
 
-  virtual void notStarted(Robot* robot);
-  virtual void inProgress(Robot* robot);
+  //virtual void notStarted(Robot* robot);
+  //virtual void inProgress(Robot* robot);
+  virtual void notStarted(Map* map, Navigator* navigator, RobotState& robotState);
+  virtual void inProgress(Map* map, Navigator* navigator, RobotState& robotState);
   virtual void suspended();
   virtual void complete();
 

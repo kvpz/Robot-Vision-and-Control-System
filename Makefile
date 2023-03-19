@@ -1,16 +1,16 @@
-WARN	:= -W -Wall -Wconversion -pedantic
+WARN	:= #-W -Wall -Wconversion -pedantic
 CC	:= g++
 USRLIBS	:= /usr/lib
 RSHEADERS := /usr/include/librealsense2
-PROJHEADERS := /home/ieeefiu/Documents/perrito/include
-#PROJHEADERS := /home/kevin/Documents/perrito/include 
+#PROJHEADERS := /home/ieeefiu/Documents/perrito/include
+PROJHEADERS := /home/kevin/Documents/perrito/include 
 INCLUDE = -I$(RSHEADERS) -I$(PROJHEADERS)
 
 ALL: main.x
 
-main.x: #./src/main.cpp $(PROJHEADERS) #robot.o
+main.x: robot.o task.o travelTask.o taskmanager.o #./src/main.cpp $(PROJHEADERS) #robot.o
 	@echo "building target main.x"
-	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lrealsense2 -o main.x robot.o
+	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lrealsense2 -o main.x robot.o task.o travelTask.o taskmanager.o 
 
 robot.o: ./src/robot.cpp $(PROJHEADERS) 
 	$(CC) -c $(INCLUDE) $(WARN) -pthread -O3 -L$(USRLIBS) -lrealsense2 -c ./src/robot.cpp
@@ -26,8 +26,8 @@ travelTask.o: $(PROJHEADERS)
 	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/travelTask.cpp -O3 -L$(USRLIBS) -lrealsense2 
 
 
-taskManager.o: $(PROJHEADERS)
-	@echo "building target taskManager.o"
+taskmanager.o: $(PROJHEADERS)
+	@echo "building target taskmanager.o"
 	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/taskmanager.cpp -O3 -L$(USRLIBS) -lrealsense2 
 
 
