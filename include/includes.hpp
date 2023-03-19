@@ -17,7 +17,7 @@
 //#include <boost/progress.hpp>
 #include "waypoints.hpp"
 #include "robot_specs.hpp"
-#include "utility.hpp"
+//#include "utility.hpp"
 
 
 #endif

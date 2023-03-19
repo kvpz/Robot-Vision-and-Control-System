@@ -8,12 +8,30 @@ INCLUDE = -I$(RSHEADERS) -I$(PROJHEADERS)
 
 ALL: main.x
 
-main.x: ./src/main.cpp $(PROJHEADERS) robot.o
+main.x: #./src/main.cpp $(PROJHEADERS) #robot.o
 	@echo "building target main.x"
 	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lrealsense2 -o main.x robot.o
 
 robot.o: ./src/robot.cpp $(PROJHEADERS) 
-	$(CC) $(INCLUDE) $(WARN) -pthread -O3 -L$(USRLIBS) -lrealsense2 -c ./src/robot.cpp
+	$(CC) -c $(INCLUDE) $(WARN) -pthread -O3 -L$(USRLIBS) -lrealsense2 -c ./src/robot.cpp
+
+# this compiles
+task.o: $(PROJHEADERS)
+	@echo "building target task.o"
+	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/task.cpp -O3 -L$(USRLIBS) -lrealsense2
+
+
+travelTask.o: $(PROJHEADERS)
+	@echo "building target travelTask.o"
+	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/travelTask.cpp -O3 -L$(USRLIBS) -lrealsense2 
+
+
+taskManager.o: $(PROJHEADERS)
+	@echo "building target taskManager.o"
+	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/taskmanager.cpp -O3 -L$(USRLIBS) -lrealsense2 
+
+
+
 
 clean:
 	rm -rf *.o *.x

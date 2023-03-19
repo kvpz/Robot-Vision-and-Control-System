@@ -1,13 +1,15 @@
 #include "robot.hpp"
 
-Robot::Robot()
+/*
+Robot::Robot() : state(STOP), robotPoseToWaypoint(NONE), robotOrientationAtEndpoint(NOTORIENTED), nearEndpoint(false)
 { 
     comport = new Comms("/dev/ttyACM0");
     robotPoseToWaypoint = NONE;
     state = STOP;
 }
-
-void Robot::run() //Task& task) {
+*/
+/*
+void Robot::run()
 {
     switch (state) {
     case MOVE_FORWARD:
@@ -32,7 +34,7 @@ void Robot::run() //Task& task) {
       stop();
       break;
     }
-  }
+}
 
 double Robot::getRobotAngleToPoint(const Robot& robot, double x, double y) const
 {
@@ -154,3 +156,4 @@ void Robot::printStatus()
     std::cout << "==========================\n";
     std::cout << std::endl;
 }
+*/

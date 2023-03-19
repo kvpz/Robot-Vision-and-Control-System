@@ -1,5 +1,5 @@
- #ifndef TASKSTATUS_HPP
- #define TASKSTATUS_HPP
+#ifndef TASKSTATUS_HPP
+#define TASKSTATUS_HPP
 #include <string>
 
 enum Status {
@@ -22,4 +22,4 @@ static std::string statusToString(Status status)
     }
 }
 
-  #endif
+#endif
