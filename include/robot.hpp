@@ -121,10 +121,15 @@ public:
     
     void setIsNearEndpoint(bool b) { nearEndpoint = b; }
 
+    /*
+      Robot sends data about itself to the task manager. 
+      The task manager then executes the current task. 
+      A task will update the state of the robot.
+    */
     void executeCurrentTask()
     {
-      taskManager->executeCurrentTask(map, navigator);
-      updateRobotState(taskManager->getNextRobotState());
+      taskManager->executeCurrentTask(map, navigator, nextRobotState);
+      updateRobotState(nextRobotState);
     }
 
 private:

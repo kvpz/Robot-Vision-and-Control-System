@@ -29,3 +29,10 @@ This task may become a subtask, or action, that will be tied to a waypoint. In o
 #### 1.1.4 Target Search Task
 This task is responsible for moving the robot until it has identified an object of interest.
 Objects of interest are: yellow ducks and green, red, or white cylinders. 
+
+
+## Tightly coupled projects
+https://github.com/dmosquera1/PCA9685-RPico-Cpp-Library 
+
+https://github.com/john-wick1999/arm_controller
+

@@ -14,10 +14,10 @@ public:
   Task();
   Task(TaskType ttype);
 
-  virtual void notStarted(Map* map, Navigator* navigator, RobotState& robotState);
-  virtual void inProgress(Map* map, Navigator* navigator, RobotState& robotState);
-  virtual void suspended();
-  virtual void complete();
+  virtual void notStarted(Map* map, Navigator* navigator, RobotState& nextRobotState);
+  virtual void inProgress(Map* map, Navigator* navigator, RobotState& nextRobotState);
+  virtual void suspended(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType);
+  virtual void complete(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType);
 
   // setters
   void setStatus(Status s);
@@ -29,7 +29,7 @@ public:
   Waypoint getDestination() const;
   TaskType getTaskType() const;
   inline std::string getName();
-  double getEndpointOrientation();
+  double getEndpointDesiredOrientation() { return -1; }
 
   static void printTaskInfo(Task& task);
   
@@ -37,7 +37,6 @@ protected:
   Waypoint destination;
 
 private:
-  double endpointOrientation; // angle
   double expected_duration;
   Status status;
   TaskType taskType;

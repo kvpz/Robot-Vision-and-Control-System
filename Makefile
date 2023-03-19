@@ -8,9 +8,9 @@ INCLUDE = -I$(RSHEADERS) -I$(PROJHEADERS)
 
 ALL: main.x
 
-main.x: task.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o robot.o 
+main.x: task.o navigatetotask.o pathcorrectiontask.o taskmanager.o robot.o 
 	@echo "building target main.x"
-	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lrealsense2 -o main.x task.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o robot.o
+	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lrealsense2 -o main.x task.o navigatetotask.o pathcorrectiontask.o taskmanager.o robot.o
 
 task.o: $(PROJHEADERS)
 	@echo "building target task.o"
@@ -24,9 +24,9 @@ pathcorrectiontask.o: $(PROJHEADERS)
 	@echo "building target pathcorrectiontask.o"
 	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/pathcorrectiontask.cpp -O3 -L$(USRLIBS) -lrealsense2 
 
-posecorrectiontask.o: $(PROJHEADERS)
-	@echo "building target posecorrectiontask.o"
-	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/posecorrectiontask.cpp -O3 -L$(USRLIBS) -lrealsense2 
+#posecorrectiontask.o: $(PROJHEADERS)
+#	@echo "building target posecorrectiontask.o"
+#	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/posecorrectiontask.cpp -O3 -L$(USRLIBS) -lrealsense2 
 
 taskmanager.o: $(PROJHEADERS)
 	@echo "building target taskmanager.o"
@@ -37,3 +37,6 @@ robot.o: ./src/robot.cpp $(PROJHEADERS)
 
 clean:
 	rm -rf *.o *.x
+
+
+

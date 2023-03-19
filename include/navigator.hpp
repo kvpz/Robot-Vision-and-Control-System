@@ -24,7 +24,8 @@ public:
         return angleToDestination;
     }
 
-    double getRobotAngleToPoseOrientation(Map* map, double endpointOrientation) const 
+    //double getRobotAngleToPoseOrientation(Map* map, double endpointOrientation) const 
+    double getRobotToEndpointSlopeAngle(Map* map, double endpointOrientation) const 
     {
         return angleToEndpointOrientation(map->getRobotOrientation(), endpointOrientation);
     }
@@ -76,7 +77,7 @@ public:
         bool isRobotApproximatelyOriented = false;
 
         // robot orientation minus endpoint orientation
-        setAngleToDestination(getRobotAngleToPoseOrientation(map, endpointOrientation));
+        setAngleToDestination(getRobotToEndpointSlopeAngle(map, endpointOrientation));
         isRobotApproximatelyOriented = std::fabs(getAngleToDestination()) > tolerance ? false : true;
 
         if(getAngleToDestination() < 0.0 && isRobotApproximatelyOriented) {
@@ -99,8 +100,6 @@ public:
 
 private:
     double angleToDestination;
-    Waypoint destination;
-
 };
 
 #endif

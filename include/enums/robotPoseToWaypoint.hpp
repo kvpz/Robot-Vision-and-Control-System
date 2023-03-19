@@ -4,6 +4,7 @@
 enum RobotPoseToWaypoint
 {
     NEAR, 
+    NEARNOTDESIREDORIENTATION,
     ON_PATH, 
     OFF_PATH, 
     NONE

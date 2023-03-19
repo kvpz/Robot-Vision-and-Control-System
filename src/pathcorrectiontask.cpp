@@ -2,12 +2,12 @@
 
 PathCorrectionTask::PathCorrectionTask(){}
 
-void PathCorrectionTask::notStarted(Map* map, Navigator* navigator, RobotState& robotState)
+void PathCorrectionTask::notStarted(Map* map, Navigator* navigator, RobotState& nextRobotState)
 {
     setStatus(INPROGRESS);
 }
 
-void PathCorrectionTask::inProgress(Map* map, Navigator* navigator, RobotState& robotState)
+void PathCorrectionTask::inProgress(Map* map, Navigator* navigator, RobotState& nextRobotState)
 {
     double destX2 = destination.getX();
     double destY2 = destination.getY();
@@ -19,13 +19,13 @@ void PathCorrectionTask::inProgress(Map* map, Navigator* navigator, RobotState& 
     switch(rposetoway) {
     case NEAR:
         setStatus(COMPLETE);
-        robotState = STOP;
+        nextRobotState = STOP;
         correcting_position = false;
         break;
     case ON_PATH:
         setStatus(COMPLETE);
         //robotState = MOVE_FORWARD;
-        robotState = STOP;
+        nextRobotState = STOP;
         correcting_position = false;
         break;
     case OFF_PATH:
@@ -33,9 +33,9 @@ void PathCorrectionTask::inProgress(Map* map, Navigator* navigator, RobotState& 
         if(correcting_position == false) {
             // decide whether to rotate CW or CCW
             if(navigator->getAngleToDestination() > angleToDestTolerance) 
-                robotState = ROTATE_CCW;
+                nextRobotState = ROTATE_CCW;
             else
-                robotState = ROTATE_CW;
+                nextRobotState = ROTATE_CW;
     
             correcting_position = true;
         }
@@ -47,13 +47,13 @@ void PathCorrectionTask::inProgress(Map* map, Navigator* navigator, RobotState& 
     }
 }
 
-void PathCorrectionTask::suspended()
+void PathCorrectionTask::suspended(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType)
 {
     //correction task cannot be suspended.
 
 }
 
-void PathCorrectionTask::complete()
+void PathCorrectionTask::complete(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType)
 {
     //nextRobotState = STOP;
     //task_queue.pop();

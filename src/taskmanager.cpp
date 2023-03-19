@@ -1,7 +1,7 @@
 #include "taskmanager.hpp"
 #include "navigatetotask.hpp"
 #include "pathcorrectiontask.hpp"
-#include "posecorrectiontask.hpp"
+//#include "posecorrectiontask.hpp"
 
 TaskManager::TaskManager() 
 { }
@@ -14,12 +14,18 @@ TaskManager::TaskManager()
     robot info required to be passed to all inProgress:
     - current x and y position
     - 
+
+    This function should avoid implementing task specific behaviors. All actions
+    or updates needed to be performed by a task should be done in their respective state functions. 
+
+    Not all tasks may achieve all status. 
 */
-void TaskManager::executeCurrentTask(Map* map, Navigator* navigator) 
+void TaskManager::executeCurrentTask(Map* map, Navigator* navigator, RobotState& nextRobotState) 
 {
+    TaskType nextTaskType = NA;
+    Task* newTask;
     switch(task_queue.top().getStatus()) {
         case NOTSTARTED:
-            //RobotState robotState;
             task_queue.top().notStarted(map, navigator, nextRobotState);
             break;  
             
@@ -29,17 +35,22 @@ void TaskManager::executeCurrentTask(Map* map, Navigator* navigator)
             break;
 
         case SUSPENDED:
-            task_queue.top().suspended();
-            if(task_queue.top().getTaskType() == NAVIGATETO){
-                Task newTask(PATHCORRECTION);
-                newTask.setEndpoint(task_queue.top().getDestination().getX(), task_queue.top().getDestination().getY(), task_queue.top().getEndpointOrientation());
-                task_queue.push(newTask);
+            task_queue.top().suspended(map, navigator, nextRobotState, nextTaskType);
+
+            // Make a new task if required by current task.
+            // This is typical when a task enters a suspended state.
+            newTask = taskFactory(nextTaskType);
+            if(newTask != nullptr) {
+                newTask->setEndpoint(task_queue.top().getDestination().getX(), task_queue.top().getDestination().getY(), task_queue.top().getEndpointDesiredOrientation());
+                addTask(taskFactory(nextTaskType));
             }
+
             break;
 
         case COMPLETE:
-            task_queue.top().complete();
+            task_queue.top().complete(map, navigator, nextRobotState, nextTaskType);
 
+            /*
             if(task_queue.top().getTaskType() == PATHCORRECTION){
                 task_queue.top().setStatus(INPROGRESS);
                 task_queue.pop();
@@ -49,7 +60,7 @@ void TaskManager::executeCurrentTask(Map* map, Navigator* navigator)
                 task_queue.pop();
                 // travelTaskCompleteState(task) definition lines below
                 Task newTask(POSECORRECTION);
-                newTask.setEndpoint(task_queue.top().getDestination().getX(), task_queue.top().getDestination().getY(), task_queue.top().getEndpointOrientation());
+                newTask.setEndpoint(task_queue.top().getDestination().getX(), task_queue.top().getDestination().getY(), task_queue.top().getEndpointDesiredOrientation());
                 task_queue.push(newTask);
             }
             else if(task_queue.top().getTaskType() == POSECORRECTION) {
@@ -57,33 +68,36 @@ void TaskManager::executeCurrentTask(Map* map, Navigator* navigator)
                 task_queue.pop();
                 task_queue.top().setStatus(INPROGRESS);
             }
-            else{
-                task_queue.pop();
+            */
+            task_queue.pop();
+
+            // Make a new task if required by current task.
+            // This is typical when a task enters a suspended state.
+            // This should only happen if nextRobotState == COMPLETE
+            newTask = taskFactory(nextTaskType);
+            if(newTask != nullptr) {
+                newTask->setEndpoint(task_queue.top().getDestination().getX(), task_queue.top().getDestination().getY(), task_queue.top().getEndpointDesiredOrientation());
+                addTask(taskFactory(nextTaskType));
             }
 
-
             break;
-    }
+    } // switch
 }
 
 
-void TaskManager::addTask(Task& task) 
+void TaskManager::addTask(Task* task) 
 {
-    task_queue.push(task);
-}
-
-RobotState TaskManager::getNextRobotState() 
-{
-    return nextRobotState;
+    if(task != nullptr)
+        task_queue.push(*task);
 }
 
 /*
     Read tasks from a json file. All tasks in the file are assumed to be in order.
 */
-void TaskManager::importTasksFromJSON()
+void TaskManager::importTasksFromJSON(std::string filename)
 {
     boost::property_tree::ptree pt;
-    boost::property_tree::read_json("tasks.json", pt);
+    boost::property_tree::read_json(filename, pt);
     std::vector<Task> task_vector;
 
     for (const auto& taskkey : pt) {
@@ -95,13 +109,12 @@ void TaskManager::importTasksFromJSON()
         double endpoint_orientation_required = taskTypeToEnum(taskkey.second.get_child("endpoint_settings").get_value<std::string>());
         task->setEndpoint(endpoint_x, endpoint_y, endpoint_orientation);
         task_vector.push_back(*task);
+        delete task;
     }
 
     // insert tasks 
     for(auto v = task_vector.rbegin(); v != task_vector.rend(); ++v){
-        addTask(*v);
-        //task_queue.push(*v);
-        //printTaskInfo(task_queue.top());
+        addTask(&*v);
     }
 }
 
@@ -119,9 +132,11 @@ Task* TaskManager::taskFactory(TaskType ttype)
         case PATHCORRECTION:
             return new PathCorrectionTask();
             break;
+        /*
         case POSECORRECTION: 
             return new PoseCorrectionTask();
             break;
+        */
         case NA:
         default:
             return nullptr;

@@ -7,10 +7,10 @@ Task::Task(TaskType ttype)
 {
 }
 
-void Task::notStarted(Map* map, Navigator* navigator, RobotState& robotState){}
-void Task::inProgress(Map* map, Navigator* navigator, RobotState& robotState){}
-void Task::suspended(){}
-void Task::complete(){}
+void Task::notStarted(Map* map, Navigator* navigator, RobotState& nextRobotState){}
+void Task::inProgress(Map* map, Navigator* navigator, RobotState& nextRobotState){}
+void Task::suspended(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType){}
+void Task::complete(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType){}
 
 // setters
 void Task::setStatus(Status s)
@@ -22,15 +22,14 @@ void Task::setEndpoint(double x, double y, double orientation)
 {
     destination.setX(x);
     destination.setY(y);
-    endpointOrientation = orientation;
+    //endpointDesiredOrientation = orientation;
 }
 
 // getters
 Status Task::getStatus() const { return status; }
 Waypoint Task::getDestination() const { return destination; } 
 TaskType Task::getTaskType() const { return taskType; }
-inline std::string Task::getName() { return taskTypeToString(taskType); }
-double Task::getEndpointOrientation() { return endpointOrientation; }
+std::string Task::getName() { return taskTypeToString(taskType); }
 
 void Task::printTaskInfo(Task& task)
 {

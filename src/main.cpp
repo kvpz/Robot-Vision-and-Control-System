@@ -4,7 +4,6 @@
 #include <vector>
 #include <utility>
 #include "robot.hpp"
-//#include "task.hpp"
 #include "taskmanager.hpp"
 #include "example-utils.hpp"
 
@@ -23,7 +22,7 @@ int main() try
     robot->setCurrentXY(x_offset, y_offset); // x,y are front of robot (camera location)
     
     // load tasks from JSON file
-    robot->getTaskManager()->importTasksFromJSON();
+    robot->getTaskManager()->importTasksFromJSON("tasks.json");
 
     // Setup T265 connection
     std::string serial_t265_str;

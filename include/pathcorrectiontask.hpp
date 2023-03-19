@@ -9,13 +9,13 @@ class PathCorrectionTask : public Task
 public:
     PathCorrectionTask();
 
-    virtual void notStarted(Map* map, Navigator* navigator, RobotState& robotState) override;
+    virtual void notStarted(Map* map, Navigator* navigator, RobotState& nextRobotState) override;
 
-    virtual void inProgress(Map* map, Navigator* navigator, RobotState& robotState) override;
+    virtual void inProgress(Map* map, Navigator* navigator, RobotState& nextRobotState) override;
 
-    virtual void suspended() override;
+    virtual void suspended(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType) override;
 
-    virtual void complete() override;
+    virtual void complete(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType) override;
 
 private:
     RobotState robotState;

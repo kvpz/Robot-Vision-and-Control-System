@@ -123,7 +123,7 @@ RobotOrientationAtEndpoint Robot::isRobotOriented(double robotOrientation, doubl
   bool isRobotApproximatelyOriented = false;
   
   // robot orientation minus endpoint orientation
-  angleToDestination = getRobotAngleToPoseOrientation(*this, endpointOrientation);
+  angleToDestination = getRobotToEndpointSlopeAngle(*this, endpointOrientation);
   isRobotApproximatelyOriented = std::fabs(angleToDestination) > tolerance ? false : true;
   
   if(angleToDestination < 0.0 && isRobotApproximatelyOriented) {

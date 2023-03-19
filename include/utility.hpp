@@ -135,10 +135,10 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
 
   The angle is calculated by 
  */
-static double angleToEndpointOrientation(double robotOrientation, double endpointOrientation)
+static double angleToEndpointOrientation(double robotOrientation, double endpointDesiredOrientation)
 {
   // this information alone will not tell us if robot should rotate left or right
-  return robotOrientation - endpointOrientation;
+  return robotOrientation - endpointDesiredOrientation;
 }
 
 #endif

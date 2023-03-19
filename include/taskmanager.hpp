@@ -36,32 +36,26 @@ class TaskManager
 public:
     TaskManager();
 
-    void executeCurrentTask(Map* map, Navigator* navigator);
+    void executeCurrentTask(Map* map, Navigator* navigator, RobotState& robotState);
 
-
-    void addTask(Task& task);
+    void addTask(Task* task);
 
     //void importTasksFromJSON(){}
 
-    RobotState getNextRobotState();
+    //RobotState getNextRobotState();
 
     /*
         importTasksFromJson
 
         Read tasks from a json file. All tasks in the file are assumed to be in order.
     */
-    void importTasksFromJSON();
+    void importTasksFromJSON(std::string filename);
 
     bool hasTasks();
 
 private:
     std::stack<Task> task_queue;
-    //Task& task;
-    //Robot&* robot;
-    RobotState nextRobotState;
-
     Task* taskFactory(TaskType ttype);
-
 };
 
 
