@@ -1,8 +1,8 @@
-#include "travelTask.hpp"
+#include "navigatetotask.hpp"
 
-TravelTask::TravelTask(){}
+NavigateToTask::NavigateToTask(){}
 
-void TravelTask::notStarted(Map* map, Navigator* navigator, RobotState& robotState)
+void NavigateToTask::notStarted(Map* map, Navigator* navigator, RobotState& robotState)
 {
     // At this point the robot should be told whether it should travel 
     // forward, backward, left, or right depending on its distance
@@ -18,7 +18,7 @@ void TravelTask::notStarted(Map* map, Navigator* navigator, RobotState& robotSta
     setStatus(INPROGRESS);
 }
 
-void TravelTask::inProgress(Map* map, Navigator* navigator, RobotState& robotState)
+void NavigateToTask::inProgress(Map* map, Navigator* navigator, RobotState& robotState)
 {
     double destX1 = destination.getX(); 
     double destY1 = destination.getY();
@@ -29,7 +29,7 @@ void TravelTask::inProgress(Map* map, Navigator* navigator, RobotState& robotSta
     // get angle required for robot to rotate until it reaches the angle required at endpoint
     navigator->getRobotAngleToPoseOrientation(map, getEndpointOrientation());
 
-    if(DEBUG_TRAVELTASK) {
+    if(DEBUG_NAVIGATETOTASK) {
         std::cout << "(travel_task_updater) robot pose relative to waypoint: " 
         << printRobotPoseToWaypoint(rposetoway) << std::endl;
     }
@@ -55,11 +55,11 @@ void TravelTask::inProgress(Map* map, Navigator* navigator, RobotState& robotSta
     }
 }
 
-void TravelTask::suspended() //override
+void NavigateToTask::suspended() //override
 {
     // travelTaskSuspendedState(task); definition below
     // if new task assumed to be CORRECTPATH
-    //Task newTask(CORRECTPATH);
+    //Task newTask(PATHCORRECTION);
     //newTask.setEndpoint(destination.getX(), destination.getY(), getEndpointOrientation());
     //task_queue.push(newTask);
 }
@@ -69,11 +69,11 @@ void TravelTask::suspended() //override
     correct its orientation so that it matches the orientation required
     by the endpoint pose.
 */
-void TravelTask::complete() //override
+void NavigateToTask::complete() //override
 {
     //task_queue.pop();
     // travelTaskCompleteState(task) definition lines below
-    //Task newTask(ORIENT);
+    //Task newTask(POSECORRECTION);
     //newTask.setEndpoint(destination.getX(), destination.getY(), getEndpointOrientation());
     //task_queue.push(newTask);
 }

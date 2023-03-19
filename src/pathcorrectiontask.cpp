@@ -1,15 +1,13 @@
-#include "correctionTask.hpp"
+#include "pathcorrectiontask.hpp"
 
-CorrectionTask::CorrectionTask(){}
+PathCorrectionTask::PathCorrectionTask(){}
 
-// Task subtasks
-
-void CorrectionTask::notStarted(Map* map, Navigator* navigator, RobotState& robotState)
+void PathCorrectionTask::notStarted(Map* map, Navigator* navigator, RobotState& robotState)
 {
     setStatus(INPROGRESS);
 }
 
-void CorrectionTask::inProgress(Map* map, Navigator* navigator, RobotState& robotState)
+void PathCorrectionTask::inProgress(Map* map, Navigator* navigator, RobotState& robotState)
 {
     double destX2 = destination.getX();
     double destY2 = destination.getY();
@@ -49,13 +47,13 @@ void CorrectionTask::inProgress(Map* map, Navigator* navigator, RobotState& robo
     }
 }
 
-void CorrectionTask::suspended()
+void PathCorrectionTask::suspended()
 {
     //correction task cannot be suspended.
 
 }
 
-void CorrectionTask::complete()
+void PathCorrectionTask::complete()
 {
     //nextRobotState = STOP;
     //task_queue.pop();

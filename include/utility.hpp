@@ -1,6 +1,5 @@
 #ifndef UTILITY_HPP
 #define UTILTY_HPP
-#include "robot_specs.hpp"
 #include <cmath>
 
 #define UTILITYDEBUG false

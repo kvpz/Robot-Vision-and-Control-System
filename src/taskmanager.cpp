@@ -1,7 +1,7 @@
 #include "taskmanager.hpp"
-#include "travelTask.hpp"
-#include "correctionTask.hpp"
-#include "orientTask.hpp"
+#include "navigatetotask.hpp"
+#include "pathcorrectiontask.hpp"
+#include "posecorrectiontask.hpp"
 
 TaskManager::TaskManager() 
 { }
@@ -30,8 +30,8 @@ void TaskManager::executeCurrentTask(Map* map, Navigator* navigator)
 
         case SUSPENDED:
             task_queue.top().suspended();
-            if(task_queue.top().getTaskType() == TRAVEL){
-                Task newTask(CORRECTPATH);
+            if(task_queue.top().getTaskType() == NAVIGATETO){
+                Task newTask(PATHCORRECTION);
                 newTask.setEndpoint(task_queue.top().getDestination().getX(), task_queue.top().getDestination().getY(), task_queue.top().getEndpointOrientation());
                 task_queue.push(newTask);
             }
@@ -40,19 +40,19 @@ void TaskManager::executeCurrentTask(Map* map, Navigator* navigator)
         case COMPLETE:
             task_queue.top().complete();
 
-            if(task_queue.top().getTaskType() == CORRECTPATH){
+            if(task_queue.top().getTaskType() == PATHCORRECTION){
                 task_queue.top().setStatus(INPROGRESS);
                 task_queue.pop();
                 nextRobotState = STOP;
             }
-            else if(task_queue.top().getTaskType() == TRAVEL) {
+            else if(task_queue.top().getTaskType() == NAVIGATETO) {
                 task_queue.pop();
                 // travelTaskCompleteState(task) definition lines below
-                Task newTask(ORIENT);
+                Task newTask(POSECORRECTION);
                 newTask.setEndpoint(task_queue.top().getDestination().getX(), task_queue.top().getDestination().getY(), task_queue.top().getEndpointOrientation());
                 task_queue.push(newTask);
             }
-            else if(task_queue.top().getTaskType() == ORIENT) {
+            else if(task_queue.top().getTaskType() == POSECORRECTION) {
                 nextRobotState = STOP;
                 task_queue.pop();
                 task_queue.top().setStatus(INPROGRESS);
@@ -113,14 +113,14 @@ bool TaskManager::hasTasks()
 Task* TaskManager::taskFactory(TaskType ttype)
 {
     switch(ttype){
-        case TRAVEL:
-            return new TravelTask();
+        case NAVIGATETO:
+            return new NavigateToTask();
             break;
-        case CORRECTPATH:
-            return new CorrectionTask();
+        case PATHCORRECTION:
+            return new PathCorrectionTask();
             break;
-        case ORIENT: 
-            return new OrientTask();
+        case POSECORRECTION: 
+            return new PoseCorrectionTask();
             break;
         case NA:
         default:

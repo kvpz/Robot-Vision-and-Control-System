@@ -36,11 +36,11 @@ void Task::printTaskInfo(Task& task)
 {
     // print status of this type of task
     switch(task.getTaskType()) {
-        case TRAVEL:
+        case NAVIGATETO:
             std::cout << "\n====== Travel Task Updater ======\n";
             break;
-        case CORRECTPATH:
-            std::cout << "\n====== CorrectPath Task Updater ======\n";
+        case PATHCORRECTION:
+            std::cout << "\n====== PathCorrection Task Updater ======\n";
             break;  
         case DROPPAYLOAD:
             std::cout << "\n====== Drop Payload Task Updater ======\n";

@@ -16,7 +16,6 @@
 #include <boost/timer/timer.hpp>
 //#include <boost/progress.hpp>
 #include "waypoint.hpp"
-#include "robot_specs.hpp"
 //#include "utility.hpp"
 
 

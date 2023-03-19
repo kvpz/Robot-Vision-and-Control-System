@@ -122,49 +122,13 @@ catch (const std::exception& e)
     return EXIT_FAILURE;
 }
 
-// compare general task requirement to robot's current state
-// (1) if robot is not near destination, keep traveling to location
-// (2) check if robot has dropped chips if [RED/GREEN]CHIPDROP task
-// (3) check if robot has recycled objects if RECYCLING task
-
-// check status of travel task and decide on robot state
-	  
-// robot has already been assigned a state
-
-// TRAVEL Subtasks
-// (1) if robot potentially stuck, undo travel
-// (2) if robot not following path (subtask), correct path
-// (2.1) set state STOP
-// (2.2) set state rotate_CW if current angle larger than expected
-// (2.3) set state rotate_CCW if current angle smaller than expected
-// path following is checked every t time or x distance. Path is not being
-// followed if orientation angle is much different than the previous reading.
-// (subtask)
-
-// if CHIPDROP task
-// CHIPDROP Subtasks
-// (1) if robot not in correct orientation, orient robot
-// (2) if robot has rotated and is not near position of attraction, orient robot
-// (3) 
-
-// if RECYCLE task
-// Verify the pincers are open. 
 
 /*
-  Notes:
-  Testing Results #1:
-  sampling: 400 ms
-  angle to destination tolerance: 4 degrees
-
-
-*/  
-
-      /*
-      if(DEBUG_MAIN) {
-        std::cout << "=========== Main Loop ============\n";
-        std::cout << "task stack size: " << task_queue.size() << "\n";
-        std::cout << "current task type: " << taskTypeToString(currentTask.getTaskType()) << "\n";
-        std::cout << "==================================" << std::endl;
-        robot.printStatus();
-      }
-      */
+if(DEBUG_MAIN) {
+  std::cout << "=========== Main Loop ============\n";
+  std::cout << "task stack size: " << task_queue.size() << "\n";
+  std::cout << "current task type: " << taskTypeToString(currentTask.getTaskType()) << "\n";
+  std::cout << "==================================" << std::endl;
+  robot.printStatus();
+}
+*/

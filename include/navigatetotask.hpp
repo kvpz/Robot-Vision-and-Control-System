@@ -1,5 +1,5 @@
-#ifndef TRAVELTASK_HPP
-#define TRAVELTASK_HPP
+#ifndef NAVIGATETASK_HPP
+#define NAVIGATETASK_HPP
 
 #include "robot.hpp"
 #include "task.hpp"
@@ -8,16 +8,12 @@
 #include "navigator.hpp"
 #include "map.hpp"
 
-#define DEBUG_TRAVELTASK false
+#define DEBUG_NAVIGATETOTASK false
 
-class Robot;
-
-class TravelTask : public Task
+class NavigateToTask : public Task
 {
 public:
-    TravelTask();
-
-    // Task subtasks
+    NavigateToTask();
 
     virtual void notStarted(Map* map, Navigator* navigator, RobotState& robotState) override;
 

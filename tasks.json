@@ -1,56 +1,56 @@
 {
     "1": {
-        "type": "travel",
+        "type": "navigateto",
         "endpoint": {"x": 120, "y": 40, "yaw": 90 },
 	    "endpoint_settings":  {"orientation_required": false }
     },
     "2": {
-        "type": "travel",
+        "type": "navigateto",
         "endpoint": {"x": 80, "y": 23, "yaw": 90 },
 	    "endpoint_settings":  {"orientation_required": false }
     },
     "2": {
-        "type": "travel",
+        "type": "navigateto",
         "endpoint": {"x": 46, "y": 23, "yaw": 90 },
 	    "endpoint_settings":  {"orientation_required": false }
     },
     "3": {
-        "type": "travel",
+        "type": "navigateto",
         "endpoint": {"x": 32, "y": 48, "yaw": 90 },
 	    "endpoint_settings":  {"orientation_required": false }
     },
     "4": {
-        "type": "travel",
+        "type": "navigateto",
         "endpoint": {"x": 73, "y": 78, "yaw": 90 },
 	    "endpoint_settings":  {"orientation_required": false }
     },
     "5": {
-        "type": "travel",
+        "type": "navigateto",
         "endpoint": {"x": 46, "y": 23, "yaw": 90 },
 	    "endpoint_settings":  {"orientation_required": true }
     },
     "6": {
-        "type": "travel",
+        "type": "navigateto",
         "endpoint": {"x": 16, "y": 16, "yaw": 0 },
         "endpoint_settings":  {"orientation_required": true }
     },
     "7": {
-        "type": "travel",
+        "type": "navigateto",
         "endpoint": {"x": 20, "y": 90, "yaw": 90 },
         "endpoint_settings":  {"orientation_required": false }
     },
     "8": {
-        "type": "travel",
+        "type": "navigateto",
         "endpoint": {"x": 220, "y": 90, "yaw": 90 },
         "endpoint_settings":  {"orientation_required": false }
     },
     "9": {
-        "type": "travel",
+        "type": "navigateto",
         "endpoint": {"x": 220, "y": 40, "yaw": 90 },
         "endpoint_settings":  {"orientation_required": false }
     },
     "10": {
-        "type": "travel",
+        "type": "navigateto",
         "endpoint": {"x": 120, "y": 40, "yaw": 90 },
         "endpoint_settings":  {"orientation_required": false }
     }

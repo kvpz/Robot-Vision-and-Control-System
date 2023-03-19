@@ -1,28 +1,26 @@
-#ifndef CORRECTIONTASK_HPP
-#define CORRECTIONTASK_HPP
+#ifndef POSECORRECTIONTASK_HPP
+#define POSECORRECTIONTASK_HPP
 #include "task.hpp"
-#include "enums/robotPoseToWaypoint.hpp"
+#include "enums/robotOrientationAtEndpoint.hpp"
+#include "navigator.hpp"
 #include "map.hpp"
 
-//class Robot;
-
-class CorrectionTask : public Task
+class PoseCorrectionTask : public Task
 {
 public:
-    CorrectionTask();
+    PoseCorrectionTask();
 
     virtual void notStarted(Map* map, Navigator* navigator, RobotState& robotState) override;
 
     virtual void inProgress(Map* map, Navigator* navigator, RobotState& robotState) override;
-
+      
     virtual void suspended() override;
 
     virtual void complete() override;
 
 private:
-    RobotState robotState;
-    double angleToDestTolerance = 10.0;
-    bool correcting_position = false;        
+    RobotState robotState; // ex. MOVE_BACKWARD
+    bool correcting_orientation = false;
 
 };
 

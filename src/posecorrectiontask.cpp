@@ -1,15 +1,15 @@
-#include "orientTask.hpp"
+#include "posecorrectiontask.hpp"
 
-OrientTask::OrientTask(){}
+PoseCorrectionTask::PoseCorrectionTask(){}
 
 // Task subtasks
 
-void OrientTask::notStarted(Map* map, Navigator* navigator, RobotState& robotState) 
+void PoseCorrectionTask::notStarted(Map* map, Navigator* navigator, RobotState& robotState) 
 {
     setStatus(INPROGRESS);
 }
 
-void OrientTask::inProgress(Map* map, Navigator* navigator, RobotState& robotState) 
+void PoseCorrectionTask::inProgress(Map* map, Navigator* navigator, RobotState& robotState) 
 {
     RobotOrientationAtEndpoint robotOrientationAtEndpoint = navigator->isRobotOriented(map, getEndpointOrientation());
         
@@ -33,13 +33,13 @@ void OrientTask::inProgress(Map* map, Navigator* navigator, RobotState& robotSta
     }
 }
     
-void OrientTask::suspended() 
+void PoseCorrectionTask::suspended() 
 {
     // orient task cannot be suspended.
 
 }
 
-void OrientTask::complete() 
+void PoseCorrectionTask::complete() 
 {
     //nextRobotState = STOP;
     //task_queue.pop();

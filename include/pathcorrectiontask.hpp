@@ -1,28 +1,26 @@
-#ifndef ORIENTTASK_HPP
-#define ORIENTTASK_HPP
+#ifndef PATHCORRECTIONTASK_HPP
+#define PATHCORRECTIONTASK_HPP
 #include "task.hpp"
-#include "enums/robotOrientationAtEndpoint.hpp"
-#include "navigator.hpp"
+#include "enums/robotPoseToWaypoint.hpp"
 #include "map.hpp"
 
-class OrientTask : public Task
+class PathCorrectionTask : public Task
 {
 public:
-    OrientTask();
-
-    // Task subtasks
+    PathCorrectionTask();
 
     virtual void notStarted(Map* map, Navigator* navigator, RobotState& robotState) override;
 
     virtual void inProgress(Map* map, Navigator* navigator, RobotState& robotState) override;
-      
+
     virtual void suspended() override;
 
     virtual void complete() override;
 
 private:
-    RobotState robotState; // ex. MOVE_BACKWARD
-    bool correcting_orientation = false;
+    RobotState robotState;
+    double angleToDestTolerance = 10.0;
+    bool correcting_position = false;        
 
 };
 

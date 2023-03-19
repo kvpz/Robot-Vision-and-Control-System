@@ -10,8 +10,8 @@ A task in the task scheduler is designed to perform the following:
 
 ### 1.1 Tasks
 The task scheduler supports the following tasks:
-* Endpoint navigation (*TRAVEL*)
-* Path correction (*CORRECTION*)
+* Endpoint navigation (*NAVIGATETO*)
+* Path correction (*PATHCORRECTION*)
 * Payload deployment (*DROPCHIP*)
 * Target search (*SEARCH*)
 
