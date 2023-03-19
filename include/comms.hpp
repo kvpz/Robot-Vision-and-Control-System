@@ -1,7 +1,7 @@
 #ifndef COMMS_HPP
 #define COMMS_HPP
 #define DEBUG_NOMCU false
-#define COMMSDEBUG true
+#define COMMSDEBUG false
 #include <boost/asio.hpp>
 
 class Comms
@@ -12,7 +12,7 @@ public:
     {
         serial_port_name = portname;
         boost::asio::io_service io;
-        serial = new boost::asio::serial_port(io, serial_port_name);//"/dev/ttyACM0");
+        serial = new boost::asio::serial_port(io, serial_port_name);
     }
 
     void send_command(std::string message) 
