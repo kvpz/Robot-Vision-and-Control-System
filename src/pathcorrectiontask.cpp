@@ -1,6 +1,11 @@
 #include "pathcorrectiontask.hpp"
 
-PathCorrectionTask::PathCorrectionTask(){}
+PathCorrectionTask::PathCorrectionTask()
+    : Task(PATHCORRECTION)
+{
+
+
+}
 
 void PathCorrectionTask::notStarted(Map* map, Navigator* navigator, RobotState& nextRobotState)
 {
@@ -13,7 +18,7 @@ void PathCorrectionTask::inProgress(Map* map, Navigator* navigator, RobotState& 
     double destY2 = destination.getY();
     double robotX2 = map->getRobotCurrentXCoordinatePoint();
     double robotY2 = map->getRobotCurrentYCoordinatePoint();
-    RobotPoseToWaypoint rposetoway = navigator->isRobotOnPath(robotX2, robotY2, destX2, destY2);
+    RobotPoseToWaypoint rposetoway = navigator->isRobotOnPath(map, robotX2, robotY2, destX2, destY2);
 
     // assign robot a task depending on orientation relative to waypoint
     switch(rposetoway) {

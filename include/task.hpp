@@ -8,6 +8,8 @@
 #include "map.hpp"
 #include "navigator.hpp"
 
+#define DEBUG_TASK true
+
 class Task
 {
 public:
@@ -21,7 +23,6 @@ public:
 
   // setters
   void setStatus(Status s);
-
   void setEndpoint(double x, double y, double orientation);
 
   // getters
@@ -29,17 +30,17 @@ public:
   Waypoint getDestination() const;
   TaskType getTaskType() const;
   inline std::string getName();
-  double getEndpointDesiredOrientation() { return -1; }
+  inline double getEndpointDesiredOrientation() { return -1; }
 
   static void printTaskInfo(Task& task);
   
 protected:
   Waypoint destination;
+  TaskType taskType;
 
 private:
   double expected_duration;
   Status status;
-  TaskType taskType;
 };
 
 #endif

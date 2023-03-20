@@ -2,15 +2,15 @@ WARN	:= #-W -Wall -Wconversion -pedantic
 CC	:= g++
 USRLIBS	:= /usr/lib
 RSHEADERS := /usr/include/librealsense2
-#PROJHEADERS := /home/ieeefiu/Documents/perrito/include
-PROJHEADERS := /home/kevin/Documents/perrito/include 
+PROJHEADERS := /home/ieeefiu/Documents/perrito/include
+#PROJHEADERS := /home/kevin/Documents/perrito/include 
 INCLUDE = -I$(RSHEADERS) -I$(PROJHEADERS)
 
 ALL: main.x
 
-main.x: task.o navigatetotask.o pathcorrectiontask.o taskmanager.o robot.o 
+main.x: task.o navigatetotask.o pathcorrectiontask.o taskmanager.o 
 	@echo "building target main.x"
-	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lrealsense2 -o main.x task.o navigatetotask.o pathcorrectiontask.o taskmanager.o robot.o
+	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lrealsense2 -o main.x task.o navigatetotask.o pathcorrectiontask.o taskmanager.o 
 
 task.o: $(PROJHEADERS)
 	@echo "building target task.o"
@@ -32,8 +32,8 @@ taskmanager.o: $(PROJHEADERS)
 	@echo "building target taskmanager.o"
 	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/taskmanager.cpp -O3 -L$(USRLIBS) -lrealsense2 
 
-robot.o: ./src/robot.cpp $(PROJHEADERS) 
-	$(CC) -c $(INCLUDE) $(WARN) -pthread -O3 -L$(USRLIBS) -lrealsense2 -c ./src/robot.cpp
+#robot.o: ./src/robot.cpp $(PROJHEADERS) 
+#	$(CC) -c $(INCLUDE) $(WARN) -pthread -O3 -L$(USRLIBS) -lrealsense2 -c ./src/robot.cpp
 
 clean:
 	rm -rf *.o *.x

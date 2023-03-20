@@ -2,12 +2,10 @@
 #define ROBOT_HPP
 #include "waypoint.hpp"
 #include "taskmanager.hpp"
-//#include "task.hpp"
 #include "comms.hpp"
 #include "enums/robotPoseToWaypoint.hpp"
 #include "enums/robotState.hpp"
 #include "enums/robotOrientationAtEndpoint.hpp"
-//#include "utility.hpp"
 #include "map.hpp"
 #include "navigator.hpp"
 
@@ -96,15 +94,10 @@ public:
     // setters (inlined)
     void setTravelDirection(RobotState travDir) { state = travDir; } //travelDirection = travDir; }
 
-    void setState(RobotState newState) 
-    {
-      state = newState;
-    }
-    
     void updateRobotState(RobotState nextRobotState)
     {
         if(state != nextRobotState) {
-            setState(nextRobotState);
+            state = nextRobotState;
             run();
         }
     }

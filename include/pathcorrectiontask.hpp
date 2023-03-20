@@ -18,7 +18,6 @@ public:
     virtual void complete(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType) override;
 
 private:
-    RobotState robotState;
     double angleToDestTolerance = 10.0;
     bool correcting_position = false;        
 

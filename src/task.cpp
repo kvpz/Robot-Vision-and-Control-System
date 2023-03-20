@@ -23,6 +23,14 @@ void Task::setEndpoint(double x, double y, double orientation)
     destination.setX(x);
     destination.setY(y);
     //endpointDesiredOrientation = orientation;
+
+    if(DEBUG_TASK) {
+        std::cout << "======= Task::setEndpoint =========\n";
+        std::cout << "set X: " << x << "\n";
+        std::cout << "set Y: " << y << "\n";
+        //std::cout << "setEndpoint: " << endpointDesiredOrientation << "\n";
+        std::cout << "===================================\n" << std::endl;
+    }
 }
 
 // getters

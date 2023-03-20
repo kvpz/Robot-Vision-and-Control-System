@@ -16,6 +16,9 @@ double _PI_over_180 = M_PI / 180.0;
 double x_offset = 120.0;
 double y_offset = 30.0;
 
+double global_yaw;
+double global_y;
+
 int main() try
 {
     Robot* robot = new Robot();
@@ -61,7 +64,9 @@ int main() try
             double z = -1.0 * pose_data.rotation.y;
             double yaw = atan((2.0 * (w*z + x*y)) /  (w*w + x*x - y*y - z*z)) * _180_over_PI;
             robot->setOrientation(yaw_to_degrees(yaw, pose_data.rotation.y));
-            
+            //global_yaw = yaw;
+            //global_y = pose_data.rotation.y;
+
             double current_x = (pose_data.translation.x) * 100.0 + x_offset;
             double current_y;
             if(pose_data.translation.z < 0.0)
@@ -100,11 +105,19 @@ int main() try
     while(1) {
       if(!robot->hasTasks())
         break;
-
+      robot->setOrientation(yaw_to_degrees(global_yaw, global_y));
       robot->executeCurrentTask();
 
       std::this_thread::sleep_for(std::chrono::milliseconds(10));	
 
+      if(DEBUG_MAIN) {
+        std::cout << "=========== Main Loop ============\n";
+        //std::cout << "task stack size: " << task_queue.size() << "\n";
+        //std::cout << "current task type: " << taskTypeToString(currentTask.getTaskType()) << "\n";
+        std::cout << "==================================" << std::endl;
+      }
+
+      robot->printStatus();
     }
 	
     
@@ -123,11 +136,5 @@ catch (const std::exception& e)
 
 
 /*
-if(DEBUG_MAIN) {
-  std::cout << "=========== Main Loop ============\n";
-  std::cout << "task stack size: " << task_queue.size() << "\n";
-  std::cout << "current task type: " << taskTypeToString(currentTask.getTaskType()) << "\n";
-  std::cout << "==================================" << std::endl;
-  robot.printStatus();
-}
+
 */

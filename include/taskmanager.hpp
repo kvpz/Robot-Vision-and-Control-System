@@ -12,6 +12,8 @@
 #include "map.hpp"
 #include "navigator.hpp"
 
+#define DEBUG_TASKMANAGER false
+
 class Task;
 /*
     ITaskManager is an interface class.
@@ -38,7 +40,7 @@ public:
 
     void executeCurrentTask(Map* map, Navigator* navigator, RobotState& robotState);
 
-    void addTask(Task* task);
+    void addTask(std::unique_ptr<Task>);
 
     //void importTasksFromJSON(){}
 
@@ -51,11 +53,12 @@ public:
     */
     void importTasksFromJSON(std::string filename);
 
-    bool hasTasks();
+    inline bool hasTasks() { return !task_queue.empty(); }
 
 private:
-    std::stack<Task> task_queue;
-    Task* taskFactory(TaskType ttype);
+    std::stack<std::unique_ptr<Task>> task_queue;
+    //std::stack<Task> task_queue;
+    std::unique_ptr<Task> taskFactory(TaskType ttype);
 };
 
 

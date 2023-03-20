@@ -13,7 +13,7 @@ public:
     Navigator(){}
 
     // setters
-    double setAngleToDestination(double angle)
+    void setAngleToDestination(double angle)
     {
         angleToDestination = angle;
     }
@@ -27,7 +27,8 @@ public:
     //double getRobotAngleToPoseOrientation(Map* map, double endpointOrientation) const 
     double getRobotToEndpointSlopeAngle(Map* map, double endpointOrientation) const 
     {
-        return angleToEndpointOrientation(map->getRobotOrientation(), endpointOrientation);
+        return map->getRobotOrientation() - endpointOrientation;
+        //return angleToEndpointOrientation(map->getRobotOrientation(), endpointOrientation);
     }
 
     double getRobotAngleToPoint(Map* map, double x, double y) const 
@@ -35,7 +36,7 @@ public:
           return angleToPoint(map->getRobotCurrentXCoordinatePoint(), map->getRobotCurrentYCoordinatePoint(), x, y, map->getRobotOrientation());
     }
 
-    RobotPoseToWaypoint isRobotOnPath(double robotX, double robotY, double destX, double destY) 
+    RobotPoseToWaypoint isRobotOnPath(Map* map, double robotX, double robotY, double destX, double destY) 
     {
         RobotPoseToWaypoint result = ON_PATH;
         // check if robot position (x,y) approximately near destination
@@ -43,13 +44,14 @@ public:
         bool isXapproxnear = approximately(robotX, destX, 2.0);
         double angleToDestTolerance = 10.0;
 
-        setAngleToDestination((destX, destY));
+        //setAngleToDestination(getRobotToEndpointSlopeAngle(map, ));
+        angleToDestination = getRobotAngleToPoint(map, destX, destY);
 
         if(isYapproxnear && isXapproxnear) {
             // near the waypoint
             result = NEAR;
         }
-        else if (getAngleToDestination() < angleToDestTolerance && getAngleToDestination() > -1.0*angleToDestTolerance
+        else if (angleToDestination < angleToDestTolerance && angleToDestination > -1.0*angleToDestTolerance
                 && (!(robotX < (destX - 2.5)) || !(robotX > (destX + 2.5)))) 
         { // robotY > destY && robotX == destX
             // detect if drifting from path
@@ -60,7 +62,7 @@ public:
         }    
 
         if(NAVDEBUG) {
-            std::cout << "\n====== isRobotOnPath ======\n";
+            std::cout << "\n====== Navigator::isRobotOnPath ======\n";
             std::cout << "result: " << printRobotPoseToWaypoint(result) << "\n";
             std::cout << "(isRobotOnPath) angle to dest: " << getAngleToDestination() << "\n";
             std::cout << "=============================\n" << std::endl;

@@ -1,6 +1,10 @@
 #include "posecorrectiontask.hpp"
 
-PoseCorrectionTask::PoseCorrectionTask(){}
+PoseCorrectionTask::PoseCorrectionTask()
+{
+
+    
+}
 
 void PoseCorrectionTask::notStarted(Map* map, Navigator* navigator, RobotState& nextRobotState) 
 {

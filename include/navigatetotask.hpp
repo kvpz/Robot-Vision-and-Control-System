@@ -13,11 +13,12 @@
 class NavigateToTask : public Task
 {
 public:
-    NavigateToTask();
+    NavigateToTask(){}
+    NavigateToTask(double endpointOrientation, bool endpointOrientationRequirement);
 
-    virtual void notStarted(Map* map, Navigator* navigator, RobotState& robotState) override;
+    virtual void notStarted(Map* map, Navigator* navigator, RobotState& nextRobotState) override;
 
-    virtual void inProgress(Map* map, Navigator* navigator, RobotState& robotState) override;
+    virtual void inProgress(Map* map, Navigator* navigator, RobotState& nextRobotState) override;
 
     virtual void suspended(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType) override;
 
@@ -34,8 +35,8 @@ public:
     inline double getEndpointDesiredOrientation() { return endpointDesiredOrientation; }
 
 private:
-    RobotState robotState; // ex. MOVE_BACKWARD
-    RobotPoseToWaypoint rPoseToWaypoint;
+    //RobotState robotState; // ex. MOVE_BACKWARD
+    //RobotPoseToWaypoint rPoseToWaypoint;
     bool isRobotAtEndpoint;
     Waypoint endpoint;
     double endpointDesiredOrientation; // angle

@@ -1,11 +1,23 @@
 #include "navigatetotask.hpp"
 
-NavigateToTask::NavigateToTask() 
-    : isRobotAtEndpoint(false)
-{}
+NavigateToTask::NavigateToTask(double endpointOrientation, bool endpointOrientationRequirement) 
+    : isRobotAtEndpoint(false), Task(NAVIGATETO)
+{
+    if(DEBUG_NAVIGATETOTASK) {
+        std::cout << "\n======= NavigateToTask::NavigateToTask =======\n";
+        std::cout << "isEndpointOrientationRequired: " << endpointOrientationRequirement << "\n";
+        std::cout << "endpointOrientation: " << endpointOrientation << "\n";
+        std::cout << "==============================================\n" << std::endl;
+    }
+    isEndpointOrientationRequired = endpointOrientationRequirement;
+    endpointDesiredOrientation = endpointOrientation;
+}
 
 void NavigateToTask::notStarted(Map* map, Navigator* navigator, RobotState& nextRobotState)
 {
+    if(DEBUG_NAVIGATETOTASK) {
+        std::cout << "\n====== NavigateToTask::notStarted =======\n" << std::endl;
+    }
     // At this point the robot should be told whether it should travel 
     // forward, backward, left, or right depending on its distance
     // to the endpoint
@@ -30,42 +42,44 @@ void NavigateToTask::inProgress(Map* map, Navigator* navigator, RobotState& next
     double destY1 = destination.getY();
 
     RobotPoseToWaypoint robotPoseRelativeToWaypoint;
-    robotPoseRelativeToWaypoint = navigator->isRobotOnPath(map->getRobotCurrentXCoordinatePoint(), map->getRobotCurrentYCoordinatePoint(), destX1, destY1);
+    robotPoseRelativeToWaypoint = navigator->isRobotOnPath(map, map->getRobotCurrentXCoordinatePoint(), map->getRobotCurrentYCoordinatePoint(), destX1, destY1);
 
     // get angle required for robot to rotate until it reaches the angle required at endpoint
     navigator->getRobotToEndpointSlopeAngle(map, endpointDesiredOrientation);
+    
+    switch(robotPoseRelativeToWaypoint) {
+        case NONE:
+            // decide whether to move forward or backward depending on distance to endpoint
+            break;
+        case NEAR:
+            // set to complete if orientation at endpoint does not matter
+            if(isEndpointOrientationRequired == false) {
+                setStatus(COMPLETE);
+                nextRobotState = STOP;
+                isRobotAtEndpoint = true;
+            }
+            else if(isEndpointOrientationRequired) {
+                setStatus(INPROGRESS);
+                EndpointPoseCorrection(map, navigator, nextRobotState);
+            }
+
+            break;
+        case ON_PATH:
+            setStatus(INPROGRESS);
+            //robotState = robot->getTravelDirection();
+            break;
+        case OFF_PATH:
+            setStatus(SUSPENDED);
+            nextRobotState = STOP;
+            break;
+    }
 
     if(DEBUG_NAVIGATETOTASK) {
+        std::cout << "======= NavigateToTask::inProgress =======" << std::endl;
         std::cout << "(navigateto_task_updater) robot pose relative to waypoint: " 
                 << printRobotPoseToWaypoint(robotPoseRelativeToWaypoint) << std::endl;
     }
-    
-    switch(robotPoseRelativeToWaypoint) {
-    case NONE:
-        // decide whether to move forward or backward depending on distance to endpoint
-        break;
-    case NEAR:
-        // set to complete if orientation at endpoint does not matter
-        if(isEndpointOrientationRequired == false) {
-            setStatus(COMPLETE);
-            nextRobotState = STOP;
-            isRobotAtEndpoint = true;
-        }
-        else if(isEndpointOrientationRequired) {
-            setStatus(INPROGRESS);
-            EndpointPoseCorrection(map, navigator, nextRobotState);
-        }
 
-        break;
-    case ON_PATH:
-        setStatus(INPROGRESS);
-        //robotState = robot->getTravelDirection();
-        break;
-    case OFF_PATH:
-        setStatus(SUSPENDED);
-        nextRobotState = STOP;
-        break;
-    }
 }
 
 void NavigateToTask::EndpointPoseCorrection(Map* map, Navigator* navigator, RobotState& nextRobotState) 
@@ -112,5 +126,7 @@ void NavigateToTask::complete(Map* map, Navigator* navigator, RobotState& nextRo
     //Task newTask(POSECORRECTION);
     //newTask.setEndpoint(destination.getX(), destination.getY(), getEndpointDesiredOrientation());
     //task_queue.push(newTask);
-
+    if(DEBUG_NAVIGATETOTASK) {
+        std::cout << "\n======= NavigateToTask::complete =======\n" << std::endl;
+    }
 }
