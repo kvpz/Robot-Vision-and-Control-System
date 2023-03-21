@@ -60,10 +60,17 @@ public:
         destinationXY.setY(desty);
     }
 
-private:
+    inline void setDestinationDesiredOrientation(double theta) 
+    {
+        destinationOrientation = theta;
+    }
 
+private:
+    // robot current position data
     Waypoint robotCurrentLocation;
     double robotCurrentOrientation; // (gyro) orientation
+
+    // destination position data
     Waypoint destinationXY;
     double destinationOrientation;
     // map<size_t, Waypoint> pointsVisited;

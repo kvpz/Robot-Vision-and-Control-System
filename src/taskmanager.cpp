@@ -118,12 +118,13 @@ void TaskManager::importTasksFromJSON(std::string filename)
     }
 
     // insert tasks into task manager queue
-    for(std::vector<std::unique_ptr<Task>>::reverse_iterator v = task_vector.rbegin(); v != task_vector.rend(); ++v){
-        switch((*v)->getTaskType()){
+    for(std::vector<std::unique_ptr<Task>>::reverse_iterator task = task_vector.rbegin(); task != task_vector.rend(); ++task){
+        switch((*task)->getTaskType()) {
             case NAVIGATETO:
-                addTask(std::move(*v));
+                addTask(std::move(*task));
                 break;
             case PATHCORRECTION:
+                std::cout << "Path correction tasks cannot be defined in task configuration JSON file." << std::endl;
                 break;
             case NA:
             default:
@@ -145,17 +146,44 @@ std::unique_ptr<Task> TaskManager::taskFactory(TaskType ttype)
     switch(ttype){
         case NAVIGATETO:
             task = std::make_unique<NavigateToTask>();
-            return task;
             break;
         case PATHCORRECTION:
-            return std::make_unique<NavigateToTask>();
+            task = std::make_unique<PathCorrectionTask>();
             break;
         case NA:
         default:
             return nullptr;
             //task.reset(nullptr);
-            return task;
             break;
     }
+
+    return task;
+}
+
+template<typename T>
+std::unique_ptr<T> 
+TaskManager::taskFactory2(TaskType ttype)
+{
+    if(DEBUG_TASKMANAGER) {
+        std::cout << "======= TaskManager::taskFactory ========\n";
+        std::cout << "taskType: " << taskTypeToString(ttype) << "\n";
+        std::cout << "=========================================\n" << std::endl;
+    }
+    std::unique_ptr<T> task;
+    switch(ttype){
+        case NAVIGATETO:
+            task = std::make_unique<NavigateToTask>();
+            break;
+        case PATHCORRECTION:
+            task = std::make_unique<PathCorrectionTask>();
+            break;
+        case NA:
+        default:
+            return nullptr;
+            //task.reset(nullptr);
+            break;
+    }
+
+    return task;
 }
     

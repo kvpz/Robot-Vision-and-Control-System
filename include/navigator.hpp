@@ -131,7 +131,7 @@ public:
             result = NEAR;
         }
         else if (angleToDestination < angleToDestTolerance && angleToDestination > -1.0*angleToDestTolerance
-                && (!(robotX < (destX - 2.5)) || !(robotX > (destX + 2.5)))) 
+                && (!(map->RobotX() < (destX - 2.5)) || !(map->RobotX() > (destX + 2.5)))) 
         { // robotY > destY && robotX == destX
             // detect if drifting from path
             result = ON_PATH;

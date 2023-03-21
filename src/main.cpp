@@ -16,10 +16,11 @@ double _PI_over_180 = M_PI / 180.0;
 // xy offset from (0,0) xy base values initiated at startup of T265
 double x_robot_camera_offset = 120.0;
 double y_robot_camera_offset = 15.0; // 30.0
+double robot_initial_orientation = 90.0;
 
 int main() try
 {
-    std::unique_ptr<Robot> robot = std::make_unique<Robot>(x_robot_camera_offset, y_robot_camera_offset);
+    std::unique_ptr<Robot> robot = std::make_unique<Robot>(x_robot_camera_offset, y_robot_camera_offset, robot_initial_orientation);
     
     // load tasks from JSON file
     robot->getTaskManager()->importTasksFromJSON("tasks.json");

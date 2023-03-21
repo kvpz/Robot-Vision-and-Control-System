@@ -10,23 +10,20 @@
 #include "map.hpp"
 #include "navigator.hpp"
 
-using namespace std;
-
 #define ROBOTDEBUG true
 
 class Robot {
 public:
-    Robot(double xpos, double ypos) 
-        : state(STOP)
+    Robot(double xpos, double ypos, double orientation) 
+        : state(STOP), robotPoseToWaypoint(NONE)
       //: map(std::make_unique<Map>()), navigator(std::make_unique<Navigator>()), taskManager(std::make_unique<TaskManager>())
     { 
-        comport = new Comms("/dev/ttyACM0");
-        robotPoseToWaypoint = NONE;
-        state = STOP;
+        comport = std::make_unique<Comms>("/dev/ttyACM0");
         taskManager = std::make_unique<TaskManager>();
         navigator = std::make_unique<Navigator>();
         map = std::make_unique<Map>();
         map->setRobotCurrentCoordinate(xpos, ypos);
+        map->setRobotOrientation(orientation);
     }
 
     //void run();
@@ -70,8 +67,8 @@ public:
         std::cout << "\n====== Robot Status ======\n";
         std::cout << "State: " << RobotStateToString(state) << "\n";
         std::cout << "current location: ("
-                << map->getRobotCurrentXCoordinatePoint() << ", "
-                << map->RobotY() << ")\n";
+                  << map->getRobotCurrentXCoordinatePoint() << ", "
+                  << map->getRobotCurrentYCoordinatePoint() << ")\n";
         std::cout << "current orientation (yaw): " << map->getRobotOrientation() << "\n";
         std::cout << "robot pose relative to waypoint: " << printRobotPoseToWaypoint(robotPoseToWaypoint) << "\n";
         std::cout << "==========================\n";
@@ -89,19 +86,11 @@ public:
     // map related functions
     inline bool isNearEndpoint() const { return nearEndpoint; }
 
-    inline std::unique_ptr<Map> getMap() { return std::move(map); }
+    //inline std::unique_ptr<Map> getMap() { return std::move(map); }
     inline std::unique_ptr<Navigator> getNavigator() { return std::move(navigator); }
 
     // setters (inlined)
     void setTravelDirection(RobotState travDir) { state = travDir; } //travelDirection = travDir; }
-
-    void updateRobotState(RobotState nextRobotState)
-    {
-        if(state != nextRobotState) {
-            state = nextRobotState;
-            run();
-        }
-    }
 
     void setCurrentXY(double x, double y) 
     {
@@ -122,16 +111,21 @@ public:
     */
     void executeCurrentTask()
     {
-      //state = taskManager->executeCurrentTask(std::move(map), std::move(navigator));
+      RobotState nextRobotState;
+      //nextRobotState = taskManager->executeCurrentTask(std::move(map), std::move(navigator));
       taskManager->executeCurrentTask(std::move(map), std::move(navigator), nextRobotState);
-      updateRobotState(nextRobotState);
+
+      // change robot state if it is different from current state
+      if(state != nextRobotState) {
+          state = nextRobotState;
+          run();
+      }
     }
 
 private:
     RobotState state;
-    RobotState nextRobotState; // better if TaskManager has this state and returns it to robot
 
-    Comms* comport;
+    std::unique_ptr<Comms> comport;
     RobotPoseToWaypoint robotPoseToWaypoint = NONE;
     RobotOrientationAtEndpoint robotOrientationAtEndpoint = NOTORIENTED;
     bool nearEndpoint = false;

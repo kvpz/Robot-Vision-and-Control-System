@@ -45,12 +45,13 @@ void NavigateToTask::inProgress(std::unique_ptr<Map> map, std::unique_ptr<Naviga
     double destY1 = destination.getY();
     double robotX = map->RobotX();
     double robotY = map->RobotY();
+    double endpointDesiredOrientation = map->dest
     RobotPoseToWaypoint isRobotOnPath = navigator->isRobotOnPath(std::move(map), robotX, robotY, destX1, destY1);
 
     // get angle required for robot to rotate until it reaches the angle required at endpoint
     navigator->getRobotToEndpointSlopeAngle(std::move(map), endpointDesiredOrientation);
     
-    switch(robotPoseRelativeToWaypoint) {
+    switch(isRobotOnPath) {
         case NONE:
             // decide whether to move forward or backward depending on distance to endpoint
             break;
@@ -80,7 +81,7 @@ void NavigateToTask::inProgress(std::unique_ptr<Map> map, std::unique_ptr<Naviga
     if(DEBUG_NAVIGATETOTASK) {
         std::cout << "======= NavigateToTask::inProgress =======" << std::endl;
         std::cout << "(navigateto_task_updater) robot pose relative to waypoint: " 
-                << printRobotPoseToWaypoint(robotPoseRelativeToWaypoint) << std::endl;
+                << printRobotPoseToWaypoint(isRobotOnPath) << std::endl;
     }
 
 }
