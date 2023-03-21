@@ -36,21 +36,13 @@ class TaskManager
 {
 
 public:
-    TaskManager();
+    TaskManager(){};
 
-    void executeCurrentTask(Map* map, Navigator* navigator, RobotState& robotState);
+    void executeCurrentTask(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& robotState);
+    //RobotState executeCurrentTask(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator);
 
     void addTask(std::unique_ptr<Task>);
 
-    //void importTasksFromJSON(){}
-
-    //RobotState getNextRobotState();
-
-    /*
-        importTasksFromJson
-
-        Read tasks from a json file. All tasks in the file are assumed to be in order.
-    */
     void importTasksFromJSON(std::string filename);
 
     inline bool hasTasks() { return !task_queue.empty(); }
@@ -59,6 +51,7 @@ private:
     std::stack<std::unique_ptr<Task>> task_queue;
     //std::stack<Task> task_queue;
     std::unique_ptr<Task> taskFactory(TaskType ttype);
+    //RobotState nextRobotState;
 };
 
 

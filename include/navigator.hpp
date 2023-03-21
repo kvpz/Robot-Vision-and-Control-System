@@ -24,28 +24,107 @@ public:
         return angleToDestination;
     }
 
-    //double getRobotAngleToPoseOrientation(Map* map, double endpointOrientation) const 
-    double getRobotToEndpointSlopeAngle(Map* map, double endpointOrientation) const 
+    //double getRobotAngleToPoseOrientation(std::unique_ptr<Map> map, double endpointOrientation) const 
+    double getRobotToEndpointSlopeAngle(std::unique_ptr<Map> map, double endpointOrientation) const 
     {
         return map->getRobotOrientation() - endpointOrientation;
         //return angleToEndpointOrientation(map->getRobotOrientation(), endpointOrientation);
     }
 
-    double getRobotAngleToPoint(Map* map, double x, double y) const 
+    //double getRobotAngleToPoint(std::unique_ptr<Map> map, double x, double y) const 
+    //{
+    //      return angleToPoint(map->RobotX(), map->RobotY(), x, y, map->getRobotOrientation());
+    
+    /*
+        Calculate the angle from one point to another on a cartesian plane. 
+        This is done by using the point slope formula then taking the 
+        inverse tangent of the slope. The robot's orientation in the global map is known
+        so the robot's orientation is subtracted from the slope angle to obtain 'theta'. 
+        If 'theta' < 0 and abs('theta') is greater than 180, then 360 is added to theta; 
+        otherwise if 'theta' > 180 then 360 is subtracted from 'theta'. 
+
+        'theta' is returned. 'theta' is used in practice to represent the difference
+        between the robot's current orientation and the desired orientation. 
+        TODO: rename function to something more meaningful like robotAngularDistanceToOrientation
+    */
+    double robotAngularDistanceToOrientation(std::unique_ptr<Map> map)
     {
-          return angleToPoint(map->getRobotCurrentXCoordinatePoint(), map->getRobotCurrentYCoordinatePoint(), x, y, map->getRobotOrientation());
+        //double delta_x = x_destination - map->RobotX();
+        //double delta_y = y_destination - map->RobotY();
+        double delta_x = map->getRobotDestinationXCoordinatePoint() - map->RobotX();
+        double delta_y = map->getRobotDestinationYCoordinatePoint() - map->RobotX();
+
+        double beta = 0.0;
+        double theta = 0.0;
+
+        // Calculate the angle of the line connecting the 
+        // robot's xy-position to the xy-destination. 
+        // Beta will be equal to a value in the [-90, 90] degree range
+        beta = atan(delta_y / delta_x) * 180.0 / (M_PI); 
+        
+        // Adjust beta depending on the quadrant of the destination point relative to the robot's position.
+        // Beta will then have a degree value (0,360) taking into account whether the        
+        if(delta_x > 0.0 && delta_y > 0.0){
+            // first quadrant
+            // no adjustments to 
+        }
+        else if(delta_x < 0.0 && delta_y > 0.0) { // beta < 0 || beta
+            // second quadrant
+            beta = beta + 180.0;
+        }
+        else if(delta_x < 0.0 && delta_y < 0.0) {
+            // third quadrant
+            beta = beta + 180.0;
+        }
+        else { // (delta_x > 0.0 && delta_y < 0.0) 
+            // fourth quadrant
+            beta = beta + 360.0;
+        }
+
+        // get difference between robot orientation and required orientation
+        theta = beta - map->getRobotOrientation();
+
+        if(theta < 0.0) {
+            if(std::fabs(theta) > 180.0) {
+                theta = 360 + theta;
+            }
+        }
+        else if(theta > 180.0) {
+            //if(theta > 180.0) {
+            theta = theta - 360.0;
+            //}
+        }
+
+        if(NAVDEBUG) {
+            std::cout << "\n============== Navigator::angleToPoint ===================\n";
+            std::cout << "x_destination: " << x_destination << "\n";
+            std::cout << "y_destination: " << y_destination << "\n";
+            std::cout << "x_robot: " << map->RobotX() << "\n";
+            std::cout << "y_robot: " << map->RobotY() << "\n";
+            std::cout << "delta_y: " << delta_y << "\n";
+            std::cout << "delta_x: " << delta_x << "\n";
+            std::cout << "delta_y / delta_x: " << delta_y / delta_x << "\n";
+            std::cout << "beta: " << beta << "\n";
+            std::cout << "current_angle: " << robot_current_angle << "\n";
+            std::cout << "============================================================" << std::endl;
+        }
+
+        return theta;
     }
+    //} // getRobotAngleToPoint(...)
 
-    RobotPoseToWaypoint isRobotOnPath(Map* map, double robotX, double robotY, double destX, double destY) 
+    RobotPoseToWaypoint isRobotOnPath(std::unique_ptr<Map> map, double robotX, double robotY, double destX, double destY) 
     {
-        RobotPoseToWaypoint result = ON_PATH;
+        // TODO: create global path correction threshold variable for config file use
         // check if robot position (x,y) approximately near destination
-        bool isYapproxnear = approximately(robotY, destY, 2.0);
-        bool isXapproxnear = approximately(robotX, destX, 2.0);
+        double approximationThreshold = 2.0;
+        bool isYapproxnear = approximately(map->RobotY(), map->getRobotDestinationYCoordinatePoint(), approximationThreshold);
+        bool isXapproxnear = approximately(map->RobotX(), map->getRobotDestinationXCoordinatePoint(), approximationThreshold);
         double angleToDestTolerance = 10.0;
+        RobotPoseToWaypoint result = ON_PATH;
 
-        //setAngleToDestination(getRobotToEndpointSlopeAngle(map, ));
-        angleToDestination = getRobotAngleToPoint(map, destX, destY);
+        //setAngleToDestination(getRobotToEndpointSlopeAngle(std::move(map), ));
+        angleToDestination = robotAngularDistanceToOrientation(std::move(map), double robot_current_angle);// getRobotAngleToPoint(std::move(map), destX, destY);
 
         if(isYapproxnear && isXapproxnear) {
             // near the waypoint
@@ -72,14 +151,14 @@ public:
         return result;
     }
 
-    RobotOrientationAtEndpoint isRobotOriented(Map* map, double endpointOrientation) 
+    RobotOrientationAtEndpoint isRobotOriented(std::unique_ptr<Map> map, double endpointOrientation) 
     {
         RobotOrientationAtEndpoint result = ORIENTED;
         double tolerance = 5.0;
         bool isRobotApproximatelyOriented = false;
 
         // robot orientation minus endpoint orientation
-        setAngleToDestination(getRobotToEndpointSlopeAngle(map, endpointOrientation));
+        setAngleToDestination(getRobotToEndpointSlopeAngle(std::move(map), endpointOrientation));
         isRobotApproximatelyOriented = std::fabs(getAngleToDestination()) > tolerance ? false : true;
 
         if(getAngleToDestination() < 0.0 && isRobotApproximatelyOriented) {

@@ -1,43 +1,72 @@
 #ifndef MAP_HPP
 #define MAP_HPP
+#include <optional>
 #include "waypoint.hpp"
 
 class Map
 {
 public:
-    Map(){}
-    
-    double getRobotCurrentXCoordinatePoint() const
+    Map() {}
+
+    // getters
+    inline double RobotX() const
     {
         return robotCurrentLocation.getX();
     }
 
-    double getRobotCurrentYCoordinatePoint() const
+    inline double RobotY() const
     {
         return robotCurrentLocation.getY();
     }
 
-    double getRobotOrientation() const
+    inline Waypoint getRobotCurrentLocation()
+    {
+        return robotCurrentLocation;
+    }
+
+    inline double getRobotOrientation() const
     {
         return robotCurrentOrientation;
     }
 
-    // setters
-    void setRobotCurrentCoordinate(double x, double y) 
+    // Not all destination points require robot to be in a particular orientation.
+    // Calling functions can evaluate whether the optional Waypoint object is null
+    // by using the std::optional has_value function. 
+    inline std::optional<double> getDestinationOrientation()
     {
-      robotCurrentLocation.setX(x);
-      robotCurrentLocation.setY(y);
+        return destinationOrientation;
     }
 
-    void setRobotOrientation(double o)
+    inline Waypoint getNextDestinationXY()
     {
-      robotCurrentOrientation = o;
+        return destinationXY;
+    }
+
+    // setters
+    inline void setRobotCurrentCoordinate(double x, double y)
+    {
+        robotCurrentLocation.setX(x);
+        robotCurrentLocation.setY(y);
+    }
+
+    inline void setRobotOrientation(double o)
+    {
+        robotCurrentOrientation = o;
+    }
+
+    inline void setDestinationXY(double destx, double desty) 
+    {
+        destinationXY.setX(destx);
+        destinationXY.setY(desty);
     }
 
 private:
+
     Waypoint robotCurrentLocation;
     double robotCurrentOrientation; // (gyro) orientation
-
+    Waypoint destinationXY;
+    double destinationOrientation;
+    // map<size_t, Waypoint> pointsVisited;
 };
 
 #endif

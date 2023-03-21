@@ -2,8 +2,8 @@
 #include "navigatetotask.hpp"
 #include "pathcorrectiontask.hpp"
 
-TaskManager::TaskManager() 
-{ }
+//TaskManager::TaskManager() 
+//{ }
 
 /*
     robot info required to be passed to all notStarted:
@@ -19,24 +19,24 @@ TaskManager::TaskManager()
 
     Not all tasks may achieve all status. 
 */
-void TaskManager::executeCurrentTask(Map* map, Navigator* navigator, RobotState& nextRobotState) 
+void TaskManager::executeCurrentTask(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState) 
 {
     TaskType nextTaskType = NA;
     std::unique_ptr<Task> newTask;
     
     switch(task_queue.top()->getStatus()) {
         case NOTSTARTED:
-            task_queue.top()->notStarted(map, navigator, nextRobotState);
+            task_queue.top()->notStarted(std::move(map), std::move(navigator), nextRobotState);
+            // set task to in progress
             break;  
             
         case INPROGRESS:
-            task_queue.top()->inProgress(map, navigator, nextRobotState);
-            //ROBOTASKS::TaskOperations::travel_task_updater(robot, task, nextRobotState);
+            task_queue.top()->inProgress(std::move(map), std::move(navigator), nextRobotState);
             break;
 
         case SUSPENDED:
             std::cout << "\n======= TaskManager::executeCurrentTask ======= path correction\n" << std::endl;
-            task_queue.top()->suspended(map, navigator, nextRobotState, nextTaskType);
+            task_queue.top()->suspended(std::move(map), std::move(navigator), nextRobotState, nextTaskType);
 
             // Make a new task if required by current task.
             // This is typical when a task enters a suspended state.
@@ -49,7 +49,7 @@ void TaskManager::executeCurrentTask(Map* map, Navigator* navigator, RobotState&
             break;
 
         case COMPLETE:
-            task_queue.top()->complete(map, navigator, nextRobotState, nextTaskType);
+            task_queue.top()->complete(std::move(map), std::move(navigator), nextRobotState, nextTaskType);
             task_queue.pop();
 
             // Make a new task if required by current task.
@@ -102,9 +102,7 @@ void TaskManager::importTasksFromJSON(std::string filename)
     double endpoint_orientation;
     bool endpoint_orientation_required;
 
-    for (const auto& taskkey : pt) {
-        //std::unique_ptr<Task> task = std::make_unique<Task>(taskTypeToEnum(taskkey.second.get_child("type").get_value<std::string>()));        
-        
+    for (const auto& taskkey : pt) {        
         endpoint_x = taskkey.second.get_child("endpoint").get_child("x").get_value<double>();
         endpoint_y = taskkey.second.get_child("endpoint").get_child("y").get_value<double>();
         endpoint_orientation = taskkey.second.get_child("endpoint").get_child("yaw").get_value<double>();
@@ -117,27 +115,20 @@ void TaskManager::importTasksFromJSON(std::string filename)
                 task_vector.push_back(std::move(task));
                 break;
         }
-        //task->setEndpoint(endpoint_x, endpoint_y, endpoint_orientation);
-        //task_vector.push_back(std::move(task));
     }
 
     // insert tasks into task manager queue
     for(std::vector<std::unique_ptr<Task>>::reverse_iterator v = task_vector.rbegin(); v != task_vector.rend(); ++v){
         switch((*v)->getTaskType()){
             case NAVIGATETO:
-                //addTask(new NavigateToTask(endpoint_orientation, endpoint_orientation_required));
                 addTask(std::move(*v));
-                //addTask(*v);
                 break;
             case PATHCORRECTION:
-                //addTask(new PathCorrectionTask());
                 break;
             case NA:
             default:
-                //return nullptr;
                 break;
         }
-        //addTask(v->get());
     }
 
     if(DEBUG_TASKMANAGER) std::cout << "====== end TaskManager::importTasksFromJson ========" << std::endl;

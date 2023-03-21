@@ -3,6 +3,7 @@
 #include <stack>
 #include <vector>
 #include <utility>
+#include <memory>
 #include "robot.hpp"
 #include "taskmanager.hpp"
 #include "example-utils.hpp"
@@ -13,16 +14,12 @@ double _180_over_PI = 180.0 / M_PI;
 double _PI_over_180 = M_PI / 180.0;
 
 // xy offset from (0,0) xy base values initiated at startup of T265
-double x_offset = 120.0;
-double y_offset = 30.0;
-
-double global_yaw;
-double global_y;
+double x_robot_camera_offset = 120.0;
+double y_robot_camera_offset = 15.0; // 30.0
 
 int main() try
 {
-    Robot* robot = new Robot();
-    robot->setCurrentXY(x_offset, y_offset); // x,y are front of robot (camera location)
+    std::unique_ptr<Robot> robot = std::make_unique<Robot>(x_robot_camera_offset, y_robot_camera_offset);
     
     // load tasks from JSON file
     robot->getTaskManager()->importTasksFromJSON("tasks.json");
@@ -56,25 +53,26 @@ int main() try
         if (rs2::pose_frame fp = frame.as<rs2::pose_frame>()) {
             rs2_pose pose_data = fp.get_pose_data();
 
-            double current_angle_quaternion = pose_data.rotation.y;
-          
             double w = pose_data.rotation.w;
             double x = -1.0 * pose_data.rotation.z;
             double y = pose_data.rotation.x;
             double z = -1.0 * pose_data.rotation.y;
             double yaw = atan((2.0 * (w*z + x*y)) /  (w*w + x*x - y*y - z*z)) * _180_over_PI;
-            robot->setOrientation(yaw_to_degrees(yaw, pose_data.rotation.y));
-            //global_yaw = yaw;
-            //global_y = pose_data.rotation.y;
+            double yaw_90_degree_offset = 90.0 - yaw;
 
-            double current_x = (pose_data.translation.x) * 100.0 + x_offset;
+            // translate current x,y provided by camera to center of robot relative to global map
+            double current_x; // = (pose_data.translation.x) * 100.0 + x_robot_camera_offset;
             double current_y;
-            if(pose_data.translation.z < 0.0)
-              current_y = std::fabs(pose_data.translation.z) * 100.0 + y_offset;
-            else
-              current_y = y_offset - ((pose_data.translation.z) * 100.0);
-
-            int quadrant = quadrant_identifier(yaw, current_angle_quaternion);
+            if(pose_data.translation.z < 0.0) {
+              current_x = (pose_data.translation.x) * 100.0 + x_robot_camera_offset;
+              current_y = std::fabs(pose_data.translation.z) * 100.0 + y_robot_camera_offset;
+            }
+            else {
+              current_x = (pose_data.translation.x) * 100.0 + x_robot_camera_offset;
+              current_y = y_robot_camera_offset - ((pose_data.translation.z) * 100.0);
+            }
+            // calculate the (x,y) position
+            int quadrant = quadrant_identifier(yaw, pose_data.rotation.y);
             if(quadrant == 1) {
               current_x = current_x - 15.0 * std::cos((90.0 - yaw) * _PI_over_180);
               current_y = current_y - 15.0 * std::sin((90.0 - yaw) * _PI_over_180);
@@ -92,6 +90,8 @@ int main() try
               current_y = current_y + 15.0 * std::sin((90.0 + yaw) * _PI_over_180);
             }
 
+            // Transfer T265 data to robot
+            robot->setOrientation(yaw_to_degrees(yaw, pose_data.rotation.y));
             robot->setCurrentXY(current_x, current_y);
         }
     };
@@ -102,20 +102,15 @@ int main() try
     // allow time for camera to initialize
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));			  
 
+    robot->setCurrentXY(x_robot_camera_offset, y_robot_camera_offset); // x,y are front of robot (camera location)
+
     while(1) {
       if(!robot->hasTasks())
         break;
-      robot->setOrientation(yaw_to_degrees(global_yaw, global_y));
+
       robot->executeCurrentTask();
 
       std::this_thread::sleep_for(std::chrono::milliseconds(10));	
-
-      if(DEBUG_MAIN) {
-        std::cout << "=========== Main Loop ============\n";
-        //std::cout << "task stack size: " << task_queue.size() << "\n";
-        //std::cout << "current task type: " << taskTypeToString(currentTask.getTaskType()) << "\n";
-        std::cout << "==================================" << std::endl;
-      }
 
       robot->printStatus();
     }
@@ -136,5 +131,10 @@ catch (const std::exception& e)
 
 
 /*
-
+      if(DEBUG_MAIN) {
+        std::cout << "=========== Main Loop ============\n";
+        //std::cout << "task stack size: " << task_queue.size() << "\n";
+        //std::cout << "current task type: " << taskTypeToString(currentTask.getTaskType()) << "\n";
+        std::cout << "==================================" << std::endl;
+      }
 */

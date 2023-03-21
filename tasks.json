@@ -2,7 +2,7 @@
     "1": {
         "type": "navigateto",
         "endpoint": {"x": 120, "y": 40, "yaw": 90 },
-	    "endpoint_settings":  {"orientation_required": 0 }
+	    "endpoint_settings":  {"orientation_required": false }
     },
     "2": {
         "type": "navigateto",

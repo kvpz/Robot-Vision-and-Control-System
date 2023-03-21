@@ -1,16 +1,16 @@
 #include "task.hpp"
 
-Task::Task() : status(NOTSTARTED) {}
+//Task::Task() : status(NOTSTARTED) {}
 
 Task::Task(TaskType ttype)
     : status(NOTSTARTED), taskType(ttype)
 {
 }
 
-void Task::notStarted(Map* map, Navigator* navigator, RobotState& nextRobotState){}
-void Task::inProgress(Map* map, Navigator* navigator, RobotState& nextRobotState){}
-void Task::suspended(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType){}
-void Task::complete(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType){}
+void Task::notStarted(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState){}
+void Task::inProgress(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState){}
+void Task::suspended(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType){}
+void Task::complete(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType){}
 
 // setters
 void Task::setStatus(Status s)
@@ -18,10 +18,10 @@ void Task::setStatus(Status s)
     status = s;
 }
 
-void Task::setEndpoint(double x, double y, double orientation)
+void Task::setEndpoint(std::unique_ptr<Map> map)//double x, double y, double orientation)
 {
-    destination.setX(x);
-    destination.setY(y);
+    destination.setX(map->getRobotCurrentLocation().getX());
+    destination.setY(map->getRobotCurrentLocation().getY());
     //endpointDesiredOrientation = orientation;
 
     if(DEBUG_TASK) {

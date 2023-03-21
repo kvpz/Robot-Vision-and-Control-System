@@ -10,16 +10,16 @@ class PoseCorrectionTask : public Task
 public:
     PoseCorrectionTask();
 
-    virtual void notStarted(Map* map, Navigator* navigator, RobotState& nextRobotState) override;
+    virtual void notStarted(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState) override;
 
-    virtual void inProgress(Map* map, Navigator* navigator, RobotState& nextRobotState) override;
+    virtual void inProgress(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState) override;
       
-    virtual void suspended(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType) override;
+    virtual void suspended(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) override;
 
-    virtual void complete(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType) override;
+    virtual void complete(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) override;
 
 private:
-    //RobotState robotState; // ex. MOVE_BACKWARD
+
     bool correcting_orientation = false;
 
 };

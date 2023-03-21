@@ -12,7 +12,7 @@ public:
     {
         serial_port_name = portname;
         boost::asio::io_service io;
-        serial = new boost::asio::serial_port(io, serial_port_name);
+        serial = std::make_unique<boost::asio::serial_port>(io, serial_port_name);
     }
 
     void send_command(std::string message) 

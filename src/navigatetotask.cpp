@@ -13,16 +13,15 @@ NavigateToTask::NavigateToTask(double endpointOrientation, bool endpointOrientat
     endpointDesiredOrientation = endpointOrientation;
 }
 
-void NavigateToTask::notStarted(Map* map, Navigator* navigator, RobotState& nextRobotState)
+void NavigateToTask::notStarted(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState)
 {
-    if(DEBUG_NAVIGATETOTASK) {
-        std::cout << "\n====== NavigateToTask::notStarted =======\n" << std::endl;
-    }
     // At this point the robot should be told whether it should travel 
     // forward, backward, left, or right depending on its distance
     // to the endpoint
-    if(distance(map->getRobotCurrentXCoordinatePoint(), destination.getX(), destination.getY(), map->getRobotCurrentYCoordinatePoint()) < 70.0 && 
-        navigator->getAngleToDestination() > 130.0) //robot->getAngleToDestination() > 130.0)
+    double robotDistanceToEndpoint = distance(map->RobotX(), destination.getX(), destination.getY(), map->getRobotCurrentYCoordinatePoint());
+    double robot_orientation_minus_destination = navigator->getAngleToDestination();
+
+    if(robotDistanceToEndpoint < 70.0 && robot_orientation_minus_destination > 130.0) //robot->getAngleToDestination() > 130.0)
         nextRobotState = MOVE_BACKWARD;
         //robot->setTravelDirection(MOVE_BACKWARD); //travelDirection = MOVE_BACKWARD;
     else
@@ -30,22 +29,26 @@ void NavigateToTask::notStarted(Map* map, Navigator* navigator, RobotState& next
         //robot->setTravelDirection(MOVE_FORWARD);//travelDirection = MOVE_FORWARD;
 
     setStatus(INPROGRESS);
+
+    if(DEBUG_NAVIGATETOTASK) {
+        std::cout << "\n====== NavigateToTask::notStarted =======\n" << std::endl;
+    }
 }
 
 /*
     The navigate to task is not complete until the robot has reached the navigation endpoint
     AND, if required, oriented itself at the endpoint at the desired orientation. 
 */
-void NavigateToTask::inProgress(Map* map, Navigator* navigator, RobotState& nextRobotState)
+void NavigateToTask::inProgress(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState)
 {
     double destX1 = destination.getX(); 
     double destY1 = destination.getY();
 
     RobotPoseToWaypoint robotPoseRelativeToWaypoint;
-    robotPoseRelativeToWaypoint = navigator->isRobotOnPath(map, map->getRobotCurrentXCoordinatePoint(), map->getRobotCurrentYCoordinatePoint(), destX1, destY1);
+    robotPoseRelativeToWaypoint = navigator->isRobotOnPath(std::move(map), map->RobotX(), map->RobotY(), destX1, destY1);
 
     // get angle required for robot to rotate until it reaches the angle required at endpoint
-    navigator->getRobotToEndpointSlopeAngle(map, endpointDesiredOrientation);
+    navigator->getRobotToEndpointSlopeAngle(std::move(map), endpointDesiredOrientation);
     
     switch(robotPoseRelativeToWaypoint) {
         case NONE:
@@ -60,7 +63,7 @@ void NavigateToTask::inProgress(Map* map, Navigator* navigator, RobotState& next
             }
             else if(isEndpointOrientationRequired) {
                 setStatus(INPROGRESS);
-                EndpointPoseCorrection(map, navigator, nextRobotState);
+                EndpointPoseCorrection(std::move(map), std::move(navigator), nextRobotState);
             }
 
             break;
@@ -82,28 +85,7 @@ void NavigateToTask::inProgress(Map* map, Navigator* navigator, RobotState& next
 
 }
 
-void NavigateToTask::EndpointPoseCorrection(Map* map, Navigator* navigator, RobotState& nextRobotState) 
-{
-    RobotOrientationAtEndpoint robotOrientationAtEndpoint = navigator->isRobotOriented(map, endpointDesiredOrientation);
-        
-    // assign robot new state depending on its orientation relative to waypoint
-    switch(robotOrientationAtEndpoint) {
-        case ORIENTED:
-            setStatus(COMPLETE);
-            nextRobotState = STOP;
-            break;
-        case OFF_TO_RIGHT:
-            setStatus(INPROGRESS);
-            nextRobotState = ROTATE_CCW;
-            break;
-        case OFF_TO_LEFT:
-            setStatus(INPROGRESS);
-            nextRobotState = ROTATE_CW;
-            break;
-    }
-}
-
-void NavigateToTask::suspended(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType) 
+void NavigateToTask::suspended(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) 
 {
     // travelTaskSuspendedState(task); definition below
     // if new task assumed to be CORRECTPATH
@@ -119,7 +101,7 @@ void NavigateToTask::suspended(Map* map, Navigator* navigator, RobotState& nextR
     correct its orientation so that it matches the orientation required
     by the endpoint pose.
 */
-void NavigateToTask::complete(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType) 
+void NavigateToTask::complete(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) 
 {
     //task_queue.pop();
     // travelTaskCompleteState(task) definition lines below
@@ -128,5 +110,26 @@ void NavigateToTask::complete(Map* map, Navigator* navigator, RobotState& nextRo
     //task_queue.push(newTask);
     if(DEBUG_NAVIGATETOTASK) {
         std::cout << "\n======= NavigateToTask::complete =======\n" << std::endl;
+    }
+}
+
+void NavigateToTask::EndpointPoseCorrection(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState) 
+{
+    RobotOrientationAtEndpoint robotOrientationAtEndpoint = navigator->isRobotOriented(std::move(map), endpointDesiredOrientation);
+        
+    // assign robot new state depending on its orientation relative to waypoint
+    switch(robotOrientationAtEndpoint) {
+        case ORIENTED:
+            setStatus(COMPLETE);
+            nextRobotState = STOP;
+            break;
+        case OFF_TO_RIGHT:
+            setStatus(INPROGRESS);
+            nextRobotState = ROTATE_CCW;
+            break;
+        case OFF_TO_LEFT:
+            setStatus(INPROGRESS);
+            nextRobotState = ROTATE_CW;
+            break;
     }
 }

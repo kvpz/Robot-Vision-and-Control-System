@@ -6,14 +6,14 @@ PoseCorrectionTask::PoseCorrectionTask()
     
 }
 
-void PoseCorrectionTask::notStarted(Map* map, Navigator* navigator, RobotState& nextRobotState) 
+void PoseCorrectionTask::notStarted(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState) 
 {
     setStatus(INPROGRESS);
 }
 
-void PoseCorrectionTask::inProgress(Map* map, Navigator* navigator, RobotState& nextRobotState) 
+void PoseCorrectionTask::inProgress(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState) 
 {
-    RobotOrientationAtEndpoint robotOrientationAtEndpoint = navigator->isRobotOriented(map, getEndpointDesiredOrientation());
+    RobotOrientationAtEndpoint robotOrientationAtEndpoint = navigator->isRobotOriented(std::move(map), getEndpointDesiredOrientation());
         
     // assign robot new state depending on its orientation relative to waypoint
     switch(robotOrientationAtEndpoint) {
@@ -35,13 +35,13 @@ void PoseCorrectionTask::inProgress(Map* map, Navigator* navigator, RobotState& 
     }
 }
     
-void PoseCorrectionTask::suspended(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType) 
+void PoseCorrectionTask::suspended(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) 
 {
     // orient task cannot be suspended.
 
 }
 
-void PoseCorrectionTask::complete(Map* map, Navigator* navigator, RobotState& nextRobotState, TaskType& nextTaskType) 
+void PoseCorrectionTask::complete(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) 
 {
     //nextRobotState = STOP;
     //task_queue.pop();

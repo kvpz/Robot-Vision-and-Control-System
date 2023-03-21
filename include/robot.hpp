@@ -1,5 +1,6 @@
 #ifndef ROBOT_HPP
 #define ROBOT_HPP
+#include <memory>
 #include "waypoint.hpp"
 #include "taskmanager.hpp"
 #include "comms.hpp"
@@ -13,18 +14,19 @@ using namespace std;
 
 #define ROBOTDEBUG true
 
-//class TaskManager;
-
 class Robot {
 public:
-    Robot() 
+    Robot(double xpos, double ypos) 
+        : state(STOP)
+      //: map(std::make_unique<Map>()), navigator(std::make_unique<Navigator>()), taskManager(std::make_unique<TaskManager>())
     { 
         comport = new Comms("/dev/ttyACM0");
         robotPoseToWaypoint = NONE;
         state = STOP;
-        taskManager = new TaskManager();
-        navigator = new Navigator();
-        map = new Map();
+        taskManager = std::make_unique<TaskManager>();
+        navigator = std::make_unique<Navigator>();
+        map = std::make_unique<Map>();
+        map->setRobotCurrentCoordinate(xpos, ypos);
     }
 
     //void run();
@@ -69,7 +71,7 @@ public:
         std::cout << "State: " << RobotStateToString(state) << "\n";
         std::cout << "current location: ("
                 << map->getRobotCurrentXCoordinatePoint() << ", "
-                << map->getRobotCurrentYCoordinatePoint() << ")\n";
+                << map->RobotY() << ")\n";
         std::cout << "current orientation (yaw): " << map->getRobotOrientation() << "\n";
         std::cout << "robot pose relative to waypoint: " << printRobotPoseToWaypoint(robotPoseToWaypoint) << "\n";
         std::cout << "==========================\n";
@@ -82,14 +84,13 @@ public:
     inline RobotState getState() const { return state; }
     inline double getOrientation() const { return map->getRobotOrientation(); }
     inline double getAngleToDestination() const { return navigator->getAngleToDestination(); }
-    inline TaskManager* getTaskManager() const { return taskManager; }
-    inline bool hasTasks() const { return taskManager->hasTasks(); }
+    inline std::unique_ptr<TaskManager> getTaskManager() { return std::move(taskManager); }
+    inline bool hasTasks() { return taskManager->hasTasks(); }
     // map related functions
     inline bool isNearEndpoint() const { return nearEndpoint; }
-    inline RobotState getTravelDirection() { return state; } //travelDirection; }
 
-    inline Map* getMap() { return map; }
-    inline Navigator* getNavigator() { return navigator; }
+    inline std::unique_ptr<Map> getMap() { return std::move(map); }
+    inline std::unique_ptr<Navigator> getNavigator() { return std::move(navigator); }
 
     // setters (inlined)
     void setTravelDirection(RobotState travDir) { state = travDir; } //travelDirection = travDir; }
@@ -121,13 +122,14 @@ public:
     */
     void executeCurrentTask()
     {
-      taskManager->executeCurrentTask(map, navigator, nextRobotState);
+      //state = taskManager->executeCurrentTask(std::move(map), std::move(navigator));
+      taskManager->executeCurrentTask(std::move(map), std::move(navigator), nextRobotState);
       updateRobotState(nextRobotState);
     }
 
 private:
-    RobotState state = STOP;
-    RobotState nextRobotState;
+    RobotState state;
+    RobotState nextRobotState; // better if TaskManager has this state and returns it to robot
 
     Comms* comport;
     RobotPoseToWaypoint robotPoseToWaypoint = NONE;
@@ -138,9 +140,9 @@ private:
     //double currentOrientation; // (gyro) orientation
     //RobotState travelDirection;
 
-    TaskManager* taskManager;
-    Navigator* navigator;
-    Map* map;
+    std::unique_ptr<TaskManager> taskManager;
+    std::unique_ptr<Navigator> navigator;
+    std::unique_ptr<Map> map;
 
 
 };
