@@ -25,9 +25,9 @@ public:
     }
 
     //double getRobotAngleToPoseOrientation(std::unique_ptr<Map> map, double endpointOrientation) const 
-    double getRobotToEndpointSlopeAngle(std::unique_ptr<Map> map, double endpointOrientation) const 
+    double getRobotToEndpointSlopeAngle(std::unique_ptr<Map> map, double endpointDesiredOrientation) const 
     {
-        return map->getRobotOrientation() - endpointOrientation;
+        return map->getRobotOrientation() - endpointDesiredOrientation;
         //return angleToEndpointOrientation(map->getRobotOrientation(), endpointOrientation);
     }
 

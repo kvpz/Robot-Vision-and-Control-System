@@ -43,9 +43,9 @@ void NavigateToTask::inProgress(std::unique_ptr<Map> map, std::unique_ptr<Naviga
 {
     double destX1 = destination.getX(); 
     double destY1 = destination.getY();
-
-    RobotPoseToWaypoint robotPoseRelativeToWaypoint;
-    robotPoseRelativeToWaypoint = navigator->isRobotOnPath(std::move(map), map->RobotX(), map->RobotY(), destX1, destY1);
+    double robotX = map->RobotX();
+    double robotY = map->RobotY();
+    RobotPoseToWaypoint isRobotOnPath = navigator->isRobotOnPath(std::move(map), robotX, robotY, destX1, destY1);
 
     // get angle required for robot to rotate until it reaches the angle required at endpoint
     navigator->getRobotToEndpointSlopeAngle(std::move(map), endpointDesiredOrientation);
