@@ -24,14 +24,14 @@ public:
         return angleToDestination;
     }
 
-    //double getRobotAngleToPoseOrientation(std::unique_ptr<Map> map, double endpointOrientation) const 
-    double getRobotToEndpointSlopeAngle(std::unique_ptr<Map> map, double endpointDesiredOrientation) const 
+    //double getRobotAngleToPoseOrientation(std::shared_ptr<Map> map, double endpointOrientation) const 
+    double getRobotToEndpointSlopeAngle(std::shared_ptr<Map> map, double endpointDesiredOrientation) const 
     {
         return map->getRobotOrientation() - endpointDesiredOrientation;
         //return angleToEndpointOrientation(map->getRobotOrientation(), endpointOrientation);
     }
 
-    //double getRobotAngleToPoint(std::unique_ptr<Map> map, double x, double y) const 
+    //double getRobotAngleToPoint(std::shared_ptr<Map> map, double x, double y) const 
     //{
     //      return angleToPoint(map->RobotX(), map->RobotY(), x, y, map->getRobotOrientation());
     
@@ -47,7 +47,7 @@ public:
         between the robot's current orientation and the desired orientation. 
         TODO: rename function to something more meaningful like robotAngularDistanceToOrientation
     */
-    double robotAngularDistanceToOrientation(std::unique_ptr<Map> map)
+    double robotAngularDistanceToOrientation(std::shared_ptr<Map> map)
     {
         //double delta_x = x_destination - map->RobotX();
         //double delta_y = y_destination - map->RobotY();
@@ -113,7 +113,7 @@ public:
     }
     //} // getRobotAngleToPoint(...)
 
-    RobotPoseToWaypoint isRobotOnPath(std::unique_ptr<Map> map, double robotX, double robotY, double destX, double destY) 
+    RobotPoseToWaypoint isRobotOnPath(std::shared_ptr<Map> map, double robotX, double robotY, double destX, double destY) 
     {
         // TODO: create global path correction threshold variable for config file use
         // check if robot position (x,y) approximately near destination
@@ -124,8 +124,8 @@ public:
         double robotCurrentOrientation = map->getRobotOrientation();
         RobotPoseToWaypoint result = ON_PATH;
 
-        //setAngleToDestination(getRobotToEndpointSlopeAngle(std::move(map), ));
-        angleToDestination = robotAngularDistanceToOrientation(std::move(map));// getRobotAngleToPoint(std::move(map), destX, destY);
+        //setAngleToDestination(getRobotToEndpointSlopeAngle(map, ));
+        angleToDestination = robotAngularDistanceToOrientation(map);// getRobotAngleToPoint(map, destX, destY);
 
         if(isYapproxnear && isXapproxnear) {
             // near the waypoint
@@ -151,14 +151,14 @@ public:
         return result;
     }
 
-    RobotOrientationAtEndpoint isRobotOriented(std::unique_ptr<Map> map, double endpointOrientation) 
+    RobotOrientationAtEndpoint isRobotOriented(std::shared_ptr<Map> map, double endpointOrientation) 
     {
         RobotOrientationAtEndpoint result = ORIENTED;
         double tolerance = 5.0;
         bool isRobotApproximatelyOriented = false;
 
         // robot orientation minus endpoint orientation
-        setAngleToDestination(getRobotToEndpointSlopeAngle(std::move(map), endpointOrientation));
+        setAngleToDestination(getRobotToEndpointSlopeAngle(map, endpointOrientation));
         isRobotApproximatelyOriented = std::fabs(getAngleToDestination()) > tolerance ? false : true;
 
         if(getAngleToDestination() < 0.0 && isRobotApproximatelyOriented) {

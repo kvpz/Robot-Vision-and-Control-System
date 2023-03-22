@@ -19,38 +19,38 @@
 
     Not all tasks may achieve all status. 
 */
-void TaskManager::executeCurrentTask(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState) 
+void TaskManager::executeCurrentTask(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
 {
     TaskType nextTaskType = NA;
     std::unique_ptr<Task> newTask;
     
     switch(task_queue.top()->getStatus()) {
         case NOTSTARTED:
-            task_queue.top()->notStarted(std::move(map), std::move(navigator), nextRobotState);
+            task_queue.top()->notStarted(map, navigator, nextRobotState);
             // set task to in progress
             break;  
             
         case INPROGRESS:
-            task_queue.top()->inProgress(std::move(map), std::move(navigator), nextRobotState);
+            task_queue.top()->inProgress(map, navigator, nextRobotState);
             break;
 
         case SUSPENDED:
             std::cout << "\n======= TaskManager::executeCurrentTask ======= path correction\n" << std::endl;
-            task_queue.top()->suspended(std::move(map), std::move(navigator), nextRobotState, nextTaskType);
+            task_queue.top()->suspended(map, navigator, nextRobotState, nextTaskType);
 
             // Make a new task if required by current task.
             // This is typical when a task enters a suspended state.
             newTask = taskFactory(nextTaskType);
             if(newTask != nullptr) {
                 //newTask->setEndpoint(task_queue.top()->getDestination().getX(), task_queue.top()->getDestination().getY(), task_queue.top()->getEndpointDesiredOrientation());
-                newTask->setEndpoint(std::move(map));
+                newTask->setEndpoint(map);
                 addTask(std::move(newTask));
             }
 
             break;
 
         case COMPLETE:
-            task_queue.top()->complete(std::move(map), std::move(navigator), nextRobotState, nextTaskType);
+            task_queue.top()->complete(map, navigator, nextRobotState, nextTaskType);
             task_queue.pop();
 
             // Make a new task if required by current task.
@@ -59,7 +59,7 @@ void TaskManager::executeCurrentTask(std::unique_ptr<Map> map, std::unique_ptr<N
             newTask = taskFactory(nextTaskType); // == nullptr if nextTaskType
             if(newTask != nullptr) {
                 //newTask->setEndpoint(task_queue.top()->getDestination().getX(), task_queue.top()->getDestination().getY(), task_queue.top()->getEndpointDesiredOrientation());
-                newTask->setEndpoint(std::move(map));
+                newTask->setEndpoint(map);
                 addTask(std::move(newTask));
             }
 

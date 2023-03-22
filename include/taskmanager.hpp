@@ -38,8 +38,8 @@ class TaskManager
 public:
     TaskManager(){};
 
-    void executeCurrentTask(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& robotState);
-    //RobotState executeCurrentTask(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator);
+    void executeCurrentTask(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& robotState);
+    //RobotState executeCurrentTask(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator);
 
     void addTask(std::unique_ptr<Task>);
 

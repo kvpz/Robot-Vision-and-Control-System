@@ -108,7 +108,6 @@ int main() try
 
     while(1) {
       if(!robot->hasTasks()) {
-        std::cout << "No more tasks. Terminating loop" << std::endl;
         break;
       }
 

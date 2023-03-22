@@ -16,18 +16,18 @@ public:
     NavigateToTask(){}
     NavigateToTask(double endpointOrientation, bool endpointOrientationRequirement);
 
-    virtual void notStarted(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState) override;
+    virtual void notStarted(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) override;
 
-    virtual void inProgress(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState) override;
+    virtual void inProgress(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) override;
 
-    virtual void suspended(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) override;
+    virtual void suspended(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) override;
 
     /*
         When a robot has completed traveling to its endpoint, it then needs to 
         correct its orientation so that it matches the orientation required
         by the endpoint pose.
     */
-    virtual void complete(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) override;
+    virtual void complete(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) override;
 
     //travelTaskSuspendedState(task);
     //travelTaskCompleteState(task);
@@ -41,7 +41,7 @@ private:
     double endpointDesiredOrientation; // angle
     bool isEndpointOrientationRequired;
 
-    void EndpointPoseCorrection(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState) ;
+    void EndpointPoseCorrection(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) ;
 
 };
 

@@ -72,8 +72,8 @@ std::unique_ptr<TaskManager> getTaskManager() { return std::move(taskManager); }
 bool hasTasks() { return taskManager->hasTasks(); }
 bool isNearEndpoint() const { return nearEndpoint; }
 
-std::unique_ptr<Map> getMap() { return std::move(map); }
-std::unique_ptr<Navigator> getNavigator() { return std::move(navigator); }
+std::unique_ptr<Map> getMap() { return map; }
+std::unique_ptr<Navigator> getNavigator() { return navigator; }
 
 // setters
 void setTravelDirection(RobotState travDir) { state = travDir; } //travelDirection = travDir; }
@@ -105,8 +105,8 @@ void setIsNearEndpoint(bool b) { nearEndpoint = b; }
 */
 void executeCurrentTask()
 {
-  //state = taskManager->executeCurrentTask(std::move(map), std::move(navigator));
-  taskManager->executeCurrentTask(std::move(map), std::move(navigator), nextRobotState);
+  //state = taskManager->executeCurrentTask(map, navigator);
+  taskManager->executeCurrentTask(map, navigator, nextRobotState);
   updateRobotState(nextRobotState);
 }
 

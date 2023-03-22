@@ -86,12 +86,12 @@ public:
     inline double getOrientation() const { return map->getRobotOrientation(); }
     inline double getAngleToDestination() const { return navigator->getAngleToDestination(); }
     inline std::shared_ptr<TaskManager> getTaskManager() { return taskManager; }
-    bool hasTasks() { std::cout << "Robot::hasTasks ==== taskManager address: " << &(*taskManager) << std::endl; return taskManager->hasTasks(); }
+    bool hasTasks() { return taskManager->hasTasks(); }
     // map related functions
     inline bool isNearEndpoint() const { return nearEndpoint; }
 
-    //inline std::unique_ptr<Map> getMap() { return std::move(map); }
-    inline std::unique_ptr<Navigator> getNavigator() { return std::move(navigator); }
+    //inline std::unique_ptr<Map> getMap() { return map; }
+    inline std::shared_ptr<Navigator> getNavigator() { return navigator; }
 
     // setters (inlined)
     void setTravelDirection(RobotState travDir) { state = travDir; } //travelDirection = travDir; }
@@ -120,8 +120,8 @@ public:
       }
 
       RobotState nextRobotState;
-      //nextRobotState = taskManager->executeCurrentTask(std::move(map), std::move(navigator));
-      taskManager->executeCurrentTask(std::move(map), std::move(navigator), nextRobotState);
+      //nextRobotState = taskManager->executeCurrentTask(map, navigator);
+      taskManager->executeCurrentTask(map, navigator, nextRobotState);
 
       // change robot state if it is different from current state
       if(state != nextRobotState) {
@@ -143,8 +143,8 @@ private:
     //RobotState travelDirection;
 
     std::shared_ptr<TaskManager> taskManager;
-    std::unique_ptr<Navigator> navigator;
-    std::unique_ptr<Map> map;
+    std::shared_ptr<Navigator> navigator;
+    std::shared_ptr<Map> map;
 
 
 };

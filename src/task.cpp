@@ -7,10 +7,10 @@ Task::Task(TaskType ttype)
 {
 }
 
-void Task::notStarted(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState){}
-void Task::inProgress(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState){}
-void Task::suspended(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType){}
-void Task::complete(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType){}
+void Task::notStarted(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState){}
+void Task::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState){}
+void Task::suspended(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType){}
+void Task::complete(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType){}
 
 // setters
 void Task::setStatus(Status s)
@@ -24,7 +24,7 @@ void Task::setEndpoint(double destx, double desty, double destOrientation)
     destination.setY(desty);
 }
 
-void Task::setEndpoint(std::unique_ptr<Map> map)//double x, double y, double orientation)
+void Task::setEndpoint(std::shared_ptr<Map> map)//double x, double y, double orientation)
 {
     destination.setX(map->getNextDestinationXY().getX());
     destination.setY(map->getNextDestinationXY().getY());
