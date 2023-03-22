@@ -15,6 +15,9 @@ NavigateToTask::NavigateToTask(double endpointOrientation, bool endpointOrientat
 
 void NavigateToTask::notStarted(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState)
 {
+    if(DEBUG_NAVIGATETOTASK) {
+        std::cout << "\n====== NavigateToTask::notStarted =======\n" << std::endl;
+    }
     // At this point the robot should be told whether it should travel 
     // forward, backward, left, or right depending on its distance
     // to the endpoint
@@ -32,7 +35,8 @@ void NavigateToTask::notStarted(std::unique_ptr<Map> map, std::unique_ptr<Naviga
     setStatus(INPROGRESS);
 
     if(DEBUG_NAVIGATETOTASK) {
-        std::cout << "\n====== NavigateToTask::notStarted =======\n" << std::endl;
+        std::cout << "setting next robot state\n";
+        std::cout << "\n==========================================\n" << std::endl;
     }
 }
 
@@ -42,6 +46,9 @@ void NavigateToTask::notStarted(std::unique_ptr<Map> map, std::unique_ptr<Naviga
 */
 void NavigateToTask::inProgress(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState)
 {
+    if(DEBUG_NAVIGATETOTASK) {
+        std::cout << "======= NavigateToTask::inProgress =======" << std::endl;
+    }
     double destX1 = map->getNextDestinationXY().getX(); 
     double destY1 = map->getNextDestinationXY().getY();
     double robotX = map->RobotX();
@@ -80,9 +87,9 @@ void NavigateToTask::inProgress(std::unique_ptr<Map> map, std::unique_ptr<Naviga
     }
 
     if(DEBUG_NAVIGATETOTASK) {
-        std::cout << "======= NavigateToTask::inProgress =======" << std::endl;
-        std::cout << "(navigateto_task_updater) robot pose relative to waypoint: " 
-                << printRobotPoseToWaypoint(isRobotOnPath) << std::endl;
+        std::cout << "robot pose relative to waypoint: " 
+                    << printRobotPoseToWaypoint(isRobotOnPath) << "\n";
+        std::cout << "==================================\n" << std::endl;
     }
 
 }

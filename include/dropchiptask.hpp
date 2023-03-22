@@ -8,7 +8,7 @@
 #include "navigator.hpp"
 #include "map.hpp"
 
-#define DEBUG_NAVIGATETOTASK false
+#define DEBUG_NAVIGATETOTASK true
 
 class NavigateToTask : public Task
 {

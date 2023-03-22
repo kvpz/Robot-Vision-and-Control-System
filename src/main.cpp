@@ -21,9 +21,10 @@ double robot_initial_orientation = 90.0;
 int main() try
 {
     std::unique_ptr<Robot> robot = std::make_unique<Robot>(x_robot_camera_offset, y_robot_camera_offset, robot_initial_orientation);
-    
+    std::cout << "Address of taskManager from getTaskManager: " << &(*robot->getTaskManager()) << std::endl;
     // load tasks from JSON file
     robot->getTaskManager()->importTasksFromJSON("tasks.json");
+    std::cout << "Address of taskManager from getTaskManager: " << &(*robot->getTaskManager()) << std::endl;
 
     // Setup T265 connection
     std::string serial_t265_str;
@@ -106,8 +107,10 @@ int main() try
     robot->setCurrentXY(x_robot_camera_offset, y_robot_camera_offset); // x,y are front of robot (camera location)
 
     while(1) {
-      if(!robot->hasTasks())
+      if(!robot->hasTasks()) {
+        std::cout << "No more tasks. Terminating loop" << std::endl;
         break;
+      }
 
       robot->executeCurrentTask();
 

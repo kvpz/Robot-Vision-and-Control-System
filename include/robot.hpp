@@ -19,11 +19,15 @@ public:
       //: map(std::make_unique<Map>()), navigator(std::make_unique<Navigator>()), taskManager(std::make_unique<TaskManager>())
     { 
         comport = std::make_unique<Comms>("/dev/ttyACM0");
-        taskManager = std::make_unique<TaskManager>();
+        taskManager = std::make_shared<TaskManager>();
         navigator = std::make_unique<Navigator>();
         map = std::make_unique<Map>();
         map->setRobotCurrentCoordinate(xpos, ypos);
         map->setRobotOrientation(orientation);
+
+        std::cout << "======== Robot::Robot ========\n";
+        std::cout << "taskManager address: " << &(*taskManager) << "\n";
+        std::cout << "==============================\n" << std::endl;
     }
 
     //void run();
@@ -81,8 +85,8 @@ public:
     inline RobotState getState() const { return state; }
     inline double getOrientation() const { return map->getRobotOrientation(); }
     inline double getAngleToDestination() const { return navigator->getAngleToDestination(); }
-    inline std::unique_ptr<TaskManager> getTaskManager() { return std::move(taskManager); }
-    inline bool hasTasks() { return taskManager->hasTasks(); }
+    inline std::shared_ptr<TaskManager> getTaskManager() { return taskManager; }
+    bool hasTasks() { std::cout << "Robot::hasTasks ==== taskManager address: " << &(*taskManager) << std::endl; return taskManager->hasTasks(); }
     // map related functions
     inline bool isNearEndpoint() const { return nearEndpoint; }
 
@@ -111,6 +115,10 @@ public:
     */
     void executeCurrentTask()
     {
+      if(ROBOTDEBUG) {
+        std::cout << "====== Robot::executeCurrentTask =======" << std::endl;
+      }
+
       RobotState nextRobotState;
       //nextRobotState = taskManager->executeCurrentTask(std::move(map), std::move(navigator));
       taskManager->executeCurrentTask(std::move(map), std::move(navigator), nextRobotState);
@@ -134,7 +142,7 @@ private:
     //double currentOrientation; // (gyro) orientation
     //RobotState travelDirection;
 
-    std::unique_ptr<TaskManager> taskManager;
+    std::shared_ptr<TaskManager> taskManager;
     std::unique_ptr<Navigator> navigator;
     std::unique_ptr<Map> map;
 

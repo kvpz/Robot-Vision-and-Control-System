@@ -12,7 +12,7 @@
 #include "map.hpp"
 #include "navigator.hpp"
 
-#define DEBUG_TASKMANAGER false
+#define DEBUG_TASKMANAGER true
 
 class Task;
 /*
