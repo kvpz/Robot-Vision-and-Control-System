@@ -1,5 +1,5 @@
 WARN	:= #-W -Wall -Wconversion -pedantic
-CC	:= g++
+CC	:= g++ -std=c++17
 USRLIBS	:= /usr/lib
 RSHEADERS := /usr/include/librealsense2
 PROJHEADERS := /home/ieeefiu/Documents/perrito/include

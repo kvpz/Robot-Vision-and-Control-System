@@ -20,14 +20,14 @@ void Task::setStatus(Status s)
 
 void Task::setEndpoint(std::unique_ptr<Map> map)//double x, double y, double orientation)
 {
-    destination.setX(map->getRobotCurrentLocation().getX());
-    destination.setY(map->getRobotCurrentLocation().getY());
+    destination.setX(map->getNextDestinationXY().getX());
+    destination.setY(map->getNextDestinationXY().getY());
     //endpointDesiredOrientation = orientation;
 
     if(DEBUG_TASK) {
         std::cout << "======= Task::setEndpoint =========\n";
-        std::cout << "set X: " << x << "\n";
-        std::cout << "set Y: " << y << "\n";
+        std::cout << "set X: " << map->getNextDestinationXY().getX() << "\n";
+        std::cout << "set Y: " << map->getNextDestinationXY().getY() << "\n";
         //std::cout << "setEndpoint: " << endpointDesiredOrientation << "\n";
         std::cout << "===================================\n" << std::endl;
     }

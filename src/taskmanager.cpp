@@ -55,7 +55,7 @@ void TaskManager::executeCurrentTask(std::unique_ptr<Map> map, std::unique_ptr<N
             // Make a new task if required by current task.
             // This is typical when a task enters a suspended state.
             // This should only happen if nextRobotState == COMPLETE
-            newTask = taskFactory(nextTaskType);
+            newTask = taskFactory(nextTaskType); // == nullptr if nextTaskType
             if(newTask != nullptr) {
                 newTask->setEndpoint(task_queue.top()->getDestination().getX(), task_queue.top()->getDestination().getY(), task_queue.top()->getEndpointDesiredOrientation());
                 addTask(std::move(newTask));

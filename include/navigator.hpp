@@ -51,8 +51,8 @@ public:
     {
         //double delta_x = x_destination - map->RobotX();
         //double delta_y = y_destination - map->RobotY();
-        double delta_x = map->getRobotDestinationXCoordinatePoint() - map->RobotX();
-        double delta_y = map->getRobotDestinationYCoordinatePoint() - map->RobotX();
+        double delta_x = map->getNextDestinationXY().getX() - map->RobotX();
+        double delta_y = map->getNextDestinationXY().getY() - map->RobotY();
 
         double beta = 0.0;
         double theta = 0.0;
@@ -97,15 +97,15 @@ public:
 
         if(NAVDEBUG) {
             std::cout << "\n============== Navigator::angleToPoint ===================\n";
-            std::cout << "x_destination: " << x_destination << "\n";
-            std::cout << "y_destination: " << y_destination << "\n";
-            std::cout << "x_robot: " << map->RobotX() << "\n";
-            std::cout << "y_robot: " << map->RobotY() << "\n";
+            std::cout << "x_destination: " << map->getNextDestinationXY().getX() << "\n";
+            std::cout << "y_destination: " << map->getNextDestinationXY().getY() << "\n";
+            std::cout << "x_robot: " << map->getRobotCurrentLocation().getX() << "\n";
+            std::cout << "y_robot: " << map->getRobotCurrentLocation().getY() << "\n";
             std::cout << "delta_y: " << delta_y << "\n";
             std::cout << "delta_x: " << delta_x << "\n";
             std::cout << "delta_y / delta_x: " << delta_y / delta_x << "\n";
             std::cout << "beta: " << beta << "\n";
-            std::cout << "current_angle: " << robot_current_angle << "\n";
+            std::cout << "current_angle: " << map->getRobotOrientation() << "\n";
             std::cout << "============================================================" << std::endl;
         }
 
@@ -118,8 +118,8 @@ public:
         // TODO: create global path correction threshold variable for config file use
         // check if robot position (x,y) approximately near destination
         double approximationThreshold = 2.0;
-        bool isYapproxnear = approximately(map->RobotY(), map->getRobotDestinationYCoordinatePoint(), approximationThreshold);
-        bool isXapproxnear = approximately(map->RobotX(), map->getRobotDestinationXCoordinatePoint(), approximationThreshold);
+        bool isYapproxnear = approximately(map->getRobotCurrentLocation().getY(), map->getNextDestinationXY().getY(), approximationThreshold);
+        bool isXapproxnear = approximately(map->getRobotCurrentLocation().getX(), map->getNextDestinationXY().getX(), approximationThreshold);
         double angleToDestTolerance = 10.0;
         RobotPoseToWaypoint result = ON_PATH;
 

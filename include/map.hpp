@@ -68,7 +68,7 @@ public:
 private:
     // robot current position data
     Waypoint robotCurrentLocation;
-    double robotCurrentOrientation; // (gyro) orientation
+    double robotCurrentOrientation;
 
     // destination position data
     Waypoint destinationXY;
