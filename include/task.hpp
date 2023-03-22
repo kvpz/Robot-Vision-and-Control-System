@@ -27,6 +27,7 @@ public:
   // setters
   void setStatus(Status s);
   void setEndpoint(std::unique_ptr<Map> map);
+  void setEndpoint(double destx, double desty, double destOrientation);
 
   // getters
   Status getStatus() const;

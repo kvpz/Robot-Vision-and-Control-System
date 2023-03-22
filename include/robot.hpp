@@ -67,8 +67,8 @@ public:
         std::cout << "\n====== Robot Status ======\n";
         std::cout << "State: " << RobotStateToString(state) << "\n";
         std::cout << "current location: ("
-                  << map->getRobotCurrentXCoordinatePoint() << ", "
-                  << map->getRobotCurrentYCoordinatePoint() << ")\n";
+                  << map->getNextDestinationXY().getX() << ", "
+                  << map->getNextDestinationXY().getY() << ")\n";
         std::cout << "current orientation (yaw): " << map->getRobotOrientation() << "\n";
         std::cout << "robot pose relative to waypoint: " << printRobotPoseToWaypoint(robotPoseToWaypoint) << "\n";
         std::cout << "==========================\n";
@@ -76,8 +76,8 @@ public:
     }
 
     // getters (inlined)
-    inline double getX() const { return map->getRobotCurrentXCoordinatePoint(); }
-    inline double getY() const { return map->getRobotCurrentXCoordinatePoint(); }
+    inline double getX() const { return map->getNextDestinationXY().getX(); }
+    inline double getY() const { return map->getNextDestinationXY().getY(); }
     inline RobotState getState() const { return state; }
     inline double getOrientation() const { return map->getRobotOrientation(); }
     inline double getAngleToDestination() const { return navigator->getAngleToDestination(); }

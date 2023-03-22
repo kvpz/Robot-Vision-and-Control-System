@@ -18,6 +18,12 @@ void Task::setStatus(Status s)
     status = s;
 }
 
+void Task::setEndpoint(double destx, double desty, double destOrientation)
+{
+    destination.setX(desty);
+    destination.setY(desty);
+}
+
 void Task::setEndpoint(std::unique_ptr<Map> map)//double x, double y, double orientation)
 {
     destination.setX(map->getNextDestinationXY().getX());

@@ -81,7 +81,7 @@ public:
     }
 private:
     std::string serial_port_name;
-    boost::asio::serial_port* serial;
+    std::unique_ptr<boost::asio::serial_port> serial;
 };
 
 #endif

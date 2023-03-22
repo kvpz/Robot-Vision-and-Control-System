@@ -121,10 +121,11 @@ public:
         bool isYapproxnear = approximately(map->getRobotCurrentLocation().getY(), map->getNextDestinationXY().getY(), approximationThreshold);
         bool isXapproxnear = approximately(map->getRobotCurrentLocation().getX(), map->getNextDestinationXY().getX(), approximationThreshold);
         double angleToDestTolerance = 10.0;
+        double robotCurrentOrientation = map->getRobotOrientation();
         RobotPoseToWaypoint result = ON_PATH;
 
         //setAngleToDestination(getRobotToEndpointSlopeAngle(std::move(map), ));
-        angleToDestination = robotAngularDistanceToOrientation(std::move(map), double robot_current_angle);// getRobotAngleToPoint(std::move(map), destX, destY);
+        angleToDestination = robotAngularDistanceToOrientation(std::move(map));// getRobotAngleToPoint(std::move(map), destX, destY);
 
         if(isYapproxnear && isXapproxnear) {
             // near the waypoint
@@ -147,7 +148,6 @@ public:
             std::cout << "=============================\n" << std::endl;
         }
 
-        //robotPoseToWaypoint = result;
         return result;
     }
 

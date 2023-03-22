@@ -42,7 +42,8 @@ void TaskManager::executeCurrentTask(std::unique_ptr<Map> map, std::unique_ptr<N
             // This is typical when a task enters a suspended state.
             newTask = taskFactory(nextTaskType);
             if(newTask != nullptr) {
-                newTask->setEndpoint(task_queue.top()->getDestination().getX(), task_queue.top()->getDestination().getY(), task_queue.top()->getEndpointDesiredOrientation());
+                //newTask->setEndpoint(task_queue.top()->getDestination().getX(), task_queue.top()->getDestination().getY(), task_queue.top()->getEndpointDesiredOrientation());
+                newTask->setEndpoint(std::move(map));
                 addTask(std::move(newTask));
             }
 
@@ -57,7 +58,8 @@ void TaskManager::executeCurrentTask(std::unique_ptr<Map> map, std::unique_ptr<N
             // This should only happen if nextRobotState == COMPLETE
             newTask = taskFactory(nextTaskType); // == nullptr if nextTaskType
             if(newTask != nullptr) {
-                newTask->setEndpoint(task_queue.top()->getDestination().getX(), task_queue.top()->getDestination().getY(), task_queue.top()->getEndpointDesiredOrientation());
+                //newTask->setEndpoint(task_queue.top()->getDestination().getX(), task_queue.top()->getDestination().getY(), task_queue.top()->getEndpointDesiredOrientation());
+                newTask->setEndpoint(std::move(map));
                 addTask(std::move(newTask));
             }
 
@@ -160,6 +162,7 @@ std::unique_ptr<Task> TaskManager::taskFactory(TaskType ttype)
     return task;
 }
 
+/*
 template<typename T>
 std::unique_ptr<T> 
 TaskManager::taskFactory2(TaskType ttype)
@@ -186,4 +189,4 @@ TaskManager::taskFactory2(TaskType ttype)
 
     return task;
 }
-    
+*/

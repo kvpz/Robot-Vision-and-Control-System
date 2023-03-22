@@ -18,7 +18,8 @@ void NavigateToTask::notStarted(std::unique_ptr<Map> map, std::unique_ptr<Naviga
     // At this point the robot should be told whether it should travel 
     // forward, backward, left, or right depending on its distance
     // to the endpoint
-    double robotDistanceToEndpoint = distance(map->RobotX(), destination.getX(), destination.getY(), map->getRobotCurrentYCoordinatePoint());
+    //double robotDistanceToEndpoint = distance(map->RobotX(), destination.getX(), destination.getY(), map->map->getNextDestinationXY().getY());
+    double robotDistanceToEndpoint = distance(map->RobotX(), destination.getX(), map->RobotY(), map->getNextDestinationXY().getY());
     double robot_orientation_minus_destination = navigator->getAngleToDestination();
 
     if(robotDistanceToEndpoint < 70.0 && robot_orientation_minus_destination > 130.0) //robot->getAngleToDestination() > 130.0)
@@ -41,11 +42,11 @@ void NavigateToTask::notStarted(std::unique_ptr<Map> map, std::unique_ptr<Naviga
 */
 void NavigateToTask::inProgress(std::unique_ptr<Map> map, std::unique_ptr<Navigator> navigator, RobotState& nextRobotState)
 {
-    double destX1 = destination.getX(); 
-    double destY1 = destination.getY();
+    double destX1 = map->getNextDestinationXY().getX(); 
+    double destY1 = map->getNextDestinationXY().getY();
     double robotX = map->RobotX();
     double robotY = map->RobotY();
-    double endpointDesiredOrientation = map->dest
+    double endpointDesiredOrientation = map->getDestinationOrientation().value_or(-1.0);
     RobotPoseToWaypoint isRobotOnPath = navigator->isRobotOnPath(std::move(map), robotX, robotY, destX1, destY1);
 
     // get angle required for robot to rotate until it reaches the angle required at endpoint
