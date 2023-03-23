@@ -17,6 +17,11 @@ static inline double distance(double x1, double x2, double y1, double y2)
   return sqrt(std::pow(x2 - x1, 2.0) + std::pow(y2 - y1, 2.0));
 }
 
+static inline double distance(XYPoint robotxy, XYPoint destinationxy) 
+{
+  return sqrt(std::pow(destinationxy.getX() - robotxy.getX(), 2.0) + std::pow(destinationxy.getY() - robotxy.getY(), 2.0));
+}
+
 static int quadrant_identifier(double angle)
 {
   int result;

@@ -37,35 +37,14 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map, std::shared_ptr<N
 
         case SUSPENDED:
             task_queue.top()->suspended(map, navigator, nextRobotState, nextTaskType);
-            
-            switch(nextTaskType) {
-                case PATHCORRECTION:
-                    task_queue.push(std::make_unique<PathCorrectionTask>());
-                    break;
-                default:
-                    std::cout << "\n[ERROR] TaskManager::executeCurrentTask. Current completed task requesting unknown task type\n" << std::endl;
-                    break;
-            }
-            // Make a new task if required by current task.
-            // This is typical when a task enters a suspended state. 
-            // Example: NavigateToTask requests task manager for a PoseCorrectionTask
-
+            scheduleNewTask(nextTaskType, map);
             break;
 
         case COMPLETE:
             task_queue.top()->complete(map, navigator, nextRobotState, nextTaskType);
             task_queue.pop();
+            scheduleNewTask(nextTaskType, map);
 
-            switch(nextTaskType) {
-                case NAVIGATETO: {
-                    XYPoint xypoint(map->getNextDestinationXY().getX(), map->getNextDestinationXY().getY());
-                    task_queue.push(std::make_unique<NavigateToTask>(xypoint, map->getDestinationOrientation(), map->getIsEndpointOrientationRequired()));
-                    break;
-                }
-                default:
-                    std::cout << "\n[ERROR] TaskManager::executeCurrentTask. Current completed task requesting unknown task type\n" << std::endl;
-                    break;
-            }
             break;
     } // switch
 
@@ -163,31 +142,19 @@ std::unique_ptr<Task> TaskManager::taskFactory(TaskType ttype)
     return task;
 }
 
-/*
-template<typename T>
-std::unique_ptr<T> 
-TaskManager::taskFactory2(TaskType ttype)
+void TaskManager::scheduleNewTask(TaskType tasktype, std::shared_ptr<Map> map)
 {
-    if(DEBUG_TASKMANAGER) {
-        std::cout << "======= TaskManager::taskFactory ========\n";
-        std::cout << "taskType: " << taskTypeToString(ttype) << "\n";
-        std::cout << "=========================================\n" << std::endl;
-    }
-    std::unique_ptr<T> task;
-    switch(ttype){
-        case NAVIGATETO:
-            task = std::make_unique<NavigateToTask>();
-            break;
+    switch(tasktype) {
         case PATHCORRECTION:
-            task = std::make_unique<PathCorrectionTask>();
+            task_queue.push(std::make_unique<PathCorrectionTask>());
             break;
-        case NA:
+        case NAVIGATETO: {
+            XYPoint xypoint(map->getNextDestinationXY().getX(), map->getNextDestinationXY().getY());
+            task_queue.push(std::make_unique<NavigateToTask>(xypoint, map->getDestinationOrientation(), map->getIsEndpointOrientationRequired()));
+            break;
+        }
         default:
-            return nullptr;
-            //task.reset(nullptr);
+            std::cout << "\n[ERROR] TaskManager::executeCurrentTask. Current completed task requesting unknown task type\n" << std::endl;
             break;
-    }
-
-    return task;
+    }            
 }
-*/

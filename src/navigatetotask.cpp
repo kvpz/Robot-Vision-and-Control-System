@@ -33,7 +33,8 @@ void NavigateToTask::notStarted(std::shared_ptr<Map> map, std::shared_ptr<Naviga
     // forward, backward, left, or right depending on its distance
     // to the endpoint
     //double robotDistanceToEndpoint = distance(map->RobotX(), destination.getX(), destination.getY(), map->map->getNextDestinationXY().getY());
-    double robotDistanceToEndpoint = distance(map->RobotX(), map->getNextDestinationXY().getX(), map->RobotY(), map->getNextDestinationXY().getY());
+    //double robotDistanceToEndpoint = distance(map->RobotX(), map->getNextDestinationXY().getX(), map->RobotY(), map->getNextDestinationXY().getY());
+    double robotDistanceToEndpoint = distance(map->getRobotCurrentLocation(), map->getNextDestinationXY());
     double robot_orientation_minus_destination = navigator->getAngleToDestination();
 
     // move robot backward to a point if travel distance is short
@@ -62,9 +63,6 @@ void NavigateToTask::notStarted(std::shared_ptr<Map> map, std::shared_ptr<Naviga
 */
 void NavigateToTask::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState)
 {
-    if(DEBUG_NAVIGATETOTASK) {
-        std::cout << "======= NavigateToTask::inProgress =======" << std::endl;
-    }
     double destX1 = map->getNextDestinationXY().getX(); 
     double destY1 = map->getNextDestinationXY().getY();
     double robotX = map->RobotX();
@@ -103,6 +101,7 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Naviga
     }
 
     if(DEBUG_NAVIGATETOTASK) {
+        std::cout << "======= NavigateToTask::inProgress =======\n";
         std::cout << "robot pose relative to waypoint: " 
                     << printRobotPoseToWaypoint(isRobotOnPath) << "\n";
         std::cout << "==================================\n" << std::endl;

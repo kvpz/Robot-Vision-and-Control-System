@@ -50,10 +50,6 @@ public:
 protected:
   TaskType taskType;
 
-  /*
-    Destination data is considered to be essential for every task, especially the following tasks:
-    NavigateTo, PathCorrectionTask, PoseCorrectionTask (functions now part of NavigateTo)
-  */
 private:
   // task management data
   double expected_duration;

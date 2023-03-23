@@ -47,6 +47,8 @@ public:
 
     inline bool hasTasks() { return !task_queue.empty(); }
 
+    void scheduleNewTask(TaskType ttype, std::shared_ptr<Map> map);
+
 private:
     std::stack<std::unique_ptr<Task>> task_queue;
     std::unique_ptr<Task> taskFactory(TaskType ttype);
