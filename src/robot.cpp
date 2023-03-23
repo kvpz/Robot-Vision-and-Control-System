@@ -54,7 +54,7 @@ void Robot::printStatus()
     std::cout << "\n====== Robot Status ======\n";
     std::cout << "State: " << RobotStateToString(state) << "\n";
     std::cout << "current location: ("
-            << map->getRobotCurrentXCoordinatePoint() << ", "
+            << map->RobotX() << ", "
             << map->RobotY() << ")\n";
     std::cout << "current orientation (yaw): " << map->getRobotOrientation() << "\n";
     std::cout << "robot pose relative to waypoint: " << printRobotPoseToWaypoint(robotPoseToWaypoint) << "\n";
@@ -63,14 +63,13 @@ void Robot::printStatus()
 }
 
 // getters
-double Robot::getX() const { return map->getRobotCurrentXCoordinatePoint(); }
-double Robot::getY() const { return map->getRobotCurrentXCoordinatePoint(); }
+double Robot::getX() const { return map->RobotX(); }
+double Robot::getY() const { return map->RobotY(); }
 RobotState getState() const { return state; }
 double getOrientation() const { return map->getRobotOrientation(); }
 double getAngleToDestination() const { return navigator->getAngleToDestination(); }
 std::unique_ptr<TaskManager> getTaskManager() { return std::move(taskManager); }
 bool hasTasks() { return taskManager->hasTasks(); }
-bool isNearEndpoint() const { return nearEndpoint; }
 
 std::unique_ptr<Map> getMap() { return map; }
 std::unique_ptr<Navigator> getNavigator() { return navigator; }
@@ -95,8 +94,6 @@ void setOrientation(double o)
 {
   map->setRobotOrientation(o);
 }
-
-void setIsNearEndpoint(bool b) { nearEndpoint = b; }
 
 /*
   Robot sends data about itself to the task manager. 

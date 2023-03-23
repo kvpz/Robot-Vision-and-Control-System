@@ -1,5 +1,5 @@
 WARN	:= #-W -Wall -Wconversion -pedantic
-CC	:= g++ -std=c++17
+CC	:= g++ -std=c++2a #g++ -std=c++17
 USRLIBS	:= /usr/lib
 RSHEADERS := /usr/include/librealsense2
 PROJHEADERS := /home/ieeefiu/Documents/perrito/include
@@ -8,9 +8,13 @@ INCLUDE = -I$(RSHEADERS) -I$(PROJHEADERS)
 
 ALL: main.x
 
-main.x: task.o navigatetotask.o pathcorrectiontask.o taskmanager.o 
+main.x: map.o task.o navigatetotask.o pathcorrectiontask.o taskmanager.o 
 	@echo "building target main.x"
-	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lrealsense2 -o main.x task.o navigatetotask.o pathcorrectiontask.o taskmanager.o 
+	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lrealsense2 -o main.x map.o task.o navigatetotask.o pathcorrectiontask.o taskmanager.o 
+
+map.o: $(PROJHEADERS)
+	@echo "building target map.o"
+	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/map.cpp -O3 -L$(USRLIBS) -lrealsense2 
 
 task.o: $(PROJHEADERS)
 	@echo "building target task.o"

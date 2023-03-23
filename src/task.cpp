@@ -1,7 +1,5 @@
 #include "task.hpp"
 
-//Task::Task() : status(NOTSTARTED) {}
-
 Task::Task(TaskType ttype)
     : status(NOTSTARTED), taskType(ttype)
 {
@@ -13,35 +11,13 @@ void Task::suspended(std::shared_ptr<Map> map, std::shared_ptr<Navigator> naviga
 void Task::complete(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType){}
 
 // setters
-void Task::setStatus(Status s)
+void Task::setStatus(TaskStatus s)
 {
     status = s;
 }
 
-void Task::setEndpoint(double destx, double desty, double destOrientation)
-{
-    destination.setX(desty);
-    destination.setY(desty);
-}
-
-void Task::setEndpoint(std::shared_ptr<Map> map)//double x, double y, double orientation)
-{
-    destination.setX(map->getNextDestinationXY().getX());
-    destination.setY(map->getNextDestinationXY().getY());
-    //endpointDesiredOrientation = orientation;
-
-    if(DEBUG_TASK) {
-        std::cout << "======= Task::setEndpoint =========\n";
-        std::cout << "set X: " << map->getNextDestinationXY().getX() << "\n";
-        std::cout << "set Y: " << map->getNextDestinationXY().getY() << "\n";
-        //std::cout << "setEndpoint: " << endpointDesiredOrientation << "\n";
-        std::cout << "===================================\n" << std::endl;
-    }
-}
-
 // getters
-Status Task::getStatus() const { return status; }
-Waypoint Task::getDestination() const { return destination; } 
+TaskStatus Task::getStatus() const { return status; }
 TaskType Task::getTaskType() const { return taskType; }
 std::string Task::getName() { return taskTypeToString(taskType); }
 
@@ -66,8 +42,7 @@ void Task::printTaskInfo(Task& task)
             break;
     }
 
-    std::cout << "Task destination (X,Y): (" << task.getDestination().getX() 
-            << ", " << task.getDestination().getY() << ")\n";
+
     std::cout << "Task status: " << statusToString(task.getStatus()) << "\n";
     std::cout << "Task name: " << task.getName() << "\n";
     std::cout << "=================================\n";

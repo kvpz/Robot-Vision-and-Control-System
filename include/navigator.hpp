@@ -31,10 +31,6 @@ public:
         //return angleToEndpointOrientation(map->getRobotOrientation(), endpointOrientation);
     }
 
-    //double getRobotAngleToPoint(std::shared_ptr<Map> map, double x, double y) const 
-    //{
-    //      return angleToPoint(map->RobotX(), map->RobotY(), x, y, map->getRobotOrientation());
-    
     /*
         Calculate the angle from one point to another on a cartesian plane. 
         This is done by using the point slope formula then taking the 
@@ -49,8 +45,6 @@ public:
     */
     double robotAngularDistanceToOrientation(std::shared_ptr<Map> map)
     {
-        //double delta_x = x_destination - map->RobotX();
-        //double delta_y = y_destination - map->RobotY();
         double delta_x = map->getNextDestinationXY().getX() - map->RobotX();
         double delta_y = map->getNextDestinationXY().getY() - map->RobotY();
 
@@ -90,7 +84,7 @@ public:
             }
         }
         else if(theta > 180.0) {
-            //if(theta > 180.0) {
+            //if(theta > 180.0) { // robot works better when this line is commented
             theta = theta - 360.0;
             //}
         }
@@ -111,7 +105,6 @@ public:
 
         return theta;
     }
-    //} // getRobotAngleToPoint(...)
 
     RobotPoseToWaypoint isRobotOnPath(std::shared_ptr<Map> map, double robotX, double robotY, double destX, double destY) 
     {
@@ -143,7 +136,7 @@ public:
 
         if(NAVDEBUG) {
             std::cout << "\n====== Navigator::isRobotOnPath ======\n";
-            std::cout << "result: " << printRobotPoseToWaypoint(result) << "\n";
+            std::cout << "robot pose relative to waypoint: " << printRobotPoseToWaypoint(result) << "\n";
             std::cout << "(isRobotOnPath) angle to dest: " << getAngleToDestination() << "\n";
             std::cout << "=============================\n" << std::endl;
         }

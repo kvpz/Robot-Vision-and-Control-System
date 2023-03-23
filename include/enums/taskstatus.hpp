@@ -2,11 +2,11 @@
 #define TASKSTATUS_HPP
 #include <string>
 
-enum Status {
+enum TaskStatus {
     NOTSTARTED, COMPLETE, INPROGRESS, SUSPENDED
 };
 
-static std::string statusToString(Status status) 
+static std::string statusToString(TaskStatus status) 
 {
     switch(status) {
         case NOTSTARTED:

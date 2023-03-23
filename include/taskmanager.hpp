@@ -49,9 +49,7 @@ public:
 
 private:
     std::stack<std::unique_ptr<Task>> task_queue;
-    //std::stack<Task> task_queue;
     std::unique_ptr<Task> taskFactory(TaskType ttype);
-    //RobotState nextRobotState;
 };
 
 

@@ -16,7 +16,7 @@ class Robot {
 public:
     Robot(double xpos, double ypos, double orientation) 
         : state(STOP), robotPoseToWaypoint(NONE)
-      //: map(std::make_unique<Map>()), navigator(std::make_unique<Navigator>()), taskManager(std::make_unique<TaskManager>())
+      //: map(std::make_shared<Map>()), navigator(std::make_unique<Navigator>()), taskManager(std::make_unique<TaskManager>())
     { 
         comport = std::make_unique<Comms>("/dev/ttyACM0");
         taskManager = std::make_shared<TaskManager>();
@@ -24,6 +24,9 @@ public:
         map = std::make_unique<Map>();
         map->setRobotCurrentCoordinate(xpos, ypos);
         map->setRobotOrientation(orientation);
+
+        robotPoseToWaypoint = NONE;
+        robotOrientationAtEndpoint = NOTORIENTED;
 
         std::cout << "======== Robot::Robot ========\n";
         std::cout << "taskManager address: " << &(*taskManager) << "\n";
@@ -41,7 +44,7 @@ public:
             move_left();
             break;
           case MOVE_RIGHT:
-              move_right();
+            move_right();
             break;
           case ROTATE_CW:
             rotate_CW(); 
@@ -66,19 +69,6 @@ public:
     void rotate_CCW() { comport->send_command("Z"); }
     void stop() { comport->send_command("S"); }
 
-    void printStatus() 
-    {
-        std::cout << "\n====== Robot Status ======\n";
-        std::cout << "State: " << RobotStateToString(state) << "\n";
-        std::cout << "current location: ("
-                  << map->getNextDestinationXY().getX() << ", "
-                  << map->getNextDestinationXY().getY() << ")\n";
-        std::cout << "current orientation (yaw): " << map->getRobotOrientation() << "\n";
-        std::cout << "robot pose relative to waypoint: " << printRobotPoseToWaypoint(robotPoseToWaypoint) << "\n";
-        std::cout << "==========================\n";
-        std::cout << std::endl;
-    }
-
     // getters (inlined)
     inline double getX() const { return map->getNextDestinationXY().getX(); }
     inline double getY() const { return map->getNextDestinationXY().getY(); }
@@ -87,8 +77,6 @@ public:
     inline double getAngleToDestination() const { return navigator->getAngleToDestination(); }
     inline std::shared_ptr<TaskManager> getTaskManager() { return taskManager; }
     bool hasTasks() { return taskManager->hasTasks(); }
-    // map related functions
-    inline bool isNearEndpoint() const { return nearEndpoint; }
 
     //inline std::unique_ptr<Map> getMap() { return map; }
     inline std::shared_ptr<Navigator> getNavigator() { return navigator; }
@@ -98,6 +86,7 @@ public:
 
     void setCurrentXY(double x, double y) 
     {
+      std::cout << "robot current location: " << x << " , " << y << "\n" << std::endl;
       map->setRobotCurrentCoordinate(x,y);
     }
 
@@ -106,8 +95,6 @@ public:
       map->setRobotOrientation(o);
     }
     
-    void setIsNearEndpoint(bool b) { nearEndpoint = b; }
-
     /*
       Robot sends data about itself to the task manager. 
       The task manager then executes the current task. 
@@ -120,32 +107,41 @@ public:
       }
 
       RobotState nextRobotState;
-      //nextRobotState = taskManager->executeCurrentTask(map, navigator);
+      //TODO: nextRobotState = taskManager->executeCurrentTask(map, navigator);
       taskManager->executeCurrentTask(map, navigator, nextRobotState);
 
       // change robot state if it is different from current state
       if(state != nextRobotState) {
           state = nextRobotState;
-          run();
+          run(); // alter robot state if it needs to be in a different
       }
     }
 
+    void printStatus() 
+    {
+        std::cout << "\n====== Robot Status ======\n";
+        std::cout << "State: " << RobotStateToString(state) << "\n";
+        std::cout << "current location: ("
+                  << map->RobotX() << ", "
+                  << map->RobotY() << ")\n";
+        std::cout << "current orientation (yaw): " << map->getRobotOrientation() << "\n";
+        std::cout << "==========================\n";
+        std::cout << std::endl;
+    }
+
 private:
-    RobotState state;
-
+    // communications
     std::unique_ptr<Comms> comport;
-    RobotPoseToWaypoint robotPoseToWaypoint = NONE;
-    RobotOrientationAtEndpoint robotOrientationAtEndpoint = NOTORIENTED;
-    bool nearEndpoint = false;
 
-    //Waypoint currentLocation;
-    //double currentOrientation; // (gyro) orientation
-    //RobotState travelDirection;
+    // robot status indicators
+    RobotState state;
+    RobotPoseToWaypoint robotPoseToWaypoint;
+    RobotOrientationAtEndpoint robotOrientationAtEndpoint;
 
+    // 
     std::shared_ptr<TaskManager> taskManager;
     std::shared_ptr<Navigator> navigator;
     std::shared_ptr<Map> map;
-
 
 };
 

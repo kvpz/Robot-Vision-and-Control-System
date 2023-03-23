@@ -10,7 +10,7 @@
 #include "map.hpp"
 #include "navigator.hpp"
 
-#define DEBUG_TASK false
+#define DEBUG_TASK false 
 
 class Task
 {
@@ -19,28 +19,35 @@ public:
   Task(TaskType ttype);
 
   // task state functions
-  virtual void notStarted(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState);
-  virtual void inProgress(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState);
-  virtual void suspended(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType);
-  virtual void complete(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType);
+  virtual void notStarted(std::shared_ptr<Map> map, 
+                          std::shared_ptr<Navigator> navigator, 
+                          RobotState& nextRobotState);
+
+  virtual void inProgress(std::shared_ptr<Map> map, 
+                          std::shared_ptr<Navigator> navigator, 
+                          RobotState& nextRobotState);
+
+  virtual void suspended(std::shared_ptr<Map> map, 
+                         std::shared_ptr<Navigator> navigator, 
+                         RobotState& nextRobotState, 
+                         TaskType& nextTaskType);
+
+  virtual void complete(std::shared_ptr<Map> map, 
+                        std::shared_ptr<Navigator> navigator, 
+                        RobotState& nextRobotState, 
+                        TaskType& nextTaskType);
 
   // setters
-  void setStatus(Status s);
-  void setEndpoint(std::shared_ptr<Map> map);
-  void setEndpoint(double destx, double desty, double destOrientation);
+  void setStatus(TaskStatus s);
 
   // getters
-  Status getStatus() const;
-  Waypoint getDestination() const;
+  TaskStatus getStatus() const;
   TaskType getTaskType() const;
   std::string getName();
-  //std::optional<double> getEndpointDesiredOrientation() { return endpointDesiredOrientation; }
-  double getEndpointDesiredOrientation() { return -1; }
 
-  static void printTaskInfo(Task& task);
+  void printTaskInfo(Task& task);
   
 protected:
-  Waypoint destination;
   TaskType taskType;
 
   /*
@@ -48,9 +55,9 @@ protected:
     NavigateTo, PathCorrectionTask, PoseCorrectionTask (functions now part of NavigateTo)
   */
 private:
+  // task management data
   double expected_duration;
-  Status status;
-  double endpointDesiredOrientation;
+  TaskStatus status;
 };
 
 #endif
@@ -59,4 +66,13 @@ private:
   TODO 1 (serial communication fault handling): 
     Add exception handling for read/write to comport functions. 
     Must expect there to be an issue 
+
+      // endpoint should be set on the map separately
+  // this does not belong here.
+  // Map class should be in charge of storing the endpoints (destinations) and other points
+  // This function may be good in NavigateTo task especially when intializing the instances
+  // that will be stored in the task manager queue.
+  //void setEndpoint(std::shared_ptr<Map> map);
+  //void setEndpoint(double destx, double desty, double destOrientation);
+
 */

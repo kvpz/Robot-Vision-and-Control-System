@@ -14,8 +14,8 @@ void PathCorrectionTask::notStarted(std::shared_ptr<Map> map, std::shared_ptr<Na
 
 void PathCorrectionTask::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState)
 {
-    double destX2 = destination.getX();
-    double destY2 = destination.getY();
+    double destX2 = map->getNextDestinationXY().getX();
+    double destY2 = map->getNextDestinationXY().getY();
     double robotX2 = map->RobotX();
     double robotY2 = map->RobotY();
     RobotPoseToWaypoint rposetoway = navigator->isRobotOnPath(map, robotX2, robotY2, destX2, destY2);
@@ -63,4 +63,5 @@ void PathCorrectionTask::complete(std::shared_ptr<Map> map, std::shared_ptr<Navi
     //nextRobotState = STOP;
     //task_queue.pop();
     //task_queue.top().setStatus(INPROGRESS);
+    nextTaskType = NAVIGATETO;
 }

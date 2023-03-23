@@ -1,6 +1,7 @@
 #include "taskmanager.hpp"
 #include "navigatetotask.hpp"
 #include "pathcorrectiontask.hpp"
+#include "posecorrectiontask.hpp"
 
 //TaskManager::TaskManager() 
 //{ }
@@ -35,17 +36,19 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map, std::shared_ptr<N
             break;
 
         case SUSPENDED:
-            std::cout << "\n======= TaskManager::executeCurrentTask ======= path correction\n" << std::endl;
             task_queue.top()->suspended(map, navigator, nextRobotState, nextTaskType);
-
-            // Make a new task if required by current task.
-            // This is typical when a task enters a suspended state.
-            newTask = taskFactory(nextTaskType);
-            if(newTask != nullptr) {
-                //newTask->setEndpoint(task_queue.top()->getDestination().getX(), task_queue.top()->getDestination().getY(), task_queue.top()->getEndpointDesiredOrientation());
-                newTask->setEndpoint(map);
-                addTask(std::move(newTask));
+            
+            switch(nextTaskType) {
+                case PATHCORRECTION:
+                    task_queue.push(std::make_unique<PathCorrectionTask>());
+                    break;
+                default:
+                    std::cout << "\n[ERROR] TaskManager::executeCurrentTask. Current completed task requesting unknown task type\n" << std::endl;
+                    break;
             }
+            // Make a new task if required by current task.
+            // This is typical when a task enters a suspended state. 
+            // Example: NavigateToTask requests task manager for a PoseCorrectionTask
 
             break;
 
@@ -53,16 +56,16 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map, std::shared_ptr<N
             task_queue.top()->complete(map, navigator, nextRobotState, nextTaskType);
             task_queue.pop();
 
-            // Make a new task if required by current task.
-            // This is typical when a task enters a suspended state.
-            // This should only happen if nextRobotState == COMPLETE
-            newTask = taskFactory(nextTaskType); // == nullptr if nextTaskType
-            if(newTask != nullptr) {
-                //newTask->setEndpoint(task_queue.top()->getDestination().getX(), task_queue.top()->getDestination().getY(), task_queue.top()->getEndpointDesiredOrientation());
-                newTask->setEndpoint(map);
-                addTask(std::move(newTask));
+            switch(nextTaskType) {
+                case NAVIGATETO: {
+                    XYPoint xypoint(map->getNextDestinationXY().getX(), map->getNextDestinationXY().getY());
+                    task_queue.push(std::make_unique<NavigateToTask>(xypoint, map->getDestinationOrientation(), map->getIsEndpointOrientationRequired()));
+                    break;
+                }
+                default:
+                    std::cout << "\n[ERROR] TaskManager::executeCurrentTask. Current completed task requesting unknown task type\n" << std::endl;
+                    break;
             }
-
             break;
     } // switch
 
@@ -84,9 +87,6 @@ void TaskManager::addTask(std::unique_ptr<Task> task)
             std::cout << "=====================================\n";
         }
         task_queue.push(std::move(task));
-    }
-    else {
-        std::cout << "failed to push to queue\n" << std::endl;
     }
 }
 
@@ -112,8 +112,9 @@ void TaskManager::importTasksFromJSON(std::string filename)
 
         switch(taskTypeToEnum(taskkey.second.get_child("type").get_value<std::string>())) {
             case NAVIGATETO:
-                std::unique_ptr<NavigateToTask> task = std::make_unique<NavigateToTask>(endpoint_orientation, endpoint_orientation_required);
-                task->setEndpoint(endpoint_x, endpoint_y, endpoint_orientation);
+                XYPoint xypoint(endpoint_x, endpoint_y);
+                std::unique_ptr<NavigateToTask> task = std::make_unique<NavigateToTask>(xypoint, endpoint_orientation, endpoint_orientation_required);
+                //task->setEndpoint(endpoint_x, endpoint_y, endpoint_orientation);
                 task_vector.push_back(std::move(task));
                 break;
         }

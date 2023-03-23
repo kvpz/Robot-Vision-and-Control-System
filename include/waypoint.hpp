@@ -1,40 +1,38 @@
-#ifndef WAYPOINT_H
-#define WAYPOINT_H
-
 /*
   This class resembles a xy-coordinate point a robot must travel to.
+  The class instances are used to:
+  (1) represent the robot's current location in the global map, 
+  (2) the xy-coordinate points of the destination, 
+  (3) tracking visited coordinate points in a Map, 
+  (4) etc.
 */
-class Waypoint
+#ifndef XYPOINT_H
+#define XYPOINT_H
+
+struct XYPoint
 {
-public:
+  double x = 0.0;
+  double y = 0.0;
+
+  inline double getX() const { return x; }
+  inline double getY() const { return y; }
+
+  inline void setX(double _x) { x = _x; }
+  inline void setY(double _y) { y = _y; }
+
   // constructors
-  Waypoint() = default;
-  Waypoint(double x, double y) : _x(x), _y(y) {}
-
-  // getters
-  inline double getX() const { return _x; }
-  inline double getY() const { return _y; }
-
-  // setters
-  void setX(double x) { _x = x; }
-  void setY(double y) { _y = y; }
-
-private:
-  // private member data
-  double _x, _y;
+  XYPoint() = default;
+  XYPoint(double x, double y) : x(x), y(y) {}
 };
 
 #endif
+
 
 /*
   NOTES:
 
   This class's name should probably be changed to XYPoint because that
-  is how it's currently being used for. The class instances are used to
-  represent (1) the robot's current location in the global map, 
-  (2) the xy-coordinate points of the destination, (3) and potentially even 
-  in a Map class member data structure for tracking visited xy-coordinate points, 
-  (4) etc.
+  is how it's currently being used for. 
 
 
 */

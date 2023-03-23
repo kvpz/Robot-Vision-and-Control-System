@@ -10,6 +10,14 @@ enum RobotPoseToWaypoint
     NONE
 };
 
+enum RobotPosition {
+    ROBOT_NEAR_ENDPOINT,
+    ROBOT_MISALIGNED_WITH_WAYPOINT,
+    ROBOT_ON_WAYPOINT_PATH,
+    ROBOT_OFF_WAYPOINT_PATH,
+    ROBOT_POSITION_UNDEFINED
+};
+
 static std::string printRobotPoseToWaypoint(RobotPoseToWaypoint r) {
     switch(r) {
       case NEAR:

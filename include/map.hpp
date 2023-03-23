@@ -6,73 +6,41 @@
 class Map
 {
 public:
-    Map() {}
+    Map();
 
     // getters
-    inline double RobotX() const
-    {
-        return robotCurrentLocation.getX();
-    }
+    double RobotX() const;
 
-    inline double RobotY() const
-    {
-        return robotCurrentLocation.getY();
-    }
+    double RobotY() const;
 
-    inline Waypoint getRobotCurrentLocation()
-    {
-        return robotCurrentLocation;
-    }
+    XYPoint getRobotCurrentLocation();
 
-    inline double getRobotOrientation() const
-    {
-        return robotCurrentOrientation;
-    }
+    double getRobotOrientation() const;
 
-    // Not all destination points require robot to be in a particular orientation.
-    // Calling functions can evaluate whether the optional Waypoint object is null
-    // by using the std::optional has_value function. 
-    inline std::optional<double> getDestinationOrientation()
-    {
-        return destinationOrientation;
-    }
+    double getDestinationOrientation();
 
-    inline Waypoint getNextDestinationXY()
-    {
-        return destinationXY;
-    }
+    XYPoint getNextDestinationXY();
 
     // setters
-    inline void setRobotCurrentCoordinate(double x, double y)
-    {
-        robotCurrentLocation.setX(x);
-        robotCurrentLocation.setY(y);
-    }
+    void setRobotCurrentCoordinate(double x, double y);
 
-    inline void setRobotOrientation(double o)
-    {
-        robotCurrentOrientation = o;
-    }
+    void setRobotOrientation(double o);
 
-    inline void setDestinationXY(double destx, double desty) 
-    {
-        destinationXY.setX(destx);
-        destinationXY.setY(desty);
-    }
+    void setDestinationXY(double destx, double desty);
 
-    inline void setDestinationDesiredOrientation(double theta) 
-    {
-        destinationOrientation = theta;
-    }
+    void setDestinationDesiredOrientation(double theta);
+
+    inline bool getIsEndpointOrientationRequired() { return isEndpointOrientationRequired; };
 
 private:
     // robot current position data
-    Waypoint robotCurrentLocation;
+    XYPoint robotCurrentLocation;
     double robotCurrentOrientation;
 
     // destination position data
-    Waypoint destinationXY;
+    XYPoint destinationXY;
     double destinationOrientation;
+    bool isEndpointOrientationRequired;
     // map<size_t, Waypoint> pointsVisited;
 };
 
