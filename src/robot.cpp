@@ -71,7 +71,6 @@ std::shared_ptr<Navigator> Robot::getNavigator() { return navigator; }
 // setters (inlined)
 void Robot::setCurrentXY(double x, double y) 
 {
-  std::cout << "robot current location: " << x << " , " << y << "\n" << std::endl;
   map->setRobotCurrentCoordinate(x,y);
 }
 
@@ -110,6 +109,9 @@ void Robot::printStatus()
               << map->RobotX() << ", "
               << map->RobotY() << ")\n";
     std::cout << "current orientation (yaw): " << map->getRobotOrientation() << "\n";
+    std::cout << "next destination: (" 
+              << map->getNextDestinationXY().getX() << ", "
+              << map->getNextDestinationXY().getY() << ")\n";
     std::cout << "==========================\n";
     std::cout << std::endl;
 }

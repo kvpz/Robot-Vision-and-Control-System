@@ -7,7 +7,7 @@
 #include "map.hpp"
 #include "utility.hpp"
 
-#define NAVDEBUG true
+#define NAVDEBUG false
 
 class Navigator
 {

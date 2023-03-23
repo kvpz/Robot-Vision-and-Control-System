@@ -10,7 +10,7 @@
 #include "map.hpp"
 #include "navigator.hpp"
 
-#define ROBOTDEBUG true
+#define ROBOTDEBUG false
 
 class Robot {
 public:

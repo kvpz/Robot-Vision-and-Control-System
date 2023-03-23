@@ -37,13 +37,15 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map, std::shared_ptr<N
 
         case SUSPENDED:
             task_queue.top()->suspended(map, navigator, nextRobotState, nextTaskType);
-            scheduleNewTask(nextTaskType, map);
+            if(nextTaskType != NA)
+                scheduleNewTask(nextTaskType, map);
             break;
 
         case COMPLETE:
             task_queue.top()->complete(map, navigator, nextRobotState, nextTaskType);
             task_queue.pop();
-            scheduleNewTask(nextTaskType, map);
+            if(nextTaskType != NA)
+                scheduleNewTask(nextTaskType, map);
 
             break;
     } // switch
