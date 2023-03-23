@@ -36,8 +36,8 @@ taskmanager.o: $(PROJHEADERS)
 	@echo "building target taskmanager.o"
 	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/taskmanager.cpp -O3 -L$(USRLIBS) -lrealsense2 
 
-#robot.o: ./src/robot.cpp $(PROJHEADERS) 
-#	$(CC) -c $(INCLUDE) $(WARN) -pthread -O3 -L$(USRLIBS) -lrealsense2 -c ./src/robot.cpp
+robot.o: ./src/robot.cpp $(PROJHEADERS) 
+	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/robot.cpp -O3 -L$(USRLIBS) -lrealsense2
 
 clean:
 	rm -rf *.o *.x
