@@ -1,5 +1,6 @@
 #ifndef ROBOTPOSETOWAYPOINT_HPP
 #define ROBOTPOSETOWAYPOINT_HPP
+#include <string> 
 
 enum RobotPoseToWaypoint
 {

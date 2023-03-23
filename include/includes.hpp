@@ -15,7 +15,7 @@
 #include <boost/asio.hpp>
 #include <boost/timer/timer.hpp>
 //#include <boost/progress.hpp>
-#include "waypoint.hpp"
+#include "xypoint.hpp"
 //#include "utility.hpp"
 
 

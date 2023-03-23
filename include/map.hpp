@@ -1,7 +1,7 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 #include <optional>
-#include "waypoint.hpp"
+#include "xypoint.hpp"
 
 class Map
 {

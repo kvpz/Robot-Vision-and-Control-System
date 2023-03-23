@@ -3,7 +3,7 @@
 #include <iostream>
 #include <memory>
 #include <optional>
-#include "waypoint.hpp"
+#include "xypoint.hpp"
 #include "enums/tasktype.hpp"
 #include "enums/taskstatus.hpp"
 #include "enums/robotState.hpp"

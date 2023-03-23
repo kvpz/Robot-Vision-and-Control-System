@@ -1,7 +1,7 @@
 #ifndef ROBOT_HPP
 #define ROBOT_HPP
 #include <memory>
-#include "waypoint.hpp"
+#include "xypoint.hpp"
 #include "taskmanager.hpp"
 #include "comms.hpp"
 #include "enums/robotPoseToWaypoint.hpp"
