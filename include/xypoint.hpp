@@ -8,6 +8,7 @@
 */
 #ifndef XYPOINT_H
 #define XYPOINT_H
+#include <iostream>
 
 struct XYPoint
 {
@@ -23,7 +24,24 @@ struct XYPoint
   // constructors
   XYPoint() = default;
   XYPoint(double x, double y) : x(x), y(y) {}
+
+  // copy constructor
+  XYPoint(const XYPoint& other) : x(other.x), y(other.y) {}
+
+  // assignment operator
+  XYPoint& operator=(const XYPoint& other) {
+    if (this != &other) {
+      x = other.x;
+      y = other.y;
+    }
+    return *this;
+  }
 };
+
+inline std::ostream& operator<<(std::ostream& os, const XYPoint& obj) {
+  os << "(" << obj.x << ", " << obj.y << ")";
+  return os;
+}
 
 #endif
 

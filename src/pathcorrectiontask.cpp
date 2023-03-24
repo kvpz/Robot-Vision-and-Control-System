@@ -11,7 +11,7 @@ void PathCorrectionTask::notStarted(std::shared_ptr<Map> map,
                                     std::shared_ptr<Navigator> navigator, 
                                     RobotState& nextRobotState)
 {
-    setStatus(INPROGRESS);
+    status = TaskStatus::INPROGRESS;
 }
 
 void PathCorrectionTask::inProgress(std::shared_ptr<Map> map, 
@@ -26,33 +26,33 @@ void PathCorrectionTask::inProgress(std::shared_ptr<Map> map,
 
     // assign robot a task depending on orientation relative to waypoint
     switch(rposetoway) {
-    case NEAR:
-        setStatus(COMPLETE);
-        nextRobotState = STOP;
-        correcting_position = false;
-        break;
-    case ON_PATH:
-        setStatus(COMPLETE);
-        //robotState = MOVE_FORWARD;
-        nextRobotState = STOP;
-        correcting_position = false;
-        break;
-    case OFF_PATH:
-        setStatus(INPROGRESS);
-        if(correcting_position == false) {
-            // decide whether to rotate CW or CCW
-            if(navigator->getAngleToDestination() > angleToDestTolerance) 
-                nextRobotState = ROTATE_CCW;
-            else
-                nextRobotState = ROTATE_CW;
-    
-            correcting_position = true;
-        }
-        else {
-            correcting_position = true;
-        }
+        case NEAR:
+            status = TaskStatus::COMPLETE;
+            nextRobotState = STOP;
+            correcting_position = false;
+            break;
+        case ON_PATH:
+            status = TaskStatus::COMPLETE;
+            //robotState = MOVE_FORWARD;
+            nextRobotState = STOP;
+            correcting_position = false;
+            break;
+        case OFF_PATH:
+            status = TaskStatus::INPROGRESS;
+            if(correcting_position == false) {
+                // decide whether to rotate CW or CCW
+                if(navigator->getAngleToDestination() > angleToDestTolerance) 
+                    nextRobotState = ROTATE_CCW;
+                else
+                    nextRobotState = ROTATE_CW;
+        
+                correcting_position = true;
+            }
+            else {
+                correcting_position = true;
+            }
 
-        break;
+            break;
     }
 }
 

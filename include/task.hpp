@@ -15,7 +15,7 @@
 class Task
 {
 public:
-  Task() : status(NOTSTARTED){}
+  Task() : status(TaskStatus::NOTSTARTED){}
   Task(TaskType ttype);
 
   // task state functions
@@ -49,11 +49,11 @@ public:
   
 protected:
   TaskType taskType;
+  TaskStatus status;
 
 private:
   // task management data
   double expected_duration;
-  TaskStatus status;
 };
 
 #endif

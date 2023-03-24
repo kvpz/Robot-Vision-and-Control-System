@@ -27,34 +27,26 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
     std::unique_ptr<Task> newTask;
     
     switch(task_queue.top()->getStatus()) {
-        case NOTSTARTED:
+        case TaskStatus::NOTSTARTED:
             task_queue.top()->notStarted(map, navigator, nextRobotState);
             // set task to in progress
+            handleNotStartedTask(map, navigator, nextRobotState, nextTaskType);
             break;   
             
-        case INPROGRESS:
+        case TaskStatus::INPROGRESS:
             task_queue.top()->inProgress(map, navigator, nextRobotState);
+            handleInProgressTask(map, navigator, nextRobotState, nextTaskType);
             break;
 
-        case SUSPENDED:
+        case TaskStatus::SUSPENDED:
             task_queue.top()->suspended(map, navigator, nextRobotState, nextTaskType);
-            if(nextTaskType != NA)
-                scheduleNewTask(nextTaskType, map);
+            handleSuspendedTask(map, navigator, nextRobotState, nextTaskType);
+
             break;
 
-        case COMPLETE:
+        case TaskStatus::COMPLETE:
             task_queue.top()->complete(map, navigator, nextRobotState, nextTaskType);
-            if(task_queue.top()->getTaskType() == PATHCORRECTION) {
-                task_queue.pop();
-                task_queue.top()->setStatus(INPROGRESS);
-            }
-            else if(nextTaskType != NA) {
-                task_queue.pop();
-                scheduleNewTask(nextTaskType, map);
-            }
-            else {
-                task_queue.pop();
-            }
+            handleCompletedTask(map, navigator, nextRobotState, nextTaskType);
 
             break;
     } // switch
@@ -131,11 +123,6 @@ void TaskManager::importTasksFromJSON(std::string filename)
 
 std::unique_ptr<Task> TaskManager::taskFactory(TaskType ttype)
 {
-    if(DEBUG_TASKMANAGER) {
-        std::cout << "======= TaskManager::taskFactory ========\n";
-        std::cout << "taskType: " << taskTypeToString(ttype) << "\n";
-        std::cout << "=========================================\n" << std::endl;
-    }
     std::unique_ptr<Task> task;
     switch(ttype){
         case NAVIGATETO:
@@ -146,9 +133,15 @@ std::unique_ptr<Task> TaskManager::taskFactory(TaskType ttype)
             break;
         case NA:
         default:
-            return nullptr;
+            task = nullptr;
             //task.reset(nullptr);
             break;
+    }
+
+    if(DEBUG_TASKMANAGER) {
+        std::cout << "======= TaskManager::taskFactory ========\n";
+        std::cout << "taskType: " << taskTypeToString(ttype) << "\n";
+        std::cout << "=========================================\n" << std::endl;
     }
 
     return task;
@@ -161,8 +154,11 @@ void TaskManager::scheduleNewTask(TaskType tasktype, std::shared_ptr<Map> map)
         case PATHCORRECTION:
             task_queue.push(std::make_unique<PathCorrectionTask>());
             break;
+        case POSECORRECTION:
+            task_queue.push(std::make_unique<PoseCorrectionTask>());
+            break;
         case NAVIGATETO: {
-            XYPoint xypoint(map->getNextDestinationXY().getX(), map->getNextDestinationXY().getY());
+            XYPoint xypoint = map->getNextDestinationXY(); 
             task_queue.push(std::make_unique<NavigateToTask>(xypoint, map->getDestinationOrientation(), map->getIsEndpointOrientationRequired()));
             break;
         }
@@ -170,4 +166,44 @@ void TaskManager::scheduleNewTask(TaskType tasktype, std::shared_ptr<Map> map)
             std::cout << "\n[ERROR] TaskManager::executeCurrentTask. Current completed task requesting unknown task type\n" << std::endl;
             break;
     }            
+}
+
+
+void TaskManager::handleNotStartedTask(std::shared_ptr<Map> map, 
+                                       std::shared_ptr<Navigator> navigator, 
+                                       RobotState& nextRobotState, TaskType& nextTaskType)
+{
+}
+
+void TaskManager::handleInProgressTask(std::shared_ptr<Map> map, 
+                                       std::shared_ptr<Navigator> navigator, 
+                                       RobotState& nextRobotState, TaskType& nextTaskType)
+{
+
+}
+
+void TaskManager::handleSuspendedTask(std::shared_ptr<Map> map, 
+                                       std::shared_ptr<Navigator> navigator, 
+                                       RobotState& nextRobotState, TaskType& nextTaskType)
+{
+    if(nextTaskType != NA)
+        scheduleNewTask(nextTaskType, map);
+}
+
+void TaskManager::handleCompletedTask(std::shared_ptr<Map> map, 
+                                       std::shared_ptr<Navigator> navigator, 
+                                       RobotState& nextRobotState, TaskType& nextTaskType)
+{
+    if(task_queue.top()->getTaskType() == PATHCORRECTION) {
+        task_queue.pop();
+        // next status should be navigate to so set it to in progress
+        task_queue.top()->setStatus(TaskStatus::INPROGRESS);
+    }
+    else if(nextTaskType != NA) {
+        task_queue.pop();
+        scheduleNewTask(nextTaskType, map);
+    }
+    else {
+        task_queue.pop();
+    }
 }

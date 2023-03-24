@@ -1,6 +1,7 @@
 #include "posecorrectiontask.hpp"
 
 PoseCorrectionTask::PoseCorrectionTask()
+   : Task(POSECORRECTION)
 {
 
     
@@ -9,28 +10,28 @@ PoseCorrectionTask::PoseCorrectionTask()
 void PoseCorrectionTask::notStarted(std::shared_ptr<Map> map, 
                                     std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
 {
-    setStatus(INPROGRESS);
+    status = TaskStatus::INPROGRESS;
 }
 
 void PoseCorrectionTask::inProgress(std::shared_ptr<Map> map, 
                                     std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
 {
-    RobotOrientationAtEndpoint robotOrientationAtEndpoint = navigator->isRobotOriented(map, getEndpointDesiredOrientation());
+    RobotOrientationAtEndpoint robotOrientationAtEndpoint = navigator->isRobotOriented(map, map->getDestinationOrientation());
         
     // assign robot new state depending on its orientation relative to waypoint
     switch(robotOrientationAtEndpoint) {
         case ORIENTED:
-            setStatus(COMPLETE);
+            status = TaskStatus::COMPLETE;
             nextRobotState = STOP;
             correcting_orientation = false;
             break;
         case OFF_TO_RIGHT:
-            setStatus(INPROGRESS);
+            status = TaskStatus::INPROGRESS;
             nextRobotState = ROTATE_CCW;
             correcting_orientation = true;
             break;
         case OFF_TO_LEFT:
-            setStatus(INPROGRESS);
+            status = TaskStatus::INPROGRESS;
             nextRobotState = ROTATE_CW;
             correcting_orientation = true;
             break;
@@ -49,7 +50,8 @@ void PoseCorrectionTask::complete(std::shared_ptr<Map> map,
                                   std::shared_ptr<Navigator> navigator, 
                                   RobotState& nextRobotState, TaskType& nextTaskType) 
 {
-    //nextRobotState = STOP;
+    nextTaskType = NA;
+    nextRobotState = STOP;
     //task_queue.pop();
     //task_queue.top().setStatus(INPROGRESS);
 }

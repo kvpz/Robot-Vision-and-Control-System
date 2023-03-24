@@ -13,7 +13,7 @@
 class NavigateToTask : public Task
 {
 public:
-    NavigateToTask(){}
+    NavigateToTask()  :  destinationOrientationTolerance(2.0) {}
     NavigateToTask(double endpointOrientation, bool endpointOrientationRequirement);
     NavigateToTask(XYPoint xy, double endpointOrientation, bool endpointOrientationRequirement);
 
@@ -42,6 +42,8 @@ public:
         endpoint.setY(desty);
     }
 
+    void printTaskInfo(std::string taskStateName);
+
 private:
     // map data (this data gets stored in robot map)
     XYPoint endpoint; 
@@ -52,9 +54,12 @@ private:
     bool isEndpointOrientationRequired;
 
     // helper functions
-    void EndpointPoseCorrection(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) ;
+    //void EndpointPoseCorrection(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) ;
   
+    // suspended state reasons
+    TaskType newTaskRequest;
 
+    double destinationOrientationTolerance;
 };
 
 #endif

@@ -14,7 +14,7 @@ static std::string taskTypeToString(TaskType ttype)
   case PATHCORRECTION:
     return "pathcorrection";
   case POSECORRECTION:
-    return "orient";
+    return "posecorrection";
   case DROPPAYLOAD:
     return "droppayload";
   case GRASP:

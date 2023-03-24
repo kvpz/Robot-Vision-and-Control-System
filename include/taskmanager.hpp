@@ -38,7 +38,8 @@ class TaskManager
 public:
     TaskManager(){};
 
-    void executeCurrentTask(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& robotState);
+    void executeCurrentTask(std::shared_ptr<Map> map, 
+                            std::shared_ptr<Navigator> navigator, RobotState& robotState);
 
     void addTask(std::unique_ptr<Task>);
 
@@ -51,6 +52,19 @@ public:
 private:
     std::stack<std::unique_ptr<Task>> task_queue;
     std::unique_ptr<Task> taskFactory(TaskType ttype);
+
+    void handleNotStartedTask(std::shared_ptr<Map> map, 
+                              std::shared_ptr<Navigator> navigator, 
+                              RobotState& nextRobotState, TaskType& nextTaskType);
+    void handleInProgressTask(std::shared_ptr<Map> map, 
+                              std::shared_ptr<Navigator> navigator, 
+                              RobotState& nextRobotState, TaskType& nextTaskType);
+    void handleSuspendedTask(std::shared_ptr<Map> map, 
+                             std::shared_ptr<Navigator> navigator, 
+                             RobotState& nextRobotState, TaskType& nextTaskType);
+    void handleCompletedTask(std::shared_ptr<Map> map, 
+                             std::shared_ptr<Navigator> navigator, 
+                             RobotState& nextRobotState, TaskType& nextTaskType);
 };
 
 

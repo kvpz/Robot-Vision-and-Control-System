@@ -2,12 +2,12 @@
     "1": {
         "type": "navigateto",
         "endpoint": {"x": 120, "y": 40, "yaw": 90 },
-	    "endpoint_settings":  {"orientation_required": false }
+	    "endpoint_settings":  {"orientation_required": true }
     },
     "2": {
         "type": "navigateto",
         "endpoint": {"x": 80, "y": 23, "yaw": 90 },
-	    "endpoint_settings":  {"orientation_required": false }
+	    "endpoint_settings":  {"orientation_required": 1 }
     },
     "3": {
         "type": "navigateto",

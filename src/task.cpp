@@ -1,7 +1,7 @@
 #include "task.hpp"
 
 Task::Task(TaskType ttype)
-    : status(NOTSTARTED), taskType(ttype)
+    : status(TaskStatus::NOTSTARTED), taskType(ttype)
 {
 }
 
