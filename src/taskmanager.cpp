@@ -20,7 +20,8 @@
 
     Not all tasks may achieve all status. 
 */
-void TaskManager::executeCurrentTask(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
+void TaskManager::executeCurrentTask(std::shared_ptr<Map> map, 
+                                     std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
 {
     TaskType nextTaskType = NA;
     std::unique_ptr<Task> newTask;

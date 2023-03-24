@@ -15,7 +15,8 @@ double Navigator::getAngleToDestination() const
 }
 
 //double getRobotAngleToPoseOrientation(std::shared_ptr<Map> map, double endpointOrientation) const 
-double Navigator::getRobotToEndpointSlopeAngle(std::shared_ptr<Map> map, double endpointDesiredOrientation) const 
+double Navigator::getRobotToEndpointSlopeAngle(std::shared_ptr<Map> map, 
+                                               double endpointDesiredOrientation) const 
 {
     return map->getRobotOrientation() - endpointDesiredOrientation;
     //return angleToEndpointOrientation(map->getRobotOrientation(), endpointOrientation);
@@ -136,7 +137,8 @@ RobotPoseToWaypoint Navigator::isRobotOnPath(const std::shared_ptr<Map> map)
     return result;
 }
 
-RobotOrientationAtEndpoint Navigator::isRobotOriented(std::shared_ptr<Map> map, double endpointOrientation) 
+RobotOrientationAtEndpoint Navigator::isRobotOriented(std::shared_ptr<Map> map, 
+                                                      double endpointOrientation) 
 {
     RobotOrientationAtEndpoint result = ORIENTED;
     double tolerance = 5.0;

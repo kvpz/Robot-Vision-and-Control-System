@@ -7,12 +7,16 @@ PathCorrectionTask::PathCorrectionTask()
 
 }
 
-void PathCorrectionTask::notStarted(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState)
+void PathCorrectionTask::notStarted(std::shared_ptr<Map> map, 
+                                    std::shared_ptr<Navigator> navigator, 
+                                    RobotState& nextRobotState)
 {
     setStatus(INPROGRESS);
 }
 
-void PathCorrectionTask::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState)
+void PathCorrectionTask::inProgress(std::shared_ptr<Map> map, 
+                                    std::shared_ptr<Navigator> navigator, 
+                                    RobotState& nextRobotState)
 {
     double destX2 = map->getNextDestinationXY().getX();
     double destY2 = map->getNextDestinationXY().getY();
@@ -52,13 +56,17 @@ void PathCorrectionTask::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Na
     }
 }
 
-void PathCorrectionTask::suspended(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType)
+void PathCorrectionTask::suspended(std::shared_ptr<Map> map, 
+                                   std::shared_ptr<Navigator> navigator, 
+                                   RobotState& nextRobotState, TaskType& nextTaskType)
 {
     //correction task cannot be suspended.
 
 }
 
-void PathCorrectionTask::complete(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType)
+void PathCorrectionTask::complete(std::shared_ptr<Map> map, 
+                                  std::shared_ptr<Navigator> navigator, 
+                                  RobotState& nextRobotState, TaskType& nextTaskType)
 {
     nextTaskType = NAVIGATETO;
     nextRobotState = STOP;

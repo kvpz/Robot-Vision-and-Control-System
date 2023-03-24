@@ -6,12 +6,14 @@ PoseCorrectionTask::PoseCorrectionTask()
     
 }
 
-void PoseCorrectionTask::notStarted(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
+void PoseCorrectionTask::notStarted(std::shared_ptr<Map> map, 
+                                    std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
 {
     setStatus(INPROGRESS);
 }
 
-void PoseCorrectionTask::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
+void PoseCorrectionTask::inProgress(std::shared_ptr<Map> map, 
+                                    std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
 {
     RobotOrientationAtEndpoint robotOrientationAtEndpoint = navigator->isRobotOriented(map, getEndpointDesiredOrientation());
         
@@ -35,13 +37,17 @@ void PoseCorrectionTask::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Na
     }
 }
     
-void PoseCorrectionTask::suspended(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) 
+void PoseCorrectionTask::suspended(std::shared_ptr<Map> map, 
+                                   std::shared_ptr<Navigator> navigator, 
+                                   RobotState& nextRobotState, TaskType& nextTaskType) 
 {
     // orient task cannot be suspended.
 
 }
 
-void PoseCorrectionTask::complete(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) 
+void PoseCorrectionTask::complete(std::shared_ptr<Map> map, 
+                                  std::shared_ptr<Navigator> navigator, 
+                                  RobotState& nextRobotState, TaskType& nextTaskType) 
 {
     //nextRobotState = STOP;
     //task_queue.pop();

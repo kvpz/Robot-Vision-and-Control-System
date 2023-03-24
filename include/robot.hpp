@@ -36,8 +36,8 @@ public:
     bool hasTasks();
 
     std::shared_ptr<TaskManager> getTaskManager();
-    std::shared_ptr<Map> getMap();
-    std::shared_ptr<Navigator> getNavigator();
+    std::shared_ptr<Map>         getMap();
+    std::shared_ptr<Navigator>   getNavigator();
 
     // setters (inlined)
 

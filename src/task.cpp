@@ -5,10 +5,16 @@ Task::Task(TaskType ttype)
 {
 }
 
-void Task::notStarted(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState){}
-void Task::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState){}
-void Task::suspended(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType){}
-void Task::complete(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType){}
+void Task::notStarted(std::shared_ptr<Map> map, 
+                      std::shared_ptr<Navigator> navigator, RobotState& nextRobotState){}
+void Task::inProgress(std::shared_ptr<Map> map, 
+                      std::shared_ptr<Navigator> navigator, RobotState& nextRobotState){}
+void Task::suspended(std::shared_ptr<Map> map, 
+                     std::shared_ptr<Navigator> navigator, 
+                     RobotState& nextRobotState, TaskType& nextTaskType){}
+void Task::complete(std::shared_ptr<Map> map, 
+                    std::shared_ptr<Navigator> navigator, 
+                    RobotState& nextRobotState, TaskType& nextTaskType){}
 
 // setters
 void Task::setStatus(TaskStatus s)

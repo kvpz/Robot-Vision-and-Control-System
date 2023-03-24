@@ -1,16 +1,18 @@
 #include "navigatetotask.hpp"
 
-NavigateToTask::NavigateToTask(double endpointOrientation, bool endpointOrientationRequirement) 
+NavigateToTask::NavigateToTask(double endpointOrientation, 
+                               bool endpointOrientationRequirement) 
     : isRobotAtEndpoint(false), Task(NAVIGATETO)
 {
+    isEndpointOrientationRequired = endpointOrientationRequirement;
+    endpointDesiredOrientation = endpointOrientation;
+
     if(DEBUG_NAVIGATETOTASK) {
         std::cout << "\n======= NavigateToTask::NavigateToTask =======\n";
         std::cout << "isEndpointOrientationRequired: " << endpointOrientationRequirement << "\n";
         std::cout << "endpointOrientation: " << endpointOrientation << "\n";
         std::cout << "==============================================\n" << std::endl;
     }
-    isEndpointOrientationRequired = endpointOrientationRequirement;
-    endpointDesiredOrientation = endpointOrientation;
 }
 
 NavigateToTask::NavigateToTask(XYPoint xy, double endpointOrientation, bool endpointOrientationRequired)
@@ -27,12 +29,11 @@ NavigateToTask::NavigateToTask(XYPoint xy, double endpointOrientation, bool endp
     This function should initialize the map because the task 
     contains information about the 
 */
-void NavigateToTask::notStarted(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState)
+void NavigateToTask::notStarted(std::shared_ptr<Map> map, 
+                                std::shared_ptr<Navigator> navigator, RobotState& nextRobotState)
 {
     // At this point the robot should be told whether it should travel 
     // forward, backward, left, or right depending on its distance to the endpoint and current location
-
-   
     double robotDistanceToEndpoint = distance(map->getRobotCurrentLocation(), map->getNextDestinationXY());
     double robot_orientation_minus_destination = navigator->getAngleToDestination();
 
@@ -65,7 +66,9 @@ void NavigateToTask::notStarted(std::shared_ptr<Map> map, std::shared_ptr<Naviga
     The navigate to task is not complete until the robot has reached the navigation endpoint
     AND, if required, oriented itself at the endpoint at the desired orientation. 
 */
-void NavigateToTask::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState)
+void NavigateToTask::inProgress(std::shared_ptr<Map> map, 
+                                std::shared_ptr<Navigator> navigator, 
+                                RobotState& nextRobotState)
 {
     double destX1 = map->getNextDestinationXY().getX(); 
     double destY1 = map->getNextDestinationXY().getY();
@@ -82,7 +85,7 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Naviga
             // decide whether to move forward or backward depending on distance to endpoint
             break;
         case NEAR:
-            // set to complete if orientation at endpoint does not matter
+            // fix endpoint if the task requires it
             if(isEndpointOrientationRequired == false) {
                 setStatus(COMPLETE);
                 nextRobotState = STOP;
@@ -114,9 +117,13 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Naviga
 
 }
 
-void NavigateToTask::suspended(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) 
+void NavigateToTask::suspended(std::shared_ptr<Map> map, 
+                               std::shared_ptr<Navigator> navigator, 
+                               RobotState& nextRobotState, TaskType& nextTaskType) 
 {
+    // refer to the member data containing next-task-type
     nextTaskType = PATHCORRECTION;
+    nextTaskType = POSECORRECTION;
     nextRobotState = STOP;
 }
 
@@ -125,8 +132,16 @@ void NavigateToTask::suspended(std::shared_ptr<Map> map, std::shared_ptr<Navigat
     correct its orientation so that it matches the orientation required
     by the endpoint pose.
 */
-void NavigateToTask::complete(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) 
+void NavigateToTask::complete(std::shared_ptr<Map> map, 
+                              std::shared_ptr<Navigator> navigator, 
+                              RobotState& nextRobotState, TaskType& nextTaskType) 
 {
+    // What used to be the pose correction task is now embedded within this
+    // class as the EnpointPoseCorrection function which is called when the
+    // robot has reached the destination but the task requires the robot to
+    // have a particular pose (orientation) at the endpoint. Instead of creating
+    // a new pose correction task it is more efficient to create a function that 
+    // will execute at the next state machine 'tick'.
     if(DEBUG_NAVIGATETOTASK) {
         std::cout << "\n======= NavigateToTask::complete =======\n" << std::endl;
     }
