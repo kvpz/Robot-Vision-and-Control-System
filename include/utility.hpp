@@ -71,7 +71,7 @@ static double yaw_to_degrees(double yaw, double quat_y)
   return 0.0;
 }
 
-static double angleToPoint(double x_robot, double y_robot, double x_destination, double y_destination, double robot_current_angle)
+static double angleToPoint(double x_robot, double y_robot, double x_destination, double y_destination, double robot_current_angle, bool reverse)
 {
   double x_diff = x_destination - x_robot;
   double y_diff = y_destination - y_robot;
@@ -97,7 +97,17 @@ static double angleToPoint(double x_robot, double y_robot, double x_destination,
     beta = beta + 360.0;
   }
 
-  theta = beta - robot_current_angle;
+  if (reverse){
+    if (robot_current_angle < 180.0){
+      theta = beta - (robot_current_angle + 180.0);
+    }
+    else{
+      theta = beta - (robot_current_angle - 180.0);
+    }
+  }
+  else{
+     theta = beta - robot_current_angle;
+  }
 
   if(theta < 0.0) {
     if(std::fabs(theta) > 180.0) {

@@ -34,9 +34,9 @@ void Robot::run() //Task& task) {
     }
   }
 
-double Robot::getRobotAngleToPoint(const Robot& robot, double x, double y) const
+double Robot::getRobotAngleToPoint(const Robot& robot, double x, double y, bool reverse) const
 {
-    return angleToPoint(robot.getX(), robot.getY(), x, y, robot.getOrientation());
+    return angleToPoint(robot.getX(), robot.getY(), x, y, robot.getOrientation(), reverse);
 }
 
 void Robot::move_forward()
@@ -82,7 +82,7 @@ RobotPoseToWaypoint Robot::isRobotOnPath(double robotX, double robotY, double de
     bool isXapproxnear = approximately(robotX, destX, 3.0, false);
     double angleToDestTolerance = 10.0;
 
-    angleToDest = getRobotAngleToPoint(*this, destX, destY);
+    angleToDest = getRobotAngleToPoint(*this, destX, destY, false);
 
     if(isYapproxnear && isXapproxnear) {
         // near the waypoint
