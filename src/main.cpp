@@ -95,6 +95,8 @@ int main() try
             // Transfer T265 data to robot
             robot->setOrientation(yaw_to_degrees(yaw, pose_data.rotation.y));
             robot->setCurrentXY(current_x, current_y);
+            // TODO: robot->getMap()->storeCurrentPositionInTime...
+            
         }
     };
 

@@ -29,7 +29,7 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map, std::shared_ptr<N
         case NOTSTARTED:
             task_queue.top()->notStarted(map, navigator, nextRobotState);
             // set task to in progress
-            break;  
+            break;   
             
         case INPROGRESS:
             task_queue.top()->inProgress(map, navigator, nextRobotState);
@@ -43,9 +43,17 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map, std::shared_ptr<N
 
         case COMPLETE:
             task_queue.top()->complete(map, navigator, nextRobotState, nextTaskType);
-            task_queue.pop();
-            if(nextTaskType != NA)
+            if(task_queue.top()->getTaskType() == PATHCORRECTION) {
+                task_queue.pop();
+                task_queue.top()->setStatus(INPROGRESS);
+            }
+            else if(nextTaskType != NA) {
+                task_queue.pop();
                 scheduleNewTask(nextTaskType, map);
+            }
+            else {
+                task_queue.pop();
+            }
 
             break;
     } // switch
@@ -54,6 +62,7 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map, std::shared_ptr<N
         std::cout << "======= TaskManager::executeCurrentTask =======\n";
         std::cout << "task type: " << taskTypeToString(task_queue.top()->getTaskType()) << "\n";
         std::cout << "task status: " << statusToString(task_queue.top()->getStatus()) << "\n";
+        std::cout << "task queue size: " << task_queue.size() << "\n";
         std::cout << "================================================\n" << std::endl;
     }
 }
@@ -146,6 +155,7 @@ std::unique_ptr<Task> TaskManager::taskFactory(TaskType ttype)
 
 void TaskManager::scheduleNewTask(TaskType tasktype, std::shared_ptr<Map> map)
 {
+    std::cout << "Sheduling a new task: " << taskTypeToString(tasktype) << std::endl;
     switch(tasktype) {
         case PATHCORRECTION:
             task_queue.push(std::make_unique<PathCorrectionTask>());

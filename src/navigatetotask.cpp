@@ -30,10 +30,9 @@ NavigateToTask::NavigateToTask(XYPoint xy, double endpointOrientation, bool endp
 void NavigateToTask::notStarted(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState)
 {
     // At this point the robot should be told whether it should travel 
-    // forward, backward, left, or right depending on its distance
-    // to the endpoint
-    //double robotDistanceToEndpoint = distance(map->RobotX(), destination.getX(), destination.getY(), map->map->getNextDestinationXY().getY());
-    //double robotDistanceToEndpoint = distance(map->RobotX(), map->getNextDestinationXY().getX(), map->RobotY(), map->getNextDestinationXY().getY());
+    // forward, backward, left, or right depending on its distance to the endpoint and current location
+
+   
     double robotDistanceToEndpoint = distance(map->getRobotCurrentLocation(), map->getNextDestinationXY());
     double robot_orientation_minus_destination = navigator->getAngleToDestination();
 
@@ -51,6 +50,11 @@ void NavigateToTask::notStarted(std::shared_ptr<Map> map, std::shared_ptr<Naviga
     // update task status
     setStatus(INPROGRESS);
 
+    /*
+        TODO:
+        (1) implement optimal travel direction
+        (2)  
+    */
     if(DEBUG_NAVIGATETOTASK) {
         std::cout << "\n====== NavigateToTask::notStarted =======\n" << std::endl;
         std::cout << "\n==========================================\n" << std::endl;
@@ -68,7 +72,7 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Naviga
     double robotX = map->RobotX();
     double robotY = map->RobotY();
     double endpointDesiredOrientation = map->getDestinationOrientation();
-    RobotPoseToWaypoint isRobotOnPath = navigator->isRobotOnPath(map, robotX, robotY, destX1, destY1);
+    RobotPoseToWaypoint isRobotOnPath = navigator->isRobotOnPath(map);
 
     // get angle required for robot to rotate until it reaches the angle required at endpoint
     navigator->getRobotToEndpointSlopeAngle(map, endpointDesiredOrientation);
@@ -92,6 +96,7 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Naviga
             break;
         case ON_PATH:
             setStatus(INPROGRESS);
+            nextRobotState = MOVE_FORWARD;
             //robotState = robot->getTravelDirection();
             break;
         case OFF_PATH:
@@ -111,11 +116,6 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Naviga
 
 void NavigateToTask::suspended(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) 
 {
-    // travelTaskSuspendedState(task); definition below
-    // if new task assumed to be CORRECTPATH
-    //Task newTask(PATHCORRECTION);
-    //newTask.setEndpoint(destination.getX(), destination.getY(), getEndpointDesiredOrientation());
-    //task_queue.push(newTask);
     nextTaskType = PATHCORRECTION;
     nextRobotState = STOP;
 }
@@ -127,11 +127,6 @@ void NavigateToTask::suspended(std::shared_ptr<Map> map, std::shared_ptr<Navigat
 */
 void NavigateToTask::complete(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) 
 {
-    //task_queue.pop();
-    // travelTaskCompleteState(task) definition lines below
-    //Task newTask(POSECORRECTION);
-    //newTask.setEndpoint(destination.getX(), destination.getY(), getEndpointDesiredOrientation());
-    //task_queue.push(newTask);
     if(DEBUG_NAVIGATETOTASK) {
         std::cout << "\n======= NavigateToTask::complete =======\n" << std::endl;
     }

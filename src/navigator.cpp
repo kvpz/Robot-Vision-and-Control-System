@@ -96,7 +96,7 @@ double Navigator::robotAngularDistanceToOrientation(std::shared_ptr<Map> map)
     return theta;
 }
 
-RobotPoseToWaypoint Navigator::isRobotOnPath(std::shared_ptr<Map> map, double robotX, double robotY, double destX, double destY) 
+RobotPoseToWaypoint Navigator::isRobotOnPath(const std::shared_ptr<Map> map) 
 {
     // TODO: create global path correction threshold variable for config file use
     // check if robot position (x,y) approximately near destination
@@ -114,8 +114,10 @@ RobotPoseToWaypoint Navigator::isRobotOnPath(std::shared_ptr<Map> map, double ro
         // near the waypoint
         result = NEAR;
     }
-    else if (angleToDestination < angleToDestTolerance && angleToDestination > -1.0*angleToDestTolerance
-            && (!(map->RobotX() < (destX - 2.5)) || !(map->RobotX() > (destX + 2.5)))) 
+    else if (angleToDestination < angleToDestTolerance 
+            && angleToDestination > -1.0*angleToDestTolerance
+            && (!(map->RobotX() < (map->getNextDestinationXY().getX() - 2.5)) 
+            || !(map->RobotX() > (map->getNextDestinationXY().getX() + 2.5)))) 
     { // robotY > destY && robotX == destX
         // detect if drifting from path
         result = ON_PATH;

@@ -1,0 +1,12 @@
+#ifndef OBJECTS_HPP
+#define OBJECTS_HPP
+
+enum OBJECTTYPES {
+    YELLOWDUCK, 
+    PINKDUCK,
+    WHITEPEDESTAL,
+    GREENPEDESTAL,
+    REDPEDESTAL
+}
+
+#endif

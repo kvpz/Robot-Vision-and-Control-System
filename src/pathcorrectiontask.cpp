@@ -1,7 +1,7 @@
 #include "pathcorrectiontask.hpp"
 
 PathCorrectionTask::PathCorrectionTask()
-    : Task(PATHCORRECTION)
+    : Task(PATHCORRECTION), correcting_position(false), angleToDestTolerance(10.0)
 {
 
 
@@ -18,7 +18,7 @@ void PathCorrectionTask::inProgress(std::shared_ptr<Map> map, std::shared_ptr<Na
     double destY2 = map->getNextDestinationXY().getY();
     double robotX2 = map->RobotX();
     double robotY2 = map->RobotY();
-    RobotPoseToWaypoint rposetoway = navigator->isRobotOnPath(map, robotX2, robotY2, destX2, destY2);
+    RobotPoseToWaypoint rposetoway = navigator->isRobotOnPath(map);
 
     // assign robot a task depending on orientation relative to waypoint
     switch(rposetoway) {
@@ -60,8 +60,6 @@ void PathCorrectionTask::suspended(std::shared_ptr<Map> map, std::shared_ptr<Nav
 
 void PathCorrectionTask::complete(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType)
 {
-    //nextRobotState = STOP;
-    //task_queue.pop();
-    //task_queue.top().setStatus(INPROGRESS);
     nextTaskType = NAVIGATETO;
+    nextRobotState = STOP;
 }

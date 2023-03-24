@@ -90,7 +90,7 @@ void Robot::executeCurrentTask()
     std::cout << "====== Robot::executeCurrentTask =======" << std::endl;
   }
 
-  RobotState nextRobotState;
+  RobotState nextRobotState = state;
   //TODO: nextRobotState = taskManager->executeCurrentTask(map, navigator);
   taskManager->executeCurrentTask(map, navigator, nextRobotState);
 

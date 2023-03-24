@@ -24,7 +24,7 @@ public:
 
     double robotAngularDistanceToOrientation(std::shared_ptr<Map> map);
 
-    RobotPoseToWaypoint isRobotOnPath(std::shared_ptr<Map> map, double robotX, double robotY, double destX, double destY);
+    RobotPoseToWaypoint isRobotOnPath(const std::shared_ptr<Map> map);
 
     RobotOrientationAtEndpoint isRobotOriented(std::shared_ptr<Map> map, double endpointOrientation);
 

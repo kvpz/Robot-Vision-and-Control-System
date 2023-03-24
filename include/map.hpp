@@ -1,7 +1,9 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 #include <optional>
+#include <unordered_map>
 #include "xypoint.hpp"
+#include "objects.hpp"
 
 class Map
 {
@@ -41,7 +43,10 @@ private:
     XYPoint destinationXY;
     double destinationOrientation;
     bool isEndpointOrientationRequired;
-    // map<size_t, Waypoint> pointsVisited;
+    
+    std::map<size_t, XYPoint> pointsVisited;
+    std::unordered_map<std::pair<int, int>, OBJECTTYPES> occupancyGrid;
+
 };
 
 #endif

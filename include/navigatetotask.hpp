@@ -44,8 +44,7 @@ public:
 
 private:
     // map data (this data gets stored in robot map)
-    //XYPoint destination;
-    XYPoint endpoint; // (destination)
+    XYPoint endpoint; 
     double endpointDesiredOrientation; // angle
 
     // task behavioral state variables (affects how task executes decisions)

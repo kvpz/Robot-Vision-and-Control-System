@@ -18,8 +18,8 @@ public:
     virtual void complete(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) override;
 
 private:
-    double angleToDestTolerance = 10.0;
-    bool correcting_position = false;        
+    double angleToDestTolerance;
+    bool correcting_position;        
 
 };
 
