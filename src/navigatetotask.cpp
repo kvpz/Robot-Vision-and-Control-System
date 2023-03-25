@@ -177,26 +177,3 @@ void NavigateToTask::printTaskInfo(std::string taskStateName)
         std::cout << "\n==========================================\n" << std::endl;
     }
 }
-
-/*
-void NavigateToTask::EndpointPoseCorrection(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
-{
-    RobotOrientationAtEndpoint robotOrientationAtEndpoint = navigator->isRobotOriented(map, endpointDesiredOrientation);
-        
-    // assign robot new state depending on its orientation relative to waypoint
-    switch(robotOrientationAtEndpoint) {
-        case ORIENTED:
-            status = COMPLETE);
-            nextRobotState = STOP;
-            break;
-        case OFF_TO_RIGHT:
-            status = INPROGRESS);
-            nextRobotState = ROTATE_CCW;
-            break;
-        case OFF_TO_LEFT:
-            status = INPROGRESS);
-            nextRobotState = ROTATE_CW;
-            break;
-    }
-}
-*/

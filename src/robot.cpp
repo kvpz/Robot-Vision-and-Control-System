@@ -92,6 +92,7 @@ void Robot::executeCurrentTask()
       run(); // alter robot state if it needs to be in a different
   }
 
+  // speed control
   if(taskManager->getCurrentTask().getTaskType() == POSECORRECTION ||
      taskManager->getCurrentTask().getTaskType() == PATHCORRECTION) {
       if(speed != Speed::b)

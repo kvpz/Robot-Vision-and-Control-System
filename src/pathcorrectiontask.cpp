@@ -3,6 +3,7 @@
 PathCorrectionTask::PathCorrectionTask()
     : Task(PATHCORRECTION)
 {
+    correcting_position = false;
 }
 
 void PathCorrectionTask::notStarted(std::shared_ptr<Map> map, 
@@ -15,7 +16,7 @@ void PathCorrectionTask::notStarted(std::shared_ptr<Map> map,
 void PathCorrectionTask::inProgress(std::shared_ptr<Map> map, 
                                     std::shared_ptr<Navigator> navigator, 
                                     RobotState& nextRobotState)
-{
+{        
     // assign robot a task depending on orientation relative to waypoint
     switch(navigator->isRobotOnPath(map)) {
         case NEAR:
@@ -25,15 +26,24 @@ void PathCorrectionTask::inProgress(std::shared_ptr<Map> map,
             break;
         case OFF_PATH:
             status = TaskStatus::INPROGRESS;
+            // decide whether to rotate CW or CCW
+            if(correcting_position == false) {
+                if(navigator->robotAngularDistanceToEndpoint(map, false) < ORIENTATION_RANGE_TOLERANCE) {
+                    nextRobotState = ROTATE_CW;
+                }
+                else if (navigator->robotAngularDistanceToEndpoint(map, false) > -1.0 * ORIENTATION_RANGE_TOLERANCE){
+                    nextRobotState = ROTATE_CCW;
+                }
+                else {
+                    status = TaskStatus::COMPLETE;
+                    nextRobotState = STOP;
+                }
+                correcting_position = true;
+            }
 
-            if(approximately(map->getDestinationOrientation(), map->getRobotOrientation(), ORIENTATION_RANGE_TOLERANCE)) {
-                    
-            else if(navigator->getAngleToDestination(map) < 0.0) 
-                nextRobotState = ROTATE_CCW;
-            else
-                nextRobotState = ROTATE_CW;
             break;
     }
+    
 }
 
 void PathCorrectionTask::suspended(std::shared_ptr<Map> map, 

@@ -60,6 +60,7 @@ double Navigator::robotAngularDistanceToEndpoint(std::shared_ptr<Map> map, bool 
         beta = beta + 360.0;
     }
 
+/*
     if (reverse){
         if (map->getRobotOrientation() < 180.0){
             theta = beta - (map->getRobotOrientation() + 180.0);
@@ -71,6 +72,8 @@ double Navigator::robotAngularDistanceToEndpoint(std::shared_ptr<Map> map, bool 
     else{
         theta = beta - map->getRobotOrientation();
     }
+*/
+    theta = beta - map->getRobotOrientation();
 
     if(theta < 0.0) {
         if(std::fabs(theta) > 180.0) {
@@ -114,9 +117,9 @@ RobotPoseToWaypoint Navigator::isRobotOnPath(const std::shared_ptr<Map> map)
         result = NEAR;
     }
     else if (angleToDestination < ORIENTATION_RANGE_TOLERANCE 
-            && angleToDestination > -1.0*ORIENTATION_RANGE_TOLERANCE
-            && (!(map->RobotX() < (map->getNextDestinationXY().getX() - 2.5)) 
-            || !(map->RobotX() > (map->getNextDestinationXY().getX() + 2.5)))) 
+            && angleToDestination > -1.0*ORIENTATION_RANGE_TOLERANCE)
+            //&& (!(map->RobotX() < (map->getNextDestinationXY().getX() - 2.5)) 
+            //|| !(map->RobotX() > (map->getNextDestinationXY().getX() + 2.5)))) 
     { // robotY > destY && robotX == destX
         // detect if drifting from path
         result = ON_PATH;
