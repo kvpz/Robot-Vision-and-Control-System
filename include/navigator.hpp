@@ -9,7 +9,7 @@
 
 #define NAVDEBUG true
 
-#define ORIENTATION_RANGE_TOLERANCE 2.0
+#define ORIENTATION_RANGE_TOLERANCE 10.0
 
 class Navigator
 {
@@ -29,7 +29,12 @@ public:
 
     double getAngleToDestination(std::shared_ptr<Map> map);
 
+    void setIsTravelDirectionForward(bool b) { isTravelDirectionForward = b; } 
+
+    bool getIsTravelDirectionForward() { return isTravelDirectionForward; }
+
 private:
+    bool isTravelDirectionForward;
 };
 
 #endif

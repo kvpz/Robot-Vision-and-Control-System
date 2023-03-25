@@ -10,7 +10,7 @@
 
 #define DEBUG_NAVIGATETOTASK true
 
-#define ORIENTATION_RANGE_TOLERANCE 2.0
+#define ORIENTATION_RANGE_TOLERANCE 10.0
 
 class NavigateToTask : public Task
 {

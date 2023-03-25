@@ -24,7 +24,7 @@ NavigateToTask::NavigateToTask(XYPoint xy, double endpointOrientation, bool endp
 
 /*
     This function should initialize the map because the task 
-    contains information about the 
+    contains information about the endpoint.
 */
 void NavigateToTask::notStarted(std::shared_ptr<Map> map, 
                                 std::shared_ptr<Navigator> navigator, RobotState& nextRobotState)
@@ -39,6 +39,7 @@ void NavigateToTask::notStarted(std::shared_ptr<Map> map,
     double robotDistanceToEndpoint = distance(map->getRobotCurrentLocation(), map->getNextDestinationXY());
     //double robot_orientation_minus_destination = navigator->robotAngularDistanceToOrientation(map); //- map->getDestinationOrientation(); //navigator->getAngleToDestination();
 
+/*
     if(robotDistanceToEndpoint < 70.0 && 
        navigator->robotAngularDistanceToEndpoint(map, true) > 130.0)
         // move robot backward to a point if travel distance is short
@@ -46,14 +47,13 @@ void NavigateToTask::notStarted(std::shared_ptr<Map> map,
         nextRobotState = MOVE_BACKWARD;
     else
         nextRobotState = MOVE_FORWARD;
-
+*/
     // update task status
     status = TaskStatus::INPROGRESS;
 
     /*
         TODO:
         (1) implement optimal travel direction
-        (2)  
     */
     if(DEBUG_NAVIGATETOTASK) {
        printTaskInfo("NavigateToTask::NavigateToTask");        
@@ -67,21 +67,8 @@ void NavigateToTask::notStarted(std::shared_ptr<Map> map,
 void NavigateToTask::inProgress(std::shared_ptr<Map> map, 
                                 std::shared_ptr<Navigator> navigator, 
                                 RobotState& nextRobotState)
-{
-    double destX1 = map->getNextDestinationXY().getX(); 
-    double destY1 = map->getNextDestinationXY().getY();
-    double robotX = map->RobotX();
-    double robotY = map->RobotY();
-    double endpointDesiredOrientation = map->getDestinationOrientation();
-    RobotPoseToWaypoint isRobotOnPath = navigator->isRobotOnPath(map);
-
-    // get angle required for robot to rotate until it reaches the angle required at endpoint
-    navigator->getRobotToEndpointSlopeAngle(map, endpointDesiredOrientation);
-    
-    switch(isRobotOnPath) {
-        case NONE:
-            // decide whether to move forward or backward depending on distance to endpoint
-            break;
+{    
+    switch(navigator->isRobotOnPath(map)) {
         case NEAR:
             // fix endpoint if the task requires it
             if(isEndpointOrientationRequired == false) {
@@ -93,8 +80,6 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
                     !approximately(map->getRobotOrientation(), map->getDestinationOrientation(), destinationOrientationTolerance)) {
                 status = TaskStatus::SUSPENDED;
                 newTaskRequest = POSECORRECTION;
-                // move function endpoint pose correction function to pose correction task
-                //EndpointPoseCorrection(map, navigator, nextRobotState);
             }
             else {
                 status = TaskStatus::COMPLETE;
@@ -104,8 +89,8 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
             break;
         case ON_PATH:
             status = TaskStatus::INPROGRESS;
-            nextRobotState = MOVE_FORWARD;
-            //robotState = robot->getTravelDirection();
+            //nextRobotState = MOVE_FORWARD;
+            nextRobotState = MOVE_BACKWARD;
             break;
         case OFF_PATH:
             status = TaskStatus::SUSPENDED;
@@ -115,14 +100,8 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
     }
 
     if(DEBUG_NAVIGATETOTASK) {
-        std::cout << "======= NavigateToTask::inProgress =======\n";
-        std::cout << "robot pose relative to waypoint: " 
-                    << printRobotPoseToWaypoint(isRobotOnPath) << "\n";
-        
-        std::cout << "==================================\n" << std::endl;
         printTaskInfo("NavigateToTask::inProgress");
     }
-
 }
 
 /*

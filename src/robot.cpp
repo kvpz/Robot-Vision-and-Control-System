@@ -6,13 +6,10 @@ Robot::Robot(double xpos, double ypos, double orientation)
     comport = std::make_unique<Comms>("/dev/ttyACM0");
     taskManager = std::make_shared<TaskManager>();
     navigator = std::make_unique<Navigator>();
+    navigator->setIsTravelDirectionForward(false);
     map = std::make_unique<Map>();
     map->setRobotCurrentCoordinate(xpos, ypos);
     map->setRobotOrientation(orientation);
-
-    std::cout << "======== Robot::Robot ========\n";
-    std::cout << "taskManager address: " << &(*taskManager) << "\n";
-    std::cout << "==============================\n" << std::endl;
 }
 
 void Robot::run()

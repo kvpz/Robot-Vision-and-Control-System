@@ -28,10 +28,20 @@ void PathCorrectionTask::inProgress(std::shared_ptr<Map> map,
             status = TaskStatus::INPROGRESS;
             // decide whether to rotate CW or CCW
             if(correcting_position == false) {
-                if(navigator->robotAngularDistanceToEndpoint(map, false) < ORIENTATION_RANGE_TOLERANCE) {
+                if(navigator->getIsTravelDirectionForward() && 
+                    navigator->robotAngularDistanceToEndpoint(map, false) < ORIENTATION_RANGE_TOLERANCE) {
                     nextRobotState = ROTATE_CW;
                 }
-                else if (navigator->robotAngularDistanceToEndpoint(map, false) > -1.0 * ORIENTATION_RANGE_TOLERANCE){
+                else if (navigator->getIsTravelDirectionForward() && 
+                    navigator->robotAngularDistanceToEndpoint(map, false) > -1.0 * ORIENTATION_RANGE_TOLERANCE){
+                    nextRobotState = ROTATE_CCW;
+                }
+                else if(!navigator->getIsTravelDirectionForward() && 
+                    navigator->robotAngularDistanceToEndpoint(map, true) < ORIENTATION_RANGE_TOLERANCE) {
+                    nextRobotState = ROTATE_CW;
+                }
+                else if (!navigator->getIsTravelDirectionForward() && 
+                    navigator->robotAngularDistanceToEndpoint(map, true) > -1.0 * ORIENTATION_RANGE_TOLERANCE){
                     nextRobotState = ROTATE_CCW;
                 }
                 else {

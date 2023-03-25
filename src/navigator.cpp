@@ -60,8 +60,8 @@ double Navigator::robotAngularDistanceToEndpoint(std::shared_ptr<Map> map, bool 
         beta = beta + 360.0;
     }
 
-/*
-    if (reverse){
+    
+    if (!isTravelDirectionForward){
         if (map->getRobotOrientation() < 180.0){
             theta = beta - (map->getRobotOrientation() + 180.0);
         }
@@ -72,9 +72,10 @@ double Navigator::robotAngularDistanceToEndpoint(std::shared_ptr<Map> map, bool 
     else{
         theta = beta - map->getRobotOrientation();
     }
-*/
-    theta = beta - map->getRobotOrientation();
+    
 
+    //theta = beta - map->getRobotOrientation();
+    /*
     if(theta < 0.0) {
         if(std::fabs(theta) > 180.0) {
             theta = 360 + theta;
@@ -85,6 +86,7 @@ double Navigator::robotAngularDistanceToEndpoint(std::shared_ptr<Map> map, bool 
         theta = theta - 360.0;
         //}
     }
+    */
 
     if(NAVDEBUG) {
         std::cout << "\n============== Navigator::angleToPoint ===================\n";
@@ -96,7 +98,7 @@ double Navigator::robotAngularDistanceToEndpoint(std::shared_ptr<Map> map, bool 
         std::cout << "delta_x: " << delta_x << "\n";
         std::cout << "delta_y / delta_x: " << delta_y / delta_x << "\n";
         std::cout << "beta: " << beta << "\n";
-        std::cout << "current_angle: " << map->getRobotOrientation() << "\n";
+        std::cout << "theta: " << theta << "\n";
         std::cout << "============================================================" << std::endl;
     }
 
@@ -110,7 +112,7 @@ RobotPoseToWaypoint Navigator::isRobotOnPath(const std::shared_ptr<Map> map)
     bool isXapproxnear = approximately(map->getRobotCurrentLocation().getX(), map->getNextDestinationXY().getX(), ORIENTATION_RANGE_TOLERANCE);
     RobotPoseToWaypoint result = ON_PATH;
 
-    double angleToDestination = robotAngularDistanceToEndpoint(map);// getRobotAngleToPoint(map, destX, destY);
+    double angleToDestination = robotAngularDistanceToEndpoint(map, !isTravelDirectionForward);// getRobotAngleToPoint(map, destX, destY);
 
     if(isYapproxnear && isXapproxnear) {
         // near the waypoint
