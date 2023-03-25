@@ -7,7 +7,9 @@
 #include "map.hpp"
 #include "utility.hpp"
 
-#define NAVDEBUG false
+#define NAVDEBUG true
+
+#define ORIENTATION_RANGE_TOLERANCE 2.0
 
 class Navigator
 {
@@ -22,11 +24,14 @@ public:
 
     double getRobotToEndpointSlopeAngle(std::shared_ptr<Map> map, double endpointDesiredOrientation) const;
 
-    double robotAngularDistanceToOrientation(std::shared_ptr<Map> map);
+    double robotAngularDistanceToEndpoint(std::shared_ptr<Map> map, bool reverse);
 
     RobotPoseToWaypoint isRobotOnPath(const std::shared_ptr<Map> map);
 
-    RobotOrientationAtEndpoint isRobotOriented(std::shared_ptr<Map> map, double endpointOrientation);
+    //RobotOrientationAtEndpoint 
+    bool isRobotOriented(std::shared_ptr<Map> map); //, double endpointOrientation);
+
+    RobotOrientationAtEndpoint getRobotOrientationToEndpoint(std::shared_ptr<Map> map);
 
 private:
     double angleToDestination;

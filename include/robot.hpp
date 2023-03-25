@@ -55,8 +55,8 @@ private:
 
     // robot status indicators
     RobotState state;
-    RobotPoseToWaypoint robotPoseToWaypoint;
-    RobotOrientationAtEndpoint robotOrientationAtEndpoint;
+    //RobotPoseToWaypoint robotPoseToWaypoint;
+    //RobotOrientationAtEndpoint robotOrientationAtEndpoint;
 
     // 
     std::shared_ptr<TaskManager> taskManager;

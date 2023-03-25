@@ -52,9 +52,16 @@ void Map::setDestinationXY(double destx, double desty)
 {
     destinationXY.setX(destx);
     destinationXY.setY(desty);
+    isEndpointOrientationRequired = false;
 }
 
 void Map::setDestinationDesiredOrientation(double theta) 
 {
     destinationOrientation = theta;
+    isEndpointOrientationRequired = true;
+}
+
+void Map::setIsEndpointOrientationRequired(bool value) 
+{
+    isEndpointOrientationRequired = value;
 }

@@ -1,8 +1,7 @@
 #include "robot.hpp"
 
 Robot::Robot(double xpos, double ypos, double orientation) 
-    : state(STOP), robotPoseToWaypoint(NONE)
-  //: map(std::make_shared<Map>()), navigator(std::make_unique<Navigator>()), taskManager(std::make_unique<TaskManager>())
+    : state(STOP)
 { 
     comport = std::make_unique<Comms>("/dev/ttyACM0");
     taskManager = std::make_shared<TaskManager>();
@@ -10,9 +9,6 @@ Robot::Robot(double xpos, double ypos, double orientation)
     map = std::make_unique<Map>();
     map->setRobotCurrentCoordinate(xpos, ypos);
     map->setRobotOrientation(orientation);
-
-    robotPoseToWaypoint = NONE;
-    robotOrientationAtEndpoint = NOTORIENTED;
 
     std::cout << "======== Robot::Robot ========\n";
     std::cout << "taskManager address: " << &(*taskManager) << "\n";
@@ -86,10 +82,6 @@ void Robot::setOrientation(double o)
 */
 void Robot::executeCurrentTask()
 {
-  if(ROBOTDEBUG) {
-    std::cout << "====== Robot::executeCurrentTask =======" << std::endl;
-  }
-
   RobotState nextRobotState = state;
   //TODO: nextRobotState = taskManager->executeCurrentTask(map, navigator);
   taskManager->executeCurrentTask(map, navigator, nextRobotState);

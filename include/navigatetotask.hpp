@@ -8,12 +8,14 @@
 #include "navigator.hpp"
 #include "map.hpp"
 
-#define DEBUG_NAVIGATETOTASK false
+#define DEBUG_NAVIGATETOTASK true
+
+#define ORIENTATION_RANGE_TOLERANCE 2.0
 
 class NavigateToTask : public Task
 {
 public:
-    NavigateToTask()  :  destinationOrientationTolerance(2.0) {}
+    NavigateToTask()  :  destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE) {}
     NavigateToTask(double endpointOrientation, bool endpointOrientationRequirement);
     NavigateToTask(XYPoint xy, double endpointOrientation, bool endpointOrientationRequirement);
 

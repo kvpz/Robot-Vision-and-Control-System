@@ -157,6 +157,7 @@ void TaskManager::scheduleNewTask(TaskType tasktype, std::shared_ptr<Map> map)
         case POSECORRECTION:
             task_queue.push(std::make_unique<PoseCorrectionTask>());
             break;
+        // TODO bottom never called. Test further
         case NAVIGATETO: {
             XYPoint xypoint = map->getNextDestinationXY(); 
             task_queue.push(std::make_unique<NavigateToTask>(xypoint, map->getDestinationOrientation(), map->getIsEndpointOrientationRequired()));
@@ -196,8 +197,13 @@ void TaskManager::handleCompletedTask(std::shared_ptr<Map> map,
 {
     if(task_queue.top()->getTaskType() == PATHCORRECTION) {
         task_queue.pop();
-        // next status should be navigate to so set it to in progress
+        // next task after a pose or path correction task should be 
+        // a navigateTo task
         task_queue.top()->setStatus(TaskStatus::INPROGRESS);
+    }
+    else if(task_queue.top()->getTaskType() == POSECORRECTION) {
+        task_queue.pop(); // pop pose correction task
+        task_queue.pop(); // pop the navigate to task that had created pose correction task
     }
     else if(nextTaskType != NA) {
         task_queue.pop();

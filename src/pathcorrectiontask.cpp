@@ -1,7 +1,7 @@
 #include "pathcorrectiontask.hpp"
 
 PathCorrectionTask::PathCorrectionTask()
-    : Task(PATHCORRECTION), correcting_position(false), angleToDestTolerance(10.0)
+    : Task(PATHCORRECTION), correcting_position(false), angleToDestTolerance(ORIENTATION_RANGE_TOLERANCE)
 {
 
 

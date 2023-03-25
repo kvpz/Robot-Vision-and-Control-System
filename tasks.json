@@ -3,56 +3,6 @@
         "type": "navigateto",
         "endpoint": {"x": 120, "y": 40, "yaw": 90 },
 	    "endpoint_settings":  {"orientation_required": true }
-    },
-    "2": {
-        "type": "navigateto",
-        "endpoint": {"x": 80, "y": 23, "yaw": 90 },
-	    "endpoint_settings":  {"orientation_required": 1 }
-    },
-    "3": {
-        "type": "navigateto",
-        "endpoint": {"x": 46, "y": 23, "yaw": 90 },
-	    "endpoint_settings":  {"orientation_required": 0 }
-    },
-    "4": {
-        "type": "navigateto",
-        "endpoint": {"x": 32, "y": 48, "yaw": 90 },
-	    "endpoint_settings":  {"orientation_required": 0 }
-    },
-    "5": {
-        "type": "navigateto",
-        "endpoint": {"x": 73, "y": 78, "yaw": 90 },
-	    "endpoint_settings":  {"orientation_required": 0 }
-    },
-    "6": {
-        "type": "navigateto",
-        "endpoint": {"x": 46, "y": 23, "yaw": 90 },
-	    "endpoint_settings":  {"orientation_required": true }
-    },
-    "7": {
-        "type": "navigateto",
-        "endpoint": {"x": 20, "y": 20, "yaw": 0 },
-        "endpoint_settings":  {"orientation_required": true }
-    },
-    "8": {
-        "type": "navigateto",
-        "endpoint": {"x": 20, "y": 90, "yaw": 90 },
-        "endpoint_settings":  {"orientation_required": 0 }
-    },
-    "9": {
-        "type": "navigateto",
-        "endpoint": {"x": 220, "y": 90, "yaw": 90 },
-        "endpoint_settings":  {"orientation_required": 0 }
-    },
-    "10": {
-        "type": "navigateto",
-        "endpoint": {"x": 220, "y": 40, "yaw": 90 },
-        "endpoint_settings":  {"orientation_required": 0 }
-    },
-    "11": {
-        "type": "navigateto",
-        "endpoint": {"x": 120, "y": 40, "yaw": 90 },
-        "endpoint_settings":  {"orientation_required": 0 }
     }
 }
 

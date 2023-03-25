@@ -35,6 +35,8 @@ public:
 
     inline bool getIsEndpointOrientationRequired() { return isEndpointOrientationRequired; };
 
+    void setIsEndpointOrientationRequired(bool value) ;
+
 private:
     // robot current position data
     XYPoint robotCurrentLocation;

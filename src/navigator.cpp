@@ -18,7 +18,7 @@ double Navigator::getAngleToDestination() const
 double Navigator::getRobotToEndpointSlopeAngle(std::shared_ptr<Map> map, 
                                                double endpointDesiredOrientation) const 
 {
-    return map->getRobotOrientation() - endpointDesiredOrientation;
+    return map->getRobotOrientation() - map->getDestinationOrientation();//endpointDesiredOrientation;
     //return angleToEndpointOrientation(map->getRobotOrientation(), endpointOrientation);
 }
 
@@ -34,7 +34,7 @@ double Navigator::getRobotToEndpointSlopeAngle(std::shared_ptr<Map> map,
     between the robot's current orientation and the desired orientation. 
     TODO: rename function to something more meaningful like robotAngularDistanceToOrientation
 */
-double Navigator::robotAngularDistanceToOrientation(std::shared_ptr<Map> map)
+double Navigator::robotAngularDistanceToEndpoint(std::shared_ptr<Map> map, bool reverse = false)
 {
     double delta_x = map->getNextDestinationXY().getX() - map->RobotX();
     double delta_y = map->getNextDestinationXY().getY() - map->RobotY();
@@ -66,8 +66,17 @@ double Navigator::robotAngularDistanceToOrientation(std::shared_ptr<Map> map)
         beta = beta + 360.0;
     }
 
-    // get difference between robot orientation and required orientation
-    theta = beta - map->getRobotOrientation();
+    if (reverse){
+        if (map->getRobotOrientation() < 180.0){
+            theta = beta - (map->getRobotOrientation() + 180.0);
+        }
+        else{
+            theta = beta - (map->getRobotOrientation() - 180.0);
+        }
+    }
+    else{
+        theta = beta - map->getRobotOrientation();
+    }
 
     if(theta < 0.0) {
         if(std::fabs(theta) > 180.0) {
@@ -104,19 +113,19 @@ RobotPoseToWaypoint Navigator::isRobotOnPath(const std::shared_ptr<Map> map)
     double approximationThreshold = 2.0;
     bool isYapproxnear = approximately(map->getRobotCurrentLocation().getY(), map->getNextDestinationXY().getY(), approximationThreshold);
     bool isXapproxnear = approximately(map->getRobotCurrentLocation().getX(), map->getNextDestinationXY().getX(), approximationThreshold);
-    double angleToDestTolerance = 10.0;
+    //double angleToDestTolerance = ORIENTATION_RANGE_TOLERANCE;//10.0;
     double robotCurrentOrientation = map->getRobotOrientation();
     RobotPoseToWaypoint result = ON_PATH;
 
     //setAngleToDestination(getRobotToEndpointSlopeAngle(map, ));
-    angleToDestination = robotAngularDistanceToOrientation(map);// getRobotAngleToPoint(map, destX, destY);
+    angleToDestination = robotAngularDistanceToEndpoint(map);// getRobotAngleToPoint(map, destX, destY);
 
     if(isYapproxnear && isXapproxnear) {
         // near the waypoint
         result = NEAR;
     }
-    else if (angleToDestination < angleToDestTolerance 
-            && angleToDestination > -1.0*angleToDestTolerance
+    else if (angleToDestination < ORIENTATION_RANGE_TOLERANCE 
+            && angleToDestination > -1.0*ORIENTATION_RANGE_TOLERANCE
             && (!(map->RobotX() < (map->getNextDestinationXY().getX() - 2.5)) 
             || !(map->RobotX() > (map->getNextDestinationXY().getX() + 2.5)))) 
     { // robotY > destY && robotX == destX
@@ -130,38 +139,94 @@ RobotPoseToWaypoint Navigator::isRobotOnPath(const std::shared_ptr<Map> map)
     if(NAVDEBUG) {
         std::cout << "\n====== Navigator::isRobotOnPath ======\n";
         std::cout << "robot pose relative to waypoint: " << printRobotPoseToWaypoint(result) << "\n";
-        std::cout << "(isRobotOnPath) angle to dest: " << getAngleToDestination() << "\n";
+        std::cout << "(isRobotOnPath) angle to dest: " << angleToDestination << "\n";
         std::cout << "=============================\n" << std::endl;
     }
 
     return result;
 }
 
-RobotOrientationAtEndpoint Navigator::isRobotOriented(std::shared_ptr<Map> map, 
-                                                      double endpointOrientation) 
+/*
+    This function returns true if the robot is in the intended
+    endpoint orientation. 
+*/
+bool Navigator::isRobotOriented(std::shared_ptr<Map> map) 
 {
-    RobotOrientationAtEndpoint result = ORIENTED;
-    double tolerance = 5.0;
+    double tolerance = ORIENTATION_RANGE_TOLERANCE;
     bool isRobotApproximatelyOriented = false;
 
-    // robot orientation minus endpoint orientation
-    setAngleToDestination(getRobotToEndpointSlopeAngle(map, endpointOrientation));
-    isRobotApproximatelyOriented = std::fabs(getAngleToDestination()) > tolerance ? false : true;
+    //angleToDestination = std::fmod(map->getRobotOrientation() - map->getDestinationOrientation(), 360.0); //getRobotToEndpointSlopeAngle(map, map->getDestinationOrientation());
+    angleToDestination = std::fmod(std::fmod((map->getRobotOrientation() - map->getDestinationOrientation()), 360.0) + 540.0, 360.0) - 180.0;
+    
+    isRobotApproximatelyOriented = std::fabs(angleToDestination) > tolerance ? false : true;
 
-    if(getAngleToDestination() < 0.0 && isRobotApproximatelyOriented) {
+    if(NAVDEBUG) {
+        std::cout << "======== Navigator::isRobotOriented =========\n";
+        std::cout << "angle to destination: " << angleToDestination << "\n";
+        std::cout << "approximately oriented? " << isRobotApproximatelyOriented << "\n";
+        std::cout << "=============================================\n" << std::endl;
+    }
+
+    return isRobotApproximatelyOriented;  
+}
+
+RobotOrientationAtEndpoint Navigator::getRobotOrientationToEndpoint(std::shared_ptr<Map> map) 
+{
+    RobotOrientationAtEndpoint result = ORIENTED;
+    double tolerance = ORIENTATION_RANGE_TOLERANCE;
+
+    if(approximately(map->getDestinationOrientation(), map->getRobotOrientation(), ORIENTATION_RANGE_TOLERANCE)) {
+        result = ORIENTED;
+    }
+    else if(angleToDestination < 0.0) {
+        result = OFF_TO_RIGHT;
+    }
+    else   {
+        result = OFF_TO_LEFT;
+    }
+    /*
+    if(angleToDestination < 0.0) {
+        if(std::fabs(angleToDestination) > 180.0) {
+            angleToDestination = 360 + angleToDestination;
+            result = OFF_TO_LEFT;
+        }
+    }
+    else if(angleToDestination > 180.0) {
+        //if(theta > 180.0) { // robot works better when this line is commented
+        angleToDestination = angleToDestination - 360.0;
+        result = OFF_TO_RIGHT;
+        //}
+    }
+    else {
+        angleToDestination = angleToDestination - map->getRobotOrientation();
+    }
+    */
+
+    /*
+    if(angleToDestination < 0.0 && isRobotOriented(map)) {
+
         // rotate CCW if absolute value of difference is less than 180
-        if(std::fabs(getAngleToDestination()) < 180.0 && std::fabs(getAngleToDestination()) > tolerance)
-        result = OFF_TO_RIGHT;
+        if(std::fabs(angleToDestination) < 180.0 && std::fabs(angleToDestination) > tolerance)
+            result = OFF_TO_RIGHT;
         else
-        result = OFF_TO_LEFT;
+            result = OFF_TO_LEFT;
     }
-    else if(getAngleToDestination() > 0.0 && std::fabs(getAngleToDestination()) > tolerance) {
-        // rotate CW if
-        if(std::fabs(getAngleToDestination()) < 180.0)
-        result = OFF_TO_LEFT;
+    else if(std::fabs(angleToDestination) > tolerance) {
+        // TODO: verify this
+        if(std::fabs(angleToDestination) < 180.0)
+            result = OFF_TO_LEFT;
         else
-        result = OFF_TO_RIGHT;
+            result = OFF_TO_RIGHT;
+    }
+    */
+
+    if(NAVDEBUG) {
+        std::cout << "========= Navigator::getRobotOrientationToEndpoint =========\n";
+        std::cout << "result: " << RobotOrientationAtEndpointToString(result) << "\n";
+        std::cout << "error tolerance: " << tolerance << "\n";
+        std::cout << "angle to destination: " << angleToDestination << "\n";
+        std::cout << "============================================================\n" << std::endl; 
     }
 
-    return result;  
+    return result;
 }
