@@ -4,7 +4,7 @@
 #include "enums/robotPoseToWaypoint.hpp"
 #include "map.hpp"
 
-#define ORIENTATION_RANGE_TOLERANCE 2.0
+#define ORIENTATION_RANGE_TOLERANCE 5.0
 
 class PathCorrectionTask : public Task
 {
@@ -20,7 +20,6 @@ public:
     virtual void complete(std::shared_ptr<Map> map, std::shared_ptr<Navigator> navigator, RobotState& nextRobotState, TaskType& nextTaskType) override;
 
 private:
-    double angleToDestTolerance;
     bool correcting_position;        
 
 };

@@ -16,12 +16,6 @@ class Navigator
 public:
     Navigator();
 
-    // setters
-    void setAngleToDestination(double angle);
-
-    // getters
-    double getAngleToDestination() const;
-
     double getRobotToEndpointSlopeAngle(std::shared_ptr<Map> map, double endpointDesiredOrientation) const;
 
     double robotAngularDistanceToEndpoint(std::shared_ptr<Map> map, bool reverse);
@@ -33,8 +27,9 @@ public:
 
     RobotOrientationAtEndpoint getRobotOrientationToEndpoint(std::shared_ptr<Map> map);
 
+    double getAngleToDestination(std::shared_ptr<Map> map);
+
 private:
-    double angleToDestination;
 };
 
 #endif

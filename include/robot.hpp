@@ -12,6 +12,10 @@
 
 #define ROBOTDEBUG false
 
+enum class Speed {
+    a='a', b,c,d,e,f
+};
+
 class Robot {
 public:
     Robot(double xpos, double ypos, double orientation);
@@ -55,6 +59,7 @@ private:
 
     // robot status indicators
     RobotState state;
+    Speed speed;
     //RobotPoseToWaypoint robotPoseToWaypoint;
     //RobotOrientationAtEndpoint robotOrientationAtEndpoint;
 

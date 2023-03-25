@@ -11,6 +11,7 @@ void PoseCorrectionTask::notStarted(std::shared_ptr<Map> map,
                                     std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
 {
     status = TaskStatus::INPROGRESS;
+    // slow down robot motor PWM speed
 }
 
 void PoseCorrectionTask::inProgress(std::shared_ptr<Map> map, 

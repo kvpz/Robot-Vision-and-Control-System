@@ -91,6 +91,16 @@ void Robot::executeCurrentTask()
       state = nextRobotState;
       run(); // alter robot state if it needs to be in a different
   }
+
+  if(taskManager->getCurrentTask().getTaskType() == POSECORRECTION ||
+     taskManager->getCurrentTask().getTaskType() == PATHCORRECTION) {
+      if(speed != Speed::b)
+        comport->send_command("b");
+  }
+  else {
+    if(speed != Speed::f)
+      comport->send_command("f");
+  }
 }
 
 void Robot::printStatus() 
