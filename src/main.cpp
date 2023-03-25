@@ -108,6 +108,7 @@ int main() try
 
     robot->setCurrentXY(x_robot_camera_offset, y_robot_camera_offset); // x,y are front of robot (camera location)
 
+    // main loop
     while(1) {
       if(!robot->hasTasks()) {
         break;

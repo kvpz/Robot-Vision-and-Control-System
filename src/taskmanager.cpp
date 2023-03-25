@@ -3,17 +3,8 @@
 #include "pathcorrectiontask.hpp"
 #include "posecorrectiontask.hpp"
 
-//TaskManager::TaskManager() 
-//{ }
-
 /*
-    robot info required to be passed to all notStarted:
-    - current x and y position
-    - angle to destination
-    
-    robot info required to be passed to all inProgress:
-    - current x and y position
-    - 
+    function: void TaskManager::executeCurrentTask
 
     This function should avoid implementing task specific behaviors. All actions
     or updates needed to be performed by a task should be done in their respective state functions. 
@@ -24,12 +15,10 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
                                      std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
 {
     TaskType nextTaskType = NA;
-    std::unique_ptr<Task> newTask;
     
     switch(task_queue.top()->getStatus()) {
         case TaskStatus::NOTSTARTED:
             task_queue.top()->notStarted(map, navigator, nextRobotState);
-            // set task to in progress
             handleNotStartedTask(map, navigator, nextRobotState, nextTaskType);
             break;   
             
@@ -41,19 +30,17 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
         case TaskStatus::SUSPENDED:
             task_queue.top()->suspended(map, navigator, nextRobotState, nextTaskType);
             handleSuspendedTask(map, navigator, nextRobotState, nextTaskType);
-
             break;
 
         case TaskStatus::COMPLETE:
             task_queue.top()->complete(map, navigator, nextRobotState, nextTaskType);
             handleCompletedTask(map, navigator, nextRobotState, nextTaskType);
-
             break;
-    } // switch
+    } 
 
     if(DEBUG_TASKMANAGER) {
         std::cout << "======= TaskManager::executeCurrentTask =======\n";
-        std::cout << "task type: " << taskTypeToString(task_queue.top()->getTaskType()) << "\n";
+        std::cout << "current task type: " << taskTypeToString(task_queue.top()->getTaskType()) << "\n";
         std::cout << "task status: " << statusToString(task_queue.top()->getStatus()) << "\n";
         std::cout << "task queue size: " << task_queue.size() << "\n";
         std::cout << "================================================\n" << std::endl;
@@ -78,7 +65,6 @@ void TaskManager::addTask(std::unique_ptr<Task> task)
 */
 void TaskManager::importTasksFromJSON(std::string filename)
 {
-    if(DEBUG_TASKMANAGER) std::cout << "======== TaskManager::importTasksFromJson ========" << std::endl;
     boost::property_tree::ptree pt;
     boost::property_tree::read_json(filename, pt);
     std::vector<std::unique_ptr<Task>> task_vector;
@@ -97,7 +83,6 @@ void TaskManager::importTasksFromJSON(std::string filename)
             case NAVIGATETO:
                 XYPoint xypoint(endpoint_x, endpoint_y);
                 std::unique_ptr<NavigateToTask> task = std::make_unique<NavigateToTask>(xypoint, endpoint_orientation, endpoint_orientation_required);
-                //task->setEndpoint(endpoint_x, endpoint_y, endpoint_orientation);
                 task_vector.push_back(std::move(task));
                 break;
         }
@@ -118,6 +103,7 @@ void TaskManager::importTasksFromJSON(std::string filename)
         }
     }
 
+    if(DEBUG_TASKMANAGER) std::cout << "======== TaskManager::importTasksFromJson ========" << std::endl;
     if(DEBUG_TASKMANAGER) std::cout << "====== end TaskManager::importTasksFromJson ========" << std::endl;
 }
 

@@ -85,13 +85,14 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
                 status = TaskStatus::COMPLETE;
                 nextRobotState = STOP;
             }
-
             break;
+
         case ON_PATH:
             status = TaskStatus::INPROGRESS;
             //nextRobotState = MOVE_FORWARD;
             nextRobotState = MOVE_BACKWARD;
             break;
+            
         case OFF_PATH:
             status = TaskStatus::SUSPENDED;
             newTaskRequest = PATHCORRECTION;
