@@ -15,7 +15,7 @@ double _PI_over_180 = M_PI / 180.0;
 
 // xy offset from (0,0) xy base values initiated at startup of T265
 double x_robot_camera_offset = 120.0;
-double y_robot_camera_offset = 15.0; // 30.0
+double y_robot_camera_offset = 28.5; // 30.0
 double robot_initial_orientation = 90.0;
 
 int main() try
@@ -106,7 +106,7 @@ int main() try
     // allow time for camera to initialize
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));			  
 
-    robot->setCurrentXY(x_robot_camera_offset, y_robot_camera_offset); // x,y are front of robot (camera location)
+    //robot->setCurrentXY(x_robot_camera_offset, y_robot_camera_offset); // x,y are front of robot (camera location)
 
     while(1) {
       if(!robot->hasTasks()) {

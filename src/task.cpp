@@ -37,8 +37,8 @@ void Task::printTaskInfo(Task& task)
         case PATHCORRECTION:
             std::cout << "\n====== PathCorrection Task Updater ======\n";
             break;  
-        case DROPPAYLOAD:
-            std::cout << "\n====== Drop Payload Task Updater ======\n";
+        case DROPCHIP:
+            std::cout << "\n====== Drop Chip Task Updater ======\n";
             break;
         case GRASP:
             std::cout << "\n====== Grasp Task Updater ======\n";

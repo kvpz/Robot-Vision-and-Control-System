@@ -6,6 +6,10 @@
 #include "xypoint.hpp"
 #include "objects.hpp"
 
+enum class AttractionColors : char {
+    GREEN, RED, NONE
+};
+
 class Map
 {
 public:
@@ -37,6 +41,14 @@ public:
 
     void setIsEndpointOrientationRequired(bool value) ;
 
+    AttractionColors getBottomLeftAttractionColor() {
+        return bottomLeftAttractionColor;
+    }
+
+    AttractionColors getTopLeftAttractionColor() {
+        return topLeftAttractionColor;
+    }
+
 private:
     // robot current position data
     XYPoint robotCurrentLocation;
@@ -50,6 +62,8 @@ private:
     std::map<size_t, XYPoint> pointsVisited;
     //std::unordered_map<std::pair<int, int>, ObjectType> occupancyGrid;
 
+    AttractionColors bottomLeftAttractionColor;
+    AttractionColors topLeftAttractionColor;
 };
 
 #endif

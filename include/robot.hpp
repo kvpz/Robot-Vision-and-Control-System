@@ -28,6 +28,10 @@ public:
     void move_right();
     void rotate_CW();
     void rotate_CCW();
+    void open_left_receptacle();
+    void close_left_receptacle();
+    void open_right_receptacle();
+    void close_right_receptacle();
     void stop();
 
     // getters (inlined)

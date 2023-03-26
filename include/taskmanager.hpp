@@ -6,11 +6,12 @@
 #include <utility>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
+#include "navigator.hpp"
 #include "task.hpp"
 #include "enums/tasktype.hpp"
 #include "enums/robotState.hpp"
 #include "map.hpp"
-#include "navigator.hpp"
+
 
 #define DEBUG_TASKMANAGER true
 

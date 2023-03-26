@@ -6,7 +6,7 @@ Robot::Robot(double xpos, double ypos, double orientation)
     comport = std::make_unique<Comms>("/dev/ttyACM0");
     taskManager = std::make_shared<TaskManager>();
     navigator = std::make_unique<Navigator>();
-    navigator->setIsTravelDirectionForward(false);
+    //navigator->setIsTravelDirectionForward(false);
     map = std::make_unique<Map>();
     map->setRobotCurrentCoordinate(xpos, ypos);
     map->setRobotOrientation(orientation);
@@ -33,19 +33,35 @@ void Robot::run()
       case MOVE_BACKWARD:
         move_backward();
         break;
+      case OPENING_RIGHT_RECEPTACLE:
+        open_right_receptacle();
+        break;
+      case OPENING_LEFT_RECEPTACLE:
+        open_left_receptacle();
+        break;
+      case CLOSING_RIGHT_RECEPTACLE:
+        close_right_receptacle();
+        break;
+      case CLOSING_LEFT_RECEPTACLE:
+        close_left_receptacle();
+        break;
       case STOP:
         stop();
         break;
     }
 }
 
-void Robot::move_forward()  { comport->send_command("F"); }
-void Robot::move_backward() { comport->send_command("B"); }
-void Robot::move_left()     { comport->send_command("L"); }
-void Robot::move_right()    { comport->send_command("R"); }
-void Robot::rotate_CW()     { comport->send_command("C"); }
-void Robot::rotate_CCW()    { comport->send_command("Z"); }
-void Robot::stop()          { comport->send_command("S"); }
+void Robot::move_forward()           { comport->send_command("F"); }
+void Robot::move_backward()          { comport->send_command("B"); }
+void Robot::move_left()              { comport->send_command("L"); }
+void Robot::move_right()             { comport->send_command("R"); }
+void Robot::rotate_CW()              { comport->send_command("C"); }
+void Robot::rotate_CCW()             { comport->send_command("Z"); }
+void Robot::open_left_receptacle()   { comport->send_command("4"); }
+void Robot::close_left_receptacle()  { comport->send_command("3"); }
+void Robot::open_right_receptacle()  { comport->send_command("1"); }
+void Robot::close_right_receptacle() { comport->send_command("2"); }
+void Robot::stop()                   { comport->send_command("S"); }
 
 // getters (inlined)
 RobotState Robot::getState() const { return state; }

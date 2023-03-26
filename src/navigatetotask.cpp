@@ -12,13 +12,16 @@ NavigateToTask::NavigateToTask(double endpointOrientation,
     }
 }
 
-NavigateToTask::NavigateToTask(XYPoint xy, double endpointOrientation, bool endpointOrientationRequired)
+NavigateToTask::NavigateToTask(XYPoint xy, 
+                               double endpointOrientation, 
+                               bool endpointOrientationRequired, TravelDirection travelDir)
     : isRobotAtEndpoint(false), Task(NAVIGATETO), destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE)
 {    
     endpoint.setX(xy.getX());
     endpoint.setY(xy.getY());
     endpointDesiredOrientation = endpointOrientation;
     isEndpointOrientationRequired = endpointOrientationRequired;
+    travelDirection = travelDir;
 }
 
 
@@ -39,6 +42,8 @@ void NavigateToTask::notStarted(std::shared_ptr<Map> map,
     double robotDistanceToEndpoint = distance(map->getRobotCurrentLocation(), map->getNextDestinationXY());
     //double robot_orientation_minus_destination = navigator->robotAngularDistanceToOrientation(map); //- map->getDestinationOrientation(); //navigator->getAngleToDestination();
 
+    // give the navigator information about robot's required travel direction
+    navigator->setTravelDirection(travelDirection);
 /*
     if(robotDistanceToEndpoint < 70.0 && 
        navigator->robotAngularDistanceToEndpoint(map, true) > 130.0)
@@ -80,18 +85,22 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
                     !approximately(map->getRobotOrientation(), map->getDestinationOrientation(), destinationOrientationTolerance)) {
                 status = TaskStatus::SUSPENDED;
                 newTaskRequest = POSECORRECTION;
+                nextRobotState = STOP;
             }
             else {
                 status = TaskStatus::COMPLETE;
                 nextRobotState = STOP;
             }
-
             break;
+
         case ON_PATH:
             status = TaskStatus::INPROGRESS;
-            //nextRobotState = MOVE_FORWARD;
-            nextRobotState = MOVE_BACKWARD;
+            if(travelDirection == TravelDirection::forward)
+                nextRobotState = MOVE_FORWARD;
+            else if(travelDirection == TravelDirection::backward)
+                nextRobotState = MOVE_BACKWARD;
             break;
+
         case OFF_PATH:
             status = TaskStatus::SUSPENDED;
             newTaskRequest = PATHCORRECTION;

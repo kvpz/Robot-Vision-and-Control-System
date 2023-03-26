@@ -2,9 +2,7 @@
 #include "navigatetotask.hpp"
 #include "pathcorrectiontask.hpp"
 #include "posecorrectiontask.hpp"
-
-//TaskManager::TaskManager() 
-//{ }
+#include "dropchiptask.hpp"
 
 /*
     robot info required to be passed to all notStarted:
@@ -29,7 +27,6 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
     switch(task_queue.top()->getStatus()) {
         case TaskStatus::NOTSTARTED:
             task_queue.top()->notStarted(map, navigator, nextRobotState);
-            // set task to in progress
             handleNotStartedTask(map, navigator, nextRobotState, nextTaskType);
             break;   
             
@@ -86,19 +83,31 @@ void TaskManager::importTasksFromJSON(std::string filename)
     double endpoint_y;
     double endpoint_orientation;
     bool endpoint_orientation_required;
+    TravelDirection travelDirection;
 
     for (const auto& taskkey : pt) {        
         endpoint_x = taskkey.second.get_child("endpoint").get_child("x").get_value<double>();
         endpoint_y = taskkey.second.get_child("endpoint").get_child("y").get_value<double>();
         endpoint_orientation = taskkey.second.get_child("endpoint").get_child("yaw").get_value<double>();
         endpoint_orientation_required = taskkey.second.get_child("endpoint_settings").get_child("orientation_required").get_value<bool>();
+        travelDirection = stringToTravelDirection(taskkey.second.get_child("move_direction").get_value<std::string>());
+        XYPoint xypoint(endpoint_x, endpoint_y);
 
         switch(taskTypeToEnum(taskkey.second.get_child("type").get_value<std::string>())) {
             case NAVIGATETO:
-                XYPoint xypoint(endpoint_x, endpoint_y);
-                std::unique_ptr<NavigateToTask> task = std::make_unique<NavigateToTask>(xypoint, endpoint_orientation, endpoint_orientation_required);
-                //task->setEndpoint(endpoint_x, endpoint_y, endpoint_orientation);
-                task_vector.push_back(std::move(task));
+                //std::unique_ptr<NavigateToTask> task = 
+                task_vector.push_back(std::make_unique<NavigateToTask>(xypoint, 
+                                                     endpoint_orientation, 
+                                                     endpoint_orientation_required,
+                                                     travelDirection));
+                //task_vector.push_back(std::move(task));
+                break;
+            case DROPCHIP:
+                //std::unique_ptr<DropChipTask> task = 
+                task_vector.push_back(std::make_unique<DropChipTask>(xypoint, 
+                                                   endpoint_orientation, 
+                                                   endpoint_orientation_required));
+                //task_vector.push_back(std::move(task));
                 break;
         }
     }
@@ -107,6 +116,9 @@ void TaskManager::importTasksFromJSON(std::string filename)
     for(std::vector<std::unique_ptr<Task>>::reverse_iterator task = task_vector.rbegin(); task != task_vector.rend(); ++task){
         switch((*task)->getTaskType()) {
             case NAVIGATETO:
+                addTask(std::move(*task));
+                break;
+            case DROPCHIP:
                 addTask(std::move(*task));
                 break;
             case PATHCORRECTION:
@@ -160,7 +172,7 @@ void TaskManager::scheduleNewTask(TaskType tasktype, std::shared_ptr<Map> map)
         // TODO bottom never called. Test further
         case NAVIGATETO: {
             XYPoint xypoint = map->getNextDestinationXY(); 
-            task_queue.push(std::make_unique<NavigateToTask>(xypoint, map->getDestinationOrientation(), map->getIsEndpointOrientationRequired()));
+            task_queue.push(std::make_unique<NavigateToTask>(xypoint, map->getDestinationOrientation(), map->getIsEndpointOrientationRequired(), TravelDirection::error));
             break;
         }
         default:
@@ -199,7 +211,8 @@ void TaskManager::handleCompletedTask(std::shared_ptr<Map> map,
         task_queue.pop();
         // next task after a pose or path correction task should be 
         // a navigateTo task
-        task_queue.top()->setStatus(TaskStatus::INPROGRESS);
+        if(task_queue.top()->getTaskType() == NAVIGATETO)
+            task_queue.top()->setStatus(TaskStatus::INPROGRESS);
     }
     else if(task_queue.top()->getTaskType() == POSECORRECTION) {
         task_queue.pop(); // pop pose correction task

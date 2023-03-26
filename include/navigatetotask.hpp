@@ -10,14 +10,16 @@
 
 #define DEBUG_NAVIGATETOTASK true
 
-#define ORIENTATION_RANGE_TOLERANCE 10.0
+#define ORIENTATION_RANGE_TOLERANCE 2.0
 
 class NavigateToTask : public Task
 {
 public:
     NavigateToTask()  :  destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE) {}
     NavigateToTask(double endpointOrientation, bool endpointOrientationRequirement);
-    NavigateToTask(XYPoint xy, double endpointOrientation, bool endpointOrientationRequirement);
+    NavigateToTask(XYPoint xy, 
+                   double endpointOrientation, 
+                   bool endpointOrientationRequirement, TravelDirection travelDirection);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
@@ -62,6 +64,8 @@ private:
     TaskType newTaskRequest;
 
     double destinationOrientationTolerance;
+
+    TravelDirection travelDirection;
 };
 
 #endif

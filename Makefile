@@ -8,9 +8,9 @@ INCLUDE = -I$(RSHEADERS) -I$(PROJHEADERS)
 
 ALL: main.x
 
-main.x: robot.o map.o task.o navigator.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o 
+main.x: robot.o map.o task.o navigator.o dropchiptask.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o 
 	@echo "building target main.x"
-	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lrealsense2 -o main.x robot.o map.o task.o navigator.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o 
+	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lrealsense2 -o main.x robot.o map.o task.o navigator.o dropchiptask.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o 
 
 map.o: $(PROJHEADERS)
 	@echo "building target map.o"
@@ -41,6 +41,10 @@ robot.o: ./src/robot.cpp $(PROJHEADERS)
 
 navigator.o: ./src/navigator.cpp $(PROJHEADERS) 
 	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/navigator.cpp -O3 -L$(USRLIBS) -lrealsense2
+
+dropchiptask.o:	$(PROJHEADERS)
+	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/dropchiptask.cpp -O3 -L$(USRLIBS) -lrealsense2
+
 
 clean:
 	rm -rf *.o *.x

@@ -61,7 +61,7 @@ double Navigator::robotAngularDistanceToEndpoint(std::shared_ptr<Map> map, bool 
     }
 
     
-    if (!isTravelDirectionForward){
+    if (travelDirection == TravelDirection::backward){
         if (map->getRobotOrientation() < 180.0){
             theta = beta - (map->getRobotOrientation() + 180.0);
         }
@@ -69,7 +69,7 @@ double Navigator::robotAngularDistanceToEndpoint(std::shared_ptr<Map> map, bool 
             theta = beta - (map->getRobotOrientation() - 180.0);
         }
     }
-    else{
+    else if(travelDirection == TravelDirection::forward){
         theta = beta - map->getRobotOrientation();
     }
     
@@ -112,7 +112,7 @@ RobotPoseToWaypoint Navigator::isRobotOnPath(const std::shared_ptr<Map> map)
     bool isXapproxnear = approximately(map->getRobotCurrentLocation().getX(), map->getNextDestinationXY().getX(), ORIENTATION_RANGE_TOLERANCE);
     RobotPoseToWaypoint result = ON_PATH;
 
-    double angleToDestination = robotAngularDistanceToEndpoint(map, !isTravelDirectionForward);// getRobotAngleToPoint(map, destX, destY);
+    double angleToDestination = robotAngularDistanceToEndpoint(map, travelDirection == TravelDirection::backward);// getRobotAngleToPoint(map, destX, destY);
 
     if(isYapproxnear && isXapproxnear) {
         // near the waypoint

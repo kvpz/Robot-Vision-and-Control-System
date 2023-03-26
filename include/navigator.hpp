@@ -2,6 +2,8 @@
 #define NAVIGATOR_HPP
 #include <iostream>
 #include <memory>
+#include "enums/travelDirection.hpp"
+//#include "robot.hpp"
 #include "enums/robotPoseToWaypoint.hpp"
 #include "enums/robotOrientationAtEndpoint.hpp"
 #include "map.hpp"
@@ -9,7 +11,7 @@
 
 #define NAVDEBUG true
 
-#define ORIENTATION_RANGE_TOLERANCE 10.0
+#define ORIENTATION_RANGE_TOLERANCE 2.0
 
 class Navigator
 {
@@ -29,12 +31,12 @@ public:
 
     double getAngleToDestination(std::shared_ptr<Map> map);
 
-    void setIsTravelDirectionForward(bool b) { isTravelDirectionForward = b; } 
-
-    bool getIsTravelDirectionForward() { return isTravelDirectionForward; }
+    void setTravelDirection(TravelDirection direction) { travelDirection = direction; }
+    
+    TravelDirection getTravelDirection() { return travelDirection; }
 
 private:
-    bool isTravelDirectionForward;
+    TravelDirection travelDirection;
 };
 
 #endif

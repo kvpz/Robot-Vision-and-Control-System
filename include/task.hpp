@@ -3,12 +3,12 @@
 #include <iostream>
 #include <memory>
 #include <optional>
+#include "navigator.hpp"
 #include "xypoint.hpp"
 #include "enums/tasktype.hpp"
 #include "enums/taskstatus.hpp"
 #include "enums/robotState.hpp"
 #include "map.hpp"
-#include "navigator.hpp"
 
 #define DEBUG_TASK false 
 
