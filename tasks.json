@@ -1,11 +1,105 @@
 {
     "1": {
-        "type": "travel",
-        "endpoint": {"x": 120, "y": 40, "yaw": 90 }
+        "type": "navigateto",
+        "endpoint": {"x": 25, "y": 30, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward"
     },
     "2": {
-        "type": "travel",
-        "endpoint": {"x": 20, "y": 40, "yaw": 90 }
+        "type": "navigateto",
+        "endpoint": {"x": 25, "y": 90, "yaw": 0 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward"
+    },
+    "3": {
+        "type": "navigateto",
+        "endpoint": {"x": 210, "y": 90, "yaw": 270 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward"
+    },
+    "4": {
+        "type": "navigateto",
+        "endpoint": {"x": 210, "y": 30, "yaw": 180 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward"
+    },
+    "5": {
+        "type": "navigateto",
+        "endpoint": {"x": 25, "y": 30, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward"
+    },
+    "6": {
+        "type": "navigateto",
+        "endpoint": {"x": 25, "y": 95, "yaw": 0 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward"
+    },
+    "7": {
+        "type": "navigateto",
+        "endpoint": {"x": 210, "y": 90, "yaw": 270 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward"
+    },
+    "8": {
+        "type": "navigateto",
+        "endpoint": {"x": 210, "y": 30, "yaw": 180 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward"
+    },
+    "9": {
+        "type": "navigateto",
+        "endpoint": {"x": 50, "y": 50, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": false },
+        "move_direction": "forward"
+    },
+    "10": {
+        "type": "navigateto",
+        "endpoint": {"x": 25, "y": 25, "yaw": 45 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward"
+    },
+    "11": {
+        "type": "navigateto",
+        "endpoint": {"x": 15, "y": 15, "yaw": 45 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward"
+    },
+    "12": {
+        "type": "dropchip",
+        "endpoint": {"x": 15, "y": 15, "yaw": 45 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward"
+    },
+    "13": {
+        "type": "navigateto",
+        "endpoint": {"x": 60, "y": 60, "yaw": 315 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward"
+    },
+    "14": {
+        "type": "navigateto",
+        "endpoint": {"x": 20, "y": 95, "yaw": 315 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward"
+    },
+    "15": {
+        "type": "navigateto",
+        "endpoint": {"x": 18, "y": 97, "yaw": 315 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward"
+    },
+    "16": {
+        "type": "dropchip",
+        "endpoint": {"x": 15, "y": 100, "yaw": 45 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward"
+    },
+    "17": {
+        "type": "navigateto",
+        "endpoint": {"x": 120, "y": 20, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward"
     }
 }
 

@@ -1,86 +1,74 @@
 #ifndef TASK_HPP
 #define TASK_HPP
 #include <iostream>
-#include "waypoints.hpp"
+#include <memory>
+#include <optional>
+#include "navigator.hpp"
+#include "xypoint.hpp"
 #include "enums/tasktype.hpp"
 #include "enums/taskstatus.hpp"
+#include "enums/robotState.hpp"
+#include "map.hpp"
 
-namespace ROBOTASKS 
+#define DEBUG_TASK false 
+
+class Task
 {
-  class Task
-  {
-  public:
-    Task() {};
-    Task(TaskType ttype)
-      : status(NOTSTARTED), taskType(ttype)
-    {
-    }
+public:
+  Task() : status(TaskStatus::NOTSTARTED){}
+  Task(TaskType ttype);
 
-    // setters
-    void setStatus(Status s)
-    {
-      status = s;
-    }
+  // task state functions
+  virtual void notStarted(std::shared_ptr<Map> map, 
+                          std::shared_ptr<Navigator> navigator, 
+                          RobotState& nextRobotState);
 
-    void setEndpoint(double x, double y, double orientation)
-    {
-      destination.setX(x);
-      destination.setY(y);
-      endpointOrientation = orientation;
-    }
-    
-    // getters
-    Status getStatus() const { return status; }
-    Waypoint getDestination() const { return destination; } 
-    TaskType getTaskType() const { return taskType; }
-    inline std::string getName() { return taskTypeToString(taskType); }
-    inline double getEndpointOrientation() { return endpointOrientation; }
+  virtual void inProgress(std::shared_ptr<Map> map, 
+                          std::shared_ptr<Navigator> navigator, 
+                          RobotState& nextRobotState);
 
-    static void printTaskInfo(ROBOTASKS::Task& task)
-    {
-        // print status of this type of task
-        switch(task.getTaskType()) {
-            case TRAVEL:
-                std::cout << "\n====== Travel Task Updater ======\n";
-                break;
-            case CORRECTPATH:
-                std::cout << "\n====== CorrectPath Task Updater ======\n";
-                break;  
-        }
+  virtual void suspended(std::shared_ptr<Map> map, 
+                         std::shared_ptr<Navigator> navigator, 
+                         RobotState& nextRobotState, 
+                         TaskType& nextTaskType);
 
-        std::cout << "Task destination (X,Y): (" << task.getDestination().getX() 
-                << ", " << task.getDestination().getY() << ")\n";
-        std::cout << "Task status: " << statusToString(task.getStatus()) << "\n";
-        std::cout << "Task name: " << task.getName() << "\n";
-        std::cout << "=================================\n";
-        std::cout << std::endl;
-    }
-    
-  private:
-    Waypoint destination;
-    double endpointOrientation; // angle
-    double expected_duration;
-    Status status;
-    TaskType taskType;
-  };
-}
+  virtual void complete(std::shared_ptr<Map> map, 
+                        std::shared_ptr<Navigator> navigator, 
+                        RobotState& nextRobotState, 
+                        TaskType& nextTaskType);
+
+  // setters
+  void setStatus(TaskStatus s);
+
+  // getters
+  TaskStatus getStatus() const;
+  TaskType getTaskType() const;
+  std::string getName();
+
+  void printTaskInfo(Task& task);
+  
+protected:
+  TaskType taskType;
+  TaskStatus status;
+
+private:
+  // task management data
+  double expected_duration;
+};
+
 #endif
 
 /*
-  Task A:
-  Behavior of robot at destination
+  TODO 1 (serial communication fault handling): 
+    Add exception handling for read/write to comport functions. 
+    Must expect there to be an issue 
 
-  This class should receive data for task status updates. 
-  It can receive the position of the robot relative to the task destination. 
-  [Maybe] The task can mark itself complete.
+      // endpoint should be set on the map separately
+  // this does not belong here.
+  // Map class should be in charge of storing the endpoints (destinations) and other points
+  // This function may be good in NavigateTo task especially when intializing the instances
+  // that will be stored in the task manager queue.
+  //void setEndpoint(std::shared_ptr<Map> map);
+  //void setEndpoint(double destx, double desty, double destOrientation);
 
-  A Task object would be a Robot's member data. 
-  The task objecsts can be stored in a generic c++ data structure. 
-  The task scheduler data structures of Task objects will track the completion of tasks. 
-
-  The robot can have a stack of completed/incompleted tasks. 
-  Task tracking and timestamping are important because they can be used to verify behaviors.
-  
-  
-
- */
+*/

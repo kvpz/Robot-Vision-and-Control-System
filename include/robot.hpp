@@ -1,127 +1,78 @@
 #ifndef ROBOT_HPP
 #define ROBOT_HPP
-#include "waypoints.hpp"
-#include "task.hpp"
+#include <memory>
+#include "xypoint.hpp"
+#include "taskmanager.hpp"
 #include "comms.hpp"
-using namespace std;
-using namespace ROBOTASKS;
+#include "enums/robotPoseToWaypoint.hpp"
+#include "enums/robotState.hpp"
+#include "enums/robotOrientationAtEndpoint.hpp"
+#include "map.hpp"
+#include "navigator.hpp"
 
-#define ROBOTDEBUG true
+#define ROBOTDEBUG false
 
-enum RobotPoseToWaypoint {
-			  NEAR, ON_PATH, OFF_PATH, NONE
+enum class Speed {
+    a='a', b,c,d,e,f
 };
-
-static std::string printRobotPoseToWaypoint(RobotPoseToWaypoint r) {
-  switch(r) {
-    case NEAR:
-      return "NEAR";
-    case ON_PATH:
-      return "ON_PATH";
-    case OFF_PATH:
-      return "OFF_PATH";
-    case NONE:
-      return "NONE";
-  }
-}
-
-enum RobotState {
-    MOVE_FORWARD,
-    MOVE_BACKWARD,
-    MOVE_LEFT,
-    MOVE_RIGHT,
-    ROTATE_CW,
-    ROTATE_CCW,
-    STOP
-};
-
-static std::string RobotStateToString(RobotState state) 
-{
-  switch(state) {
-    case MOVE_FORWARD:
-      return "MOVE_FORWARD";
-    case MOVE_BACKWARD:
-      return "MOVE_BACKWARD";
-    case MOVE_LEFT:
-      return "MOVE_LEFT";
-    case MOVE_RIGHT:
-      return "MOVE_RIGHT";
-    case ROTATE_CW:
-      return "ROTATE_CW";
-    case ROTATE_CCW:
-      return "ROTATE_CCW";
-    case STOP:
-      return "STOP";
-    default:
-      return "error";
-  }
-}
 
 class Robot {
 public:
-  Robot();
-  void run();
-  double getRobotAngleToPoint(const Robot&, double x, double y) const;
-  void move_forward();
-  void move_backward();
-  void move_left();
-  void move_right();
-  void rotate_CW(); 
-  void rotate_CCW(); 
-  void stop();
-  RobotPoseToWaypoint isRobotOnPath(double robotX, double robotY, double destX, double destY);
-  void printStatus();
+    Robot(double xpos, double ypos, double orientation);
 
-  // getters (inlined)
-  inline double getX() const { return currentLocation.getX(); }
-  inline double getY() const { return currentLocation.getY(); }
-  inline RobotState getState() const { return state; }
-  inline double getOrientation() const { return currentOrientation; }
-  inline double getAngleToDestination() const { return angleToDest; }
-  inline bool isNearEndpoint() const { return nearEndpoint; }
+    void run();
 
-  // setters (inlined)
-  void setCurrentXY(double x, double y) {
-    currentLocation.setX(x);
-    currentLocation.setY(y);
-  }
-  
-  void setState(RobotState newState) {
-    state = newState;
-  }
+    void move_forward();
+    void move_backward();
+    void move_left();
+    void move_right();
+    void rotate_CW();
+    void rotate_CCW();
+    void open_left_receptacle();
+    void close_left_receptacle();
+    void open_right_receptacle();
+    void close_right_receptacle();
+    void stop();
 
-  void setOrientation(double o)
-  {
-    currentOrientation = o;
-  }
-  
-  void setIsNearEndpoint(bool b) { nearEndpoint = b; }
+    // getters (inlined)
+    inline RobotState getState() const;
+
+    inline double getX() const;
+    inline double getY() const;
+    inline double getOrientation() const;
+
+    bool hasTasks();
+
+    std::shared_ptr<TaskManager> getTaskManager();
+    std::shared_ptr<Map>         getMap();
+    std::shared_ptr<Navigator>   getNavigator();
+
+    // setters (inlined)
+
+    void setCurrentXY(double x, double y);
+
+    void setOrientation(double o);
+
+    void executeCurrentTask();
+
+    void printStatus();
 
 private:
-  RobotState state = STOP;
-  Waypoint currentLocation;
-  double currentOrientation; // (gyro) orientation
-  double velocity;
-  double currentAngle; // relative to starting position
-  Comms* comport;
-  RobotPoseToWaypoint robotPoseToWaypoint = NONE;
-  double angleToDest;
-  bool nearEndpoint = false;
+    // communications
+    std::unique_ptr<Comms> comport;
+
+    // robot status indicators
+    RobotState state;
+    Speed speed;
+    //RobotPoseToWaypoint robotPoseToWaypoint;
+    //RobotOrientationAtEndpoint robotOrientationAtEndpoint;
+
+    // 
+    std::shared_ptr<TaskManager> taskManager;
+    std::shared_ptr<Navigator> navigator;
+    std::shared_ptr<Map> map;
+
 };
 
+
 #endif
-
-/*
-  Notes:
-
-  Think of current location as the location on the xy-grid. 
-
-  This of the current Position as a superset of the current location data
-  that also provides data about the robot's position in 3D space. 
-
-  A robot will have a task to complete.
-
-  There can be a data structure that has timestamps as keys and values of Tasks. 
-
-  
- */
