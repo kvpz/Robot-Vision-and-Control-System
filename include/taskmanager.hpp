@@ -3,7 +3,12 @@
 #include <iostream>
 #include <stack>
 #include <vector>
+#include <queue>
 #include <utility>
+#include <thread>
+#include <mutex>
+#include <mqueue.h>
+#include <condition_variable>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include "navigator.hpp"
@@ -13,7 +18,7 @@
 #include "map.hpp"
 
 
-#define DEBUG_TASKMANAGER true
+#define DEBUG_TASKMANAGER false
 
 class Task;
 /*
@@ -55,8 +60,19 @@ public:
     }
 
 private:
+    std::thread thread_;
+    std::mutex mutex_;
+    std::condition_variable condition_;
+
     std::stack<std::unique_ptr<Task>> task_queue;
     std::unique_ptr<Task> taskFactory(TaskType ttype);
+
+/*
+    std::priority_queue<std::unique_ptr<Task>, std::vector<std::unique_ptr<Task>>, 
+        decltype([](const auto& a, const auto& b) { return (a->priority() > b->priority()); })> 
+        high_priority_tasks_;
+*/
+    std::deque<std::unique_ptr<Task>> low_priority_tasks_;
 
     void handleNotStartedTask(std::shared_ptr<Map> map, 
                               std::shared_ptr<Navigator> navigator, 

@@ -5,10 +5,7 @@
 #include <unordered_map>
 #include "xypoint.hpp"
 #include "objects.hpp"
-
-enum class AttractionColors : char {
-    GREEN, RED, NONE
-};
+#include "enums/attractionColors.hpp"
 
 class Map
 {
@@ -49,6 +46,20 @@ public:
         return topLeftAttractionColor;
     }
 
+    void setBottomLeftAttractionColor(AttractionColors attractionColor) {
+        bottomLeftAttractionColor = attractionColor;
+    }
+
+    void setTopLeftAttractionColor(AttractionColors attractionColor) {
+        topLeftAttractionColor = attractionColor;
+    }
+
+    bool isAttractionColorKnown() const
+    {
+        return bottomLeftAttractionColor != AttractionColors::NONE || 
+            topLeftAttractionColor != AttractionColors::NONE;
+    }
+
 private:
     // robot current position data
     XYPoint robotCurrentLocation;
@@ -62,8 +73,10 @@ private:
     std::map<size_t, XYPoint> pointsVisited;
     //std::unordered_map<std::pair<int, int>, ObjectType> occupancyGrid;
 
+    // data about areas of interest
     AttractionColors bottomLeftAttractionColor;
     AttractionColors topLeftAttractionColor;
+    
 };
 
 #endif

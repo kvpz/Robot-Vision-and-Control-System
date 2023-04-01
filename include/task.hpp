@@ -3,6 +3,7 @@
 #include <iostream>
 #include <memory>
 #include <optional>
+#include <mqueue.h>
 #include "navigator.hpp"
 #include "xypoint.hpp"
 #include "enums/tasktype.hpp"
@@ -34,7 +35,7 @@ public:
 
   virtual void complete(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
-                        RobotState& nextRobotState, 
+                        RobotState& nextRobotState,
                         TaskType& nextTaskType);
 
   // setters
@@ -44,7 +45,9 @@ public:
   TaskStatus getStatus() const;
   TaskType getTaskType() const;
   std::string getName();
+  unsigned int priority() { return priority_; }
 
+  // debug functions
   void printTaskInfo(Task& task);
   
 protected:
@@ -54,6 +57,7 @@ protected:
 private:
   // task management data
   double expected_duration;
+  unsigned int priority_;
 };
 
 #endif

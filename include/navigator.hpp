@@ -9,7 +9,7 @@
 #include "map.hpp"
 #include "utility.hpp"
 
-#define NAVDEBUG true
+#define NAVDEBUG false
 
 #define ORIENTATION_RANGE_TOLERANCE 2.0
 

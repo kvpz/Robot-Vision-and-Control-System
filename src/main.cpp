@@ -4,6 +4,7 @@
 #include <vector>
 #include <utility>
 #include <memory>
+#include <mqueue.h>
 #include "robot.hpp"
 #include "taskmanager.hpp"
 #include "example-utils.hpp"
@@ -117,7 +118,7 @@ int main() try
 
       std::this_thread::sleep_for(std::chrono::milliseconds(10));	
 
-      robot->printStatus();
+      //robot->printStatus();
     }
 	
     

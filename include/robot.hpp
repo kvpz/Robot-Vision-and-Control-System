@@ -7,6 +7,7 @@
 #include "enums/robotPoseToWaypoint.hpp"
 #include "enums/robotState.hpp"
 #include "enums/robotOrientationAtEndpoint.hpp"
+#include "enums/attractionColors.hpp"
 #include "map.hpp"
 #include "navigator.hpp"
 
@@ -50,7 +51,6 @@ public:
     // setters (inlined)
 
     void setCurrentXY(double x, double y);
-
     void setOrientation(double o);
 
     void executeCurrentTask();
@@ -71,6 +71,7 @@ private:
     std::shared_ptr<TaskManager> taskManager;
     std::shared_ptr<Navigator> navigator;
     std::shared_ptr<Map> map;
+
 
 };
 

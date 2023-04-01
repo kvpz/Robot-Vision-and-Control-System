@@ -8,7 +8,7 @@
 #include "navigator.hpp"
 #include "map.hpp"
 
-#define DEBUG_DROPCHIPTOTASK true
+#define DEBUG_DROPCHIPTOTASK false
 
 class DropChipTask : public Task
 {

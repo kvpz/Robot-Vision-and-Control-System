@@ -3,6 +3,7 @@
 Robot::Robot(double xpos, double ypos, double orientation) 
     : state(STOP)
 { 
+    //attraction_color_mq_name = "/attraction_color_mq";
     comport = std::make_unique<Comms>("/dev/ttyACM0");
     taskManager = std::make_shared<TaskManager>();
     navigator = std::make_unique<Navigator>();
@@ -10,6 +11,8 @@ Robot::Robot(double xpos, double ypos, double orientation)
     map = std::make_unique<Map>();
     map->setRobotCurrentCoordinate(xpos, ypos);
     map->setRobotOrientation(orientation);
+    //attraction_color_mq = mq_open(attraction_color_mq_name, O_CREAT | O_RDWR | O_NONBLOCK, 0666, nullptr);
+
 }
 
 void Robot::run()
@@ -87,7 +90,7 @@ void Robot::setOrientation(double o)
 {
   map->setRobotOrientation(o);
 }
-    
+
 /*
   Robot sends data about itself to the task manager. 
   The task manager then executes the current task. 
@@ -95,6 +98,7 @@ void Robot::setOrientation(double o)
 */
 void Robot::executeCurrentTask()
 {
+
   RobotState nextRobotState = state;
   //TODO: nextRobotState = taskManager->executeCurrentTask(map, navigator);
   taskManager->executeCurrentTask(map, navigator, nextRobotState);

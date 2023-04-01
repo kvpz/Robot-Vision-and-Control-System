@@ -24,6 +24,14 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
     TaskType nextTaskType = NA;
     std::unique_ptr<Task> newTask;
     
+    /*
+    for(auto task : high_priority_tasks){
+        
+    }
+    */
+    // read obj detection data from message queue
+    
+
     switch(task_queue.top()->getStatus()) {
         case TaskStatus::NOTSTARTED:
             task_queue.top()->notStarted(map, navigator, nextRobotState);
@@ -57,7 +65,6 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
     }
 }
 
-
 void TaskManager::addTask(std::unique_ptr<Task> task) 
 {
     if(task != nullptr){
@@ -85,7 +92,8 @@ void TaskManager::importTasksFromJSON(std::string filename)
     bool endpoint_orientation_required;
     TravelDirection travelDirection;
 
-    for (const auto& taskkey : pt) {        
+    for (const auto& taskkey : pt) {
+        
         endpoint_x = taskkey.second.get_child("endpoint").get_child("x").get_value<double>();
         endpoint_y = taskkey.second.get_child("endpoint").get_child("y").get_value<double>();
         endpoint_orientation = taskkey.second.get_child("endpoint").get_child("yaw").get_value<double>();
@@ -95,19 +103,15 @@ void TaskManager::importTasksFromJSON(std::string filename)
 
         switch(taskTypeToEnum(taskkey.second.get_child("type").get_value<std::string>())) {
             case NAVIGATETO:
-                //std::unique_ptr<NavigateToTask> task = 
                 task_vector.push_back(std::make_unique<NavigateToTask>(xypoint, 
                                                      endpoint_orientation, 
                                                      endpoint_orientation_required,
                                                      travelDirection));
-                //task_vector.push_back(std::move(task));
                 break;
             case DROPCHIP:
-                //std::unique_ptr<DropChipTask> task = 
                 task_vector.push_back(std::make_unique<DropChipTask>(xypoint, 
                                                    endpoint_orientation, 
                                                    endpoint_orientation_required));
-                //task_vector.push_back(std::move(task));
                 break;
         }
     }

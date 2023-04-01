@@ -75,7 +75,7 @@ double Navigator::robotAngularDistanceToEndpoint(std::shared_ptr<Map> map, bool 
     
 
     //theta = beta - map->getRobotOrientation();
-    /*
+    
     if(theta < 0.0) {
         if(std::fabs(theta) > 180.0) {
             theta = 360 + theta;
@@ -86,7 +86,7 @@ double Navigator::robotAngularDistanceToEndpoint(std::shared_ptr<Map> map, bool 
         theta = theta - 360.0;
         //}
     }
-    */
+    
 
     if(NAVDEBUG) {
         std::cout << "\n============== Navigator::angleToPoint ===================\n";
