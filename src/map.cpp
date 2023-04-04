@@ -1,7 +1,7 @@
 #include "map.hpp"
 
 Map::Map()
-    : bottomLeftAttractionColor(AttractionColors::NONE)
+    : bottomLeftAttractionColor(AttractionColors::NONE), topLeftAttractionColor(AttractionColors::NONE)
 {}
 
 // getters

@@ -41,12 +41,14 @@ public:
 
   // setters
   void setStatus(TaskStatus s);
+  void setReadyForDeletion(bool v) { readyToBeDeleted = v; }
 
   // getters
   TaskStatus getStatus() const;
   TaskType getTaskType() const;
   std::string getName();
   unsigned int getPriority() { return priority_; }
+  bool isReadyForDeletion() { return readyToBeDeleted; }
 
   // debug functions
   void printTaskInfo(Task& task);
@@ -62,6 +64,7 @@ private:
   unsigned int priority_;
   unsigned int id;
 
+  bool readyToBeDeleted;
 };
 
 #endif

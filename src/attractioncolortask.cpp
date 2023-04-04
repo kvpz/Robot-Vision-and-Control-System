@@ -74,8 +74,10 @@ void AttractionColorTask::inProgress(std::shared_ptr<Map> map,
 
     // if a color was assigned to the attractions
     // change the state of the task
-    if(map->isAttractionColorKnown())
+    if(map->isAttractionColorKnown()) {
+        std::cout << "AttractionColorTask::inprogress attraction color is known" << std::endl;
         status = TaskStatus::COMPLETE;
+    }
 }
 
 void AttractionColorTask::suspended(std::shared_ptr<Map> map, 

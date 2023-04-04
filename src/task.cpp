@@ -2,12 +2,12 @@
 
 Task::Task() 
  : status(TaskStatus::NOTSTARTED),
- taskType(NA), priority_(UINT_MAX)
+ taskType(NA), priority_(UINT_MAX), readyToBeDeleted(false)
  {}
 
 Task::Task(TaskType ttype, unsigned int priority)
     : status(TaskStatus::NOTSTARTED), taskType(ttype),
-    priority_(priority)
+    priority_(priority), readyToBeDeleted(false)
 {
 }
 
@@ -43,6 +43,12 @@ void Task::printTaskInfo(Task& task)
         case PATHCORRECTION:
             std::cout << "\n====== PathCorrection Task Updater ======\n";
             break;  
+        case POSECORRECTION:
+            std::cout << "\n====== PoseCorrection Task ======\n";
+            break;
+        case ATTRACTIONCOLOR:
+            std::cout << "\n====== AttractionColor Task ======\n";
+            break;
         case DROPCHIP:
             std::cout << "\n====== Drop Chip Task Updater ======\n";
             break;

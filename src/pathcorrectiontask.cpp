@@ -46,6 +46,7 @@ void PathCorrectionTask::inProgress(std::shared_ptr<Map> map,
                     nextRobotState = ROTATE_CCW;
                 }
                 else {
+                    std::cout << "(pathcorrection::inprogress) status changed to COMPLETE" << std::endl;
                     status = TaskStatus::COMPLETE;
                     nextRobotState = STOP;
                 }

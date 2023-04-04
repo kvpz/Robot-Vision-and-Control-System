@@ -84,6 +84,8 @@ private:
 
     std::deque<std::unique_ptr<Task>> low_priority_tasks;
 
+    std::vector<std::unique_ptr<Task>> pending_high_priority_tasks;
+
     unsigned int currentTaskPriority;
     TaskType currentTaskType;
     TaskStatus currentTaskStatus;
