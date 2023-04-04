@@ -68,6 +68,8 @@ public:
         return currentTaskStatus;
     }
 
+    void printHighPriorityTasks();
+
 private:
     std::thread thread_;
     std::mutex mutex_;

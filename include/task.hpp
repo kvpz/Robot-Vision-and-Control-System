@@ -50,6 +50,7 @@ public:
 
   // debug functions
   void printTaskInfo(Task& task);
+  void printTaskInfo();
   
 protected:
   TaskType taskType;
@@ -60,6 +61,7 @@ private:
   double expected_duration;
   unsigned int priority_;
   unsigned int id;
+
 };
 
 #endif

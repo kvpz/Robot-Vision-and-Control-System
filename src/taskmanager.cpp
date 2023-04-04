@@ -23,42 +23,47 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
                                      std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
 {
     TaskType nextTaskType = NA;
-    //std::unique_ptr<Task> newTask;
-    
-    
-    for(auto& task : high_priority_tasks) {    
+    //std::vector<std::unique_ptr<Task>> tasksToDelete;
+
+    for(auto& task : high_priority_tasks) { 
         // read obj detection data from message queue
+        currentTaskPriority = task->getPriority();
+        currentTaskType = task->getTaskType();
+        currentTaskStatus = task->getStatus();
 
         switch(task->getStatus()) {
             case TaskStatus::NOTSTARTED:
-                //task_queue.top()->notStarted(map, navigator, nextRobotState);
                 task->notStarted(map, navigator, nextRobotState);
                 handleNotStartedTask(map, navigator, nextRobotState, nextTaskType);
                 break;   
                 
             case TaskStatus::INPROGRESS:
-                //task_queue.top()->inProgress(map, navigator, nextRobotState);
                 task->inProgress(map, navigator, nextRobotState);
                 handleInProgressTask(map, navigator, nextRobotState, nextTaskType);
                 break;
 
             case TaskStatus::SUSPENDED:
-                //task_queue.top()->suspended(map, navigator, nextRobotState, nextTaskType);
                 task->suspended(map, navigator, nextRobotState, nextTaskType);
                 handleSuspendedTask(map, navigator, nextRobotState, nextTaskType);
                 break;
 
             case TaskStatus::COMPLETE:
-                //task_queue.top()->complete(map, navigator, nextRobotState, nextTaskType);
                 task->complete(map, navigator, nextRobotState, nextTaskType);
                 handleCompletedTask(map, navigator, nextRobotState, nextTaskType);
+                //tasksToDelete.push_back(std::move(task));
                 break;
         } // switch
 
-        currentTaskPriority = task->getPriority();
-        currentTaskType = task->getTaskType();
-        currentTaskStatus = task->getStatus();
+        // issue: "task" may have been deleted from multiset by this point
+        //currentTaskPriority = task->getPriority();
+        //currentTaskType = task->getTaskType();
+        //currentTaskStatus = task->getStatus();
     }
+
+    // delete all completed tasks from the high priority list
+    //for(auto& task : tasksToDelete) {
+    //    high_priority_tasks.erase(task);
+   // }
 
     if(DEBUG_TASKMANAGER) {
         std::cout << "======= TaskManager::executeCurrentTask =======\n";
@@ -81,8 +86,6 @@ void TaskManager::addTask(std::unique_ptr<Task> task)
             std::cout << "tasktype: " << taskTypeToString(task->getTaskType()) << std::endl;
             std::cout << "=====================================\n";
         }
-        
-        //task_queue.push(std::move(task));
     }
 }
 
@@ -125,6 +128,7 @@ void TaskManager::importTasksFromJSON(std::string filename)
             }
             catch(boost::property_tree::ptree_bad_path& e){
                 std::cout << "[ERROR] start_time node not found" << std::endl;
+                startTime = "";
             }
 
             if(startTime == "now") {
@@ -221,22 +225,19 @@ std::unique_ptr<Task> TaskManager::taskFactory(TaskType ttype)
 */
 void TaskManager::scheduleNewTask(TaskType tasktype, std::shared_ptr<Map> map)
 {
-    //std::cout << "Sheduling a new task: " << taskTypeToString(tasktype) << std::endl;
+    if(DEBUG_TASKMANAGER)
+        std::cout << "scheduling new task " << taskTypeToString(tasktype) << std::endl;
+
     switch(tasktype) {
         case PATHCORRECTION:
-            //task_queue.push(std::make_unique<PathCorrectionTask>());
             high_priority_tasks.insert(std::make_unique<PathCorrectionTask>());
             break;
         case POSECORRECTION:
-            //task_queue.push(std::make_unique<PoseCorrectionTask>());
             high_priority_tasks.insert(std::make_unique<PoseCorrectionTask>());
             break;
-        case NAVIGATETO: {
-            XYPoint xypoint = map->getNextDestinationXY(); 
-            //task_queue.push(std::make_unique<NavigateToTask>(xypoint, map->getDestinationOrientation(), map->getIsEndpointOrientationRequired(), TravelDirection::error));
-            high_priority_tasks.insert(std::make_unique<NavigateToTask>(xypoint, map->getDestinationOrientation(), map->getIsEndpointOrientationRequired(), TravelDirection::error));
+        case NAVIGATETO:
+            high_priority_tasks.insert(std::make_unique<NavigateToTask>(map->getNextDestinationXY(), map->getDestinationOrientation(), map->getIsEndpointOrientationRequired(), TravelDirection::error));
             break;
-        }
         default:
             std::cout << "\n[ERROR] TaskManager::executeCurrentTask. Current completed task requesting unknown task type\n" << std::endl;
             break;
@@ -261,6 +262,7 @@ void TaskManager::handleSuspendedTask(std::shared_ptr<Map> map,
                                        std::shared_ptr<Navigator> navigator, 
                                        RobotState& nextRobotState, TaskType& nextTaskType)
 {
+    std::cout << "handling suspended task " << taskTypeToString(currentTaskType) << std::endl;
     if(nextTaskType != NA)
         scheduleNewTask(nextTaskType, map);
 }
@@ -275,18 +277,25 @@ void TaskManager::handleCompletedTask(std::shared_ptr<Map> map,
 
     for(auto i = high_priority_tasks.begin(); i != high_priority_tasks.end(); ++i) {
         if((*i)->getPriority() != currentTaskPriority)
-            break;
+            continue;
+        if((*i)->getTaskType() != currentTaskType)
+            continue;
+        // current task has been found
 
+        std::cout << "handleCompleted Task : " << taskTypeToString((*i)->getTaskType()) << std::endl;
         if((*i)->getTaskType() == PATHCORRECTION) {
             // find the navigate to task in the high priority queue and change
             // its status to IN PROGRESS from SUSPENDED
             for(auto pqi = high_priority_tasks.begin(); pqi != high_priority_tasks.end(); ++pqi) {
                 if((*pqi)->getTaskType() == NAVIGATETO) {
+                    std::cout << "found next task NAVIGATETO" << std::endl;
                     // next task after a pose or path correction task should be 
                     // a navigateTo task
                     (*pqi)->setStatus(TaskStatus::INPROGRESS);
                     // pop the current task
-                    high_priority_tasks.erase(i);
+                    std::cout << "before erase" << std::endl;
+                    //high_priority_tasks.erase(i);
+                    std::cout << "after erase" << std::endl;
                     break;
                 }
             }
@@ -313,3 +322,18 @@ void TaskManager::handleCompletedTask(std::shared_ptr<Map> map,
         }
     }
 }
+
+void TaskManager::printHighPriorityTasks() 
+{
+    for(auto pqi = high_priority_tasks.begin(); pqi != high_priority_tasks.end(); ++pqi) {
+        (*pqi)->printTaskInfo();
+    }
+}
+
+/*
+    Note: we cannot have two high priority tasks that change the state
+    of the robot at the same time. Therefore, make sure that the in progress
+    tasks in the high priority task list do change the state of the robot. 
+
+    There should only be one instance of a task type in the priority queue
+*/

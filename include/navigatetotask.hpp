@@ -68,6 +68,12 @@ private:
     double destinationOrientationTolerance;
 
     TravelDirection travelDirection;
+
+    // state execution counters
+    unsigned int notStartedCounter;
+    unsigned int inProgressCounter;
+    unsigned int suspendedCounter;
+    unsigned int completedCounter;
 };
 
 #endif

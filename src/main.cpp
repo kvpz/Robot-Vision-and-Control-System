@@ -107,8 +107,6 @@ int main() try
     // allow time for camera to initialize
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));			  
 
-    //robot->setCurrentXY(x_robot_camera_offset, y_robot_camera_offset); // x,y are front of robot (camera location)
-
     while(1) {
       if(!robot->hasTasks()) {
         break;
@@ -118,7 +116,8 @@ int main() try
 
       std::this_thread::sleep_for(std::chrono::milliseconds(10));	
 
-      robot->printStatus();
+      //robot->printStatus();
+      robot->getTaskManager()->printHighPriorityTasks();
     }
 	
     
@@ -134,13 +133,3 @@ catch (const std::exception& e)
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
 }
-
-
-/*
-      if(DEBUG_MAIN) {
-        std::cout << "=========== Main Loop ============\n";
-        //std::cout << "task stack size: " << task_queue.size() << "\n";
-        //std::cout << "current task type: " << taskTypeToString(currentTask.getTaskType()) << "\n";
-        std::cout << "==================================" << std::endl;
-      }
-*/

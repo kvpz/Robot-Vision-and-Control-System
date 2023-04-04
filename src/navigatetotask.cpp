@@ -81,6 +81,8 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
                                 std::shared_ptr<Navigator> navigator, 
                                 RobotState& nextRobotState)
 {    
+    suspendedCounter = 0;
+
     switch(navigator->isRobotOnPath(map)) {
         case NEAR:
             // fix endpoint if the task requires it
@@ -119,7 +121,7 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
     if(DEBUG_NAVIGATETOTASK) {
         printTaskInfo("NavigateToTask::inProgress");
     }
-}
+} 
 
 /*
     This is where the task makes the decision as to what type
@@ -129,8 +131,13 @@ void NavigateToTask::suspended(std::shared_ptr<Map> map,
                                std::shared_ptr<Navigator> navigator, 
                                RobotState& nextRobotState, TaskType& nextTaskType) 
 {
-    nextTaskType = newTaskRequest;
-    nextRobotState = STOP;
+    // the suspended state procedure should only run once
+    // after the task has been suspended. If the task is set back in progress,
+    // then the suspend procedure can execute once again.
+    if(suspendedCounter++ < 1) {
+        nextTaskType = newTaskRequest;
+        nextRobotState = STOP;
+    }
 }
 
 /*
