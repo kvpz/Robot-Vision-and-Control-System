@@ -7,6 +7,8 @@
 
 #define POSECORRECTIONTASK_PRIORITY 4
 
+#define POSECORRECTION_DEBUG true
+
 class PoseCorrectionTask : public Task
 {
 public:

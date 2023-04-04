@@ -66,9 +66,6 @@ void Robot::open_right_receptacle()  { comport->send_command("1"); }
 void Robot::close_right_receptacle() { comport->send_command("2"); }
 void Robot::stop()                   { comport->send_command("S"); }
 
-// getters (inlined)
-RobotState Robot::getState() const { return state; }
-
 double Robot::getX() const { return map->getNextDestinationXY().getX(); }
 double Robot::getY() const { return map->getNextDestinationXY().getY(); }
 double Robot::getOrientation() const { return map->getRobotOrientation(); }

@@ -28,13 +28,13 @@
     "4": {
         "type": "navigateto",
         "endpoint": {"x": 205, "y": 45, "yaw": 330 },
-	    "endpoint_settings":  {"orientation_required": true },
+	    "endpoint_settings":  {"orientation_required": false },
         "move_direction": "forward"
     },
     "5": {
         "type": "navigateto",
         "endpoint": {"x": 210, "y": 30, "yaw": 315 },
-	    "endpoint_settings":  {"orientation_required": true },
+	    "endpoint_settings":  {"orientation_required": false },
         "move_direction": "forward"
     },
     "6": {
