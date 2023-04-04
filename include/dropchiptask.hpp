@@ -10,6 +10,8 @@
 
 #define DEBUG_DROPCHIPTOTASK false
 
+#define DROPCHIPTASK_PRIORITY 3
+
 class DropChipTask : public Task
 {
 public:

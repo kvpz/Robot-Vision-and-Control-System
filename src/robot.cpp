@@ -110,8 +110,8 @@ void Robot::executeCurrentTask()
   }
 
   // speed control
-  if(taskManager->getCurrentTask().getTaskType() == POSECORRECTION ||
-     taskManager->getCurrentTask().getTaskType() == PATHCORRECTION) {
+  if(taskManager->getCurrentTaskType() == POSECORRECTION ||
+     taskManager->getCurrentTaskType() == PATHCORRECTION) {
       if(speed != Speed::b)
         comport->send_command("b");
   }

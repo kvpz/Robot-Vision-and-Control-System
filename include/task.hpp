@@ -4,6 +4,7 @@
 #include <memory>
 #include <optional>
 #include <mqueue.h>
+#include <climits>
 #include "navigator.hpp"
 #include "xypoint.hpp"
 #include "enums/tasktype.hpp"
@@ -16,8 +17,8 @@
 class Task
 {
 public:
-  Task() : status(TaskStatus::NOTSTARTED){}
-  Task(TaskType ttype);
+  Task();
+  Task(TaskType ttype, unsigned int priority);
 
   // task state functions
   virtual void notStarted(std::shared_ptr<Map> map, 
@@ -45,7 +46,7 @@ public:
   TaskStatus getStatus() const;
   TaskType getTaskType() const;
   std::string getName();
-  unsigned int priority() { return priority_; }
+  unsigned int getPriority() { return priority_; }
 
   // debug functions
   void printTaskInfo(Task& task);
@@ -58,6 +59,7 @@ private:
   // task management data
   double expected_duration;
   unsigned int priority_;
+  unsigned int id;
 };
 
 #endif

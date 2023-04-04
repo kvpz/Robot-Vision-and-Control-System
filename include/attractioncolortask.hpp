@@ -2,6 +2,14 @@
 #define ATTRACTIONCOLORTASK
 #include <iostream>
 #include <mqueue.h>
+#include "robot.hpp"
+#include "task.hpp"
+#include "enums/robotPoseToWaypoint.hpp"
+#include "enums/robotState.hpp"
+#include "enums/tasktype.hpp"
+#include "map.hpp"
+
+#define ATTRACTIONCOLORTASK_PRIORITY 2
 
 /*
     This runs only under the following conditions:
@@ -15,7 +23,7 @@
 class AttractionColorTask : public Task
 {
 public:
-    AttractionColorTask();
+    AttractionColorTask(const char* messageQueueName);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 

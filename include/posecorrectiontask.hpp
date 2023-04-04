@@ -5,6 +5,8 @@
 #include "navigator.hpp"
 #include "map.hpp"
 
+#define POSECORRECTIONTASK_PRIORITY 4
+
 class PoseCorrectionTask : public Task
 {
 public:

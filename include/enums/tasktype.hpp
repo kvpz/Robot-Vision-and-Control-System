@@ -3,7 +3,7 @@
 
 enum TaskType {
         NAVIGATETO, DROPCHIP, GRASP, STACKPED,
-        PATHCORRECTION, POSECORRECTION, NA
+        PATHCORRECTION, POSECORRECTION, ATTRACTIONCOLOR, NA
 };
 
 static std::string taskTypeToString(TaskType ttype) 
@@ -21,6 +21,8 @@ static std::string taskTypeToString(TaskType ttype)
     return "grasp";
   case STACKPED:
     return "stackped";
+  case ATTRACTIONCOLOR:
+    return "attractioncolor";
   case NA:
     return "NA";
   default:
@@ -34,6 +36,7 @@ static TaskType taskTypeToEnum(std::string ttype)
     else if(ttype == "pathcorrection") return PATHCORRECTION;
     else if(ttype == "posecorrection") return POSECORRECTION;
     else if(ttype == "dropchip") return DROPCHIP;
+    else if(ttype == "attractioncolor") return ATTRACTIONCOLOR;
     else return NA;
 }
 

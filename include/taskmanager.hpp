@@ -8,6 +8,7 @@
 #include <thread>
 #include <mutex>
 #include <mqueue.h>
+#include <set>
 #include <condition_variable>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -18,7 +19,7 @@
 #include "map.hpp"
 
 
-#define DEBUG_TASKMANAGER false
+#define DEBUG_TASKMANAGER true
 
 class Task;
 /*
@@ -51,12 +52,20 @@ public:
 
     void importTasksFromJSON(std::string filename);
 
-    inline bool hasTasks() { return !task_queue.empty(); }
+    inline bool hasTasks() { return !high_priority_tasks.empty() || !low_priority_tasks.empty(); }
 
     void scheduleNewTask(TaskType ttype, std::shared_ptr<Map> map);
 
-    Task getCurrentTask() {
-        return *task_queue.top();
+    TaskType getCurrentTaskType() {
+        //for(auto i = high_priority_tasks.begin(); i != high_priority_tasks.end(); ++i) {
+        //    if(i->getTaskType() == )
+        //}
+        //return high_priority_tasks//*task_queue.top();
+        return currentTaskType;
+    }
+
+    TaskStatus getCurrentTaskStatus() {
+        return currentTaskStatus;
     }
 
 private:
@@ -64,16 +73,19 @@ private:
     std::mutex mutex_;
     std::condition_variable condition_;
 
-    std::stack<std::unique_ptr<Task>> task_queue;
+    //std::stack<std::unique_ptr<Task>> task_queue;
     std::unique_ptr<Task> taskFactory(TaskType ttype);
 
-/*
-    std::priority_queue<std::unique_ptr<Task>, std::vector<std::unique_ptr<Task>>, 
-        decltype([](const auto& a, const auto& b) { return (a->priority() > b->priority()); })> 
-        high_priority_tasks_;
-*/
-    std::deque<std::unique_ptr<Task>> low_priority_tasks_;
+    std::multiset<std::unique_ptr<Task>, 
+        decltype([](const auto& a, const auto& b) { return (a->getPriority() < b->getPriority()); })> 
+        high_priority_tasks;
 
+    std::deque<std::unique_ptr<Task>> low_priority_tasks;
+
+    unsigned int currentTaskPriority;
+    TaskType currentTaskType;
+    TaskStatus currentTaskStatus;
+    
     void handleNotStartedTask(std::shared_ptr<Map> map, 
                               std::shared_ptr<Navigator> navigator, 
                               RobotState& nextRobotState, TaskType& nextTaskType);

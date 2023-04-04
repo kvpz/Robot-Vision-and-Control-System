@@ -1,11 +1,11 @@
 #include "dropchiptask.hpp"
 
-DropChipTask::DropChipTask() : Task(DROPCHIP) {}
+DropChipTask::DropChipTask() : Task(DROPCHIP, DROPCHIPTASK_PRIORITY) {}
 
 DropChipTask::DropChipTask(XYPoint xy, 
                            double endpointOrientation, 
                            bool endpointOrientationRequirement)
-    : Task(DROPCHIP)
+    : Task(DROPCHIP, DROPCHIPTASK_PRIORITY)
 {
     payloadLocation = xy;
     this->endpointOrientation = endpointOrientation;

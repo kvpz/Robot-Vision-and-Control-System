@@ -1,7 +1,7 @@
 #include "posecorrectiontask.hpp"
 
 PoseCorrectionTask::PoseCorrectionTask()
-   : Task(POSECORRECTION)
+   : Task(TaskType::POSECORRECTION, POSECORRECTIONTASK_PRIORITY)
 {
 
     

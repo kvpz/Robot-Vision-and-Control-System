@@ -1,12 +1,17 @@
 {
     "0": {
-        "type": "attractioncolortask"
+        "type": "attractioncolor",
+        "mqname": "/attraction_color_mq",
+        "priority": 1,
+        "start_time": "now"
     },
     "1": {
         "type": "navigateto",
         "endpoint": {"x": 20, "y": 20, "yaw": 90 },
 	    "endpoint_settings":  {"orientation_required": true },
-        "move_direction": "forward"
+        "move_direction": "forward",
+        "priority": 2,
+        "start_time": "now"
     },
     "2": {
         "type": "navigateto",

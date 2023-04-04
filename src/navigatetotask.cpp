@@ -1,8 +1,15 @@
 #include "navigatetotask.hpp"
 
+NavigateToTask::NavigateToTask()
+:  destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE), 
+    Task(TaskType::NAVIGATETO, NAVIGATETOTTASK_PRIORITY) 
+{}
+
 NavigateToTask::NavigateToTask(double endpointOrientation, 
                                bool endpointOrientationRequirement) 
-    : isRobotAtEndpoint(false), Task(NAVIGATETO), destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE)
+    : isRobotAtEndpoint(false), 
+    Task(NAVIGATETO, NAVIGATETOTTASK_PRIORITY), 
+    destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE)
 {
     isEndpointOrientationRequired = endpointOrientationRequirement;
     endpointDesiredOrientation = endpointOrientation;
@@ -15,7 +22,8 @@ NavigateToTask::NavigateToTask(double endpointOrientation,
 NavigateToTask::NavigateToTask(XYPoint xy, 
                                double endpointOrientation, 
                                bool endpointOrientationRequired, TravelDirection travelDir)
-    : isRobotAtEndpoint(false), Task(NAVIGATETO), destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE)
+    : isRobotAtEndpoint(false), Task(NAVIGATETO, NAVIGATETOTTASK_PRIORITY), 
+    destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE)
 {    
     endpoint.setX(xy.getX());
     endpoint.setY(xy.getY());

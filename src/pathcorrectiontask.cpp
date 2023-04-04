@@ -1,7 +1,7 @@
 #include "pathcorrectiontask.hpp"
 
 PathCorrectionTask::PathCorrectionTask()
-    : Task(PATHCORRECTION)
+    : Task(PATHCORRECTION, PATHCORRECTIONTASK_PRIORITY)
 {
     correcting_position = false;
 }

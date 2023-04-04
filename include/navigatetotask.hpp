@@ -12,10 +12,12 @@
 
 #define ORIENTATION_RANGE_TOLERANCE 2.0
 
+#define NAVIGATETOTTASK_PRIORITY 3
+
 class NavigateToTask : public Task
 {
 public:
-    NavigateToTask()  :  destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE) {}
+    NavigateToTask();
     NavigateToTask(double endpointOrientation, bool endpointOrientationRequirement);
     NavigateToTask(XYPoint xy, 
                    double endpointOrientation, 

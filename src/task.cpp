@@ -1,7 +1,13 @@
 #include "task.hpp"
 
-Task::Task(TaskType ttype)
-    : status(TaskStatus::NOTSTARTED), taskType(ttype)
+Task::Task() 
+ : status(TaskStatus::NOTSTARTED),
+ taskType(NA), priority_(UINT_MAX)
+ {}
+
+Task::Task(TaskType ttype, unsigned int priority)
+    : status(TaskStatus::NOTSTARTED), taskType(ttype),
+    priority_(priority)
 {
 }
 

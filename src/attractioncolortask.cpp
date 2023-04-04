@@ -1,14 +1,15 @@
 #include "attractioncolortask.hpp"
 
-AttractionColorTask::AttractionColorTask()
-    : attraction_color_mq(mq_open(attraction_color_mq_name, O_CREAT | O_RDONLY | O_NONBLOCK, 0666, nullptr)),
-    attraction_color_mq_name("/attraction_color_mq")
+AttractionColorTask::AttractionColorTask(const char* messageQueueName)
+    : attraction_color_mq_name(messageQueueName), 
+    attraction_color_mq(mq_open(attraction_color_mq_name, O_CREAT | O_RDONLY | O_NONBLOCK, 0666, nullptr)),
+    Task(TaskType::ATTRACTIONCOLOR, ATTRACTIONCOLORTASK_PRIORITY)
 {
     // this function initializes the message queue for reading
 
 }
 
-virtual void AttractionColorTask::notStarted(std::shared_ptr<Map> map, 
+void AttractionColorTask::notStarted(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
                         RobotState& nextRobotState)
 {
@@ -17,7 +18,7 @@ virtual void AttractionColorTask::notStarted(std::shared_ptr<Map> map,
 
 }
 
-virtual void inProgress(std::shared_ptr<Map> map, 
+void AttractionColorTask::inProgress(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
                         RobotState& nextRobotState) 
 {
@@ -44,7 +45,7 @@ virtual void inProgress(std::shared_ptr<Map> map,
     // to interpret and react on the input color data
 
 
-    switch(quadrant_identifier(map->getRobotCurrentOrientation())) {
+    switch(quadrant_identifier(map->getRobotOrientation())) {
         case 2:
             if(detectedColor == AttractionColors::GREEN) {
                 map->setTopLeftAttractionColor(AttractionColors::GREEN);
@@ -74,10 +75,10 @@ virtual void inProgress(std::shared_ptr<Map> map,
     // if a color was assigned to the attractions
     // change the state of the task
     if(map->isAttractionColorKnown())
-        state = TaskStatus::COMPLETE;
+        status = TaskStatus::COMPLETE;
 }
 
-virtual void suspended(std::shared_ptr<Map> map, 
+void AttractionColorTask::suspended(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
                         RobotState& nextRobotState, 
                         TaskType& nextTaskType) 
@@ -92,7 +93,7 @@ virtual void suspended(std::shared_ptr<Map> map,
     
 }
 
-virtual void complete(std::shared_ptr<Map> map, 
+void AttractionColorTask::complete(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
                         RobotState& nextRobotState, 
                         TaskType& nextTaskType) 

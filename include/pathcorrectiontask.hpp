@@ -7,6 +7,8 @@
 
 #define ORIENTATION_RANGE_TOLERANCE 2.0
 
+#define PATHCORRECTIONTASK_PRIORITY 4
+
 class PathCorrectionTask : public Task
 {
 public:
