@@ -2,8 +2,8 @@ WARN	:= #-W -Wall -Wconversion -pedantic
 CC	:= g++ -std=c++2a #g++ -std=c++17
 USRLIBS	:= /usr/lib 
 RSHEADERS := /usr/include/librealsense2
-PROJHEADERS := /home/ieeefiu/Documents/perrito/include
-#PROJHEADERS := /home/kevin/Documents/perrito/include 
+#PROJHEADERS := /home/ieeefiu/Documents/perrito/include
+PROJHEADERS := /home/kevin/Documents/perrito/include 
 INCLUDE = -I$(RSHEADERS) -I$(PROJHEADERS)
 
 ALL: main.x
