@@ -8,16 +8,20 @@
 #include "navigator.hpp"
 #include "map.hpp"
 
-#define DEBUG_NAVIGATETOTASK true
+#define DEBUG_NAVIGATETOTASK false
 
-#define ORIENTATION_RANGE_TOLERANCE 10.0
+#define ORIENTATION_RANGE_TOLERANCE 2.0
+
+#define NAVIGATETOTTASK_PRIORITY 3
 
 class NavigateToTask : public Task
 {
 public:
-    NavigateToTask()  :  destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE) {}
+    NavigateToTask();
     NavigateToTask(double endpointOrientation, bool endpointOrientationRequirement);
-    NavigateToTask(XYPoint xy, double endpointOrientation, bool endpointOrientationRequirement);
+    NavigateToTask(XYPoint xy, 
+                   double endpointOrientation, 
+                   bool endpointOrientationRequirement, TravelDirection travelDirection);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
@@ -62,6 +66,14 @@ private:
     TaskType newTaskRequest;
 
     double destinationOrientationTolerance;
+
+    TravelDirection travelDirection;
+
+    // state execution counters
+    unsigned int notStartedCounter;
+    unsigned int inProgressCounter;
+    unsigned int suspendedCounter;
+    unsigned int completedCounter;
 };
 
 #endif

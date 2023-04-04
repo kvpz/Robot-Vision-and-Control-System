@@ -7,6 +7,7 @@
 #include "enums/robotPoseToWaypoint.hpp"
 #include "enums/robotState.hpp"
 #include "enums/robotOrientationAtEndpoint.hpp"
+#include "enums/attractionColors.hpp"
 #include "map.hpp"
 #include "navigator.hpp"
 
@@ -28,6 +29,10 @@ public:
     void move_right();
     void rotate_CW();
     void rotate_CCW();
+    void open_left_receptacle();
+    void close_left_receptacle();
+    void open_right_receptacle();
+    void close_right_receptacle();
     void stop();
 
     // getters (inlined)
@@ -46,7 +51,6 @@ public:
     // setters (inlined)
 
     void setCurrentXY(double x, double y);
-
     void setOrientation(double o);
 
     void executeCurrentTask();
@@ -67,6 +71,7 @@ private:
     std::shared_ptr<TaskManager> taskManager;
     std::shared_ptr<Navigator> navigator;
     std::shared_ptr<Map> map;
+
 
 };
 

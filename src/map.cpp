@@ -1,6 +1,8 @@
 #include "map.hpp"
 
-Map::Map() {}
+Map::Map()
+    : bottomLeftAttractionColor(AttractionColors::NONE)
+{}
 
 // getters
 double Map::RobotX() const

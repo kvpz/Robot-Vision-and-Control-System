@@ -2,8 +2,8 @@
 #define TASKTYPE_HPP
 
 enum TaskType {
-        NAVIGATETO, DROPPAYLOAD, GRASP, STACKPED,
-        PATHCORRECTION, POSECORRECTION, NA
+        NAVIGATETO, DROPCHIP, GRASP, STACKPED,
+        PATHCORRECTION, POSECORRECTION, ATTRACTIONCOLOR, NA
 };
 
 static std::string taskTypeToString(TaskType ttype) 
@@ -15,12 +15,14 @@ static std::string taskTypeToString(TaskType ttype)
     return "pathcorrection";
   case POSECORRECTION:
     return "posecorrection";
-  case DROPPAYLOAD:
-    return "droppayload";
+  case DROPCHIP:
+    return "dropchip";
   case GRASP:
     return "grasp";
   case STACKPED:
     return "stackped";
+  case ATTRACTIONCOLOR:
+    return "attractioncolor";
   case NA:
     return "NA";
   default:
@@ -33,7 +35,8 @@ static TaskType taskTypeToEnum(std::string ttype)
     if(ttype == "navigateto") return NAVIGATETO;
     else if(ttype == "pathcorrection") return PATHCORRECTION;
     else if(ttype == "posecorrection") return POSECORRECTION;
-    else if(ttype == "droppayload") return DROPPAYLOAD;
+    else if(ttype == "dropchip") return DROPCHIP;
+    else if(ttype == "attractioncolor") return ATTRACTIONCOLOR;
     else return NA;
 }
 

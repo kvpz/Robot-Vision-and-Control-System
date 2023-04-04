@@ -1,6 +1,6 @@
 WARN	:= #-W -Wall -Wconversion -pedantic
 CC	:= g++ -std=c++2a #g++ -std=c++17
-USRLIBS	:= /usr/lib
+USRLIBS	:= /usr/lib 
 RSHEADERS := /usr/include/librealsense2
 PROJHEADERS := /home/ieeefiu/Documents/perrito/include
 #PROJHEADERS := /home/kevin/Documents/perrito/include 
@@ -8,9 +8,9 @@ INCLUDE = -I$(RSHEADERS) -I$(PROJHEADERS)
 
 ALL: main.x
 
-main.x: robot.o map.o task.o navigator.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o 
+main.x: robot.o map.o task.o navigator.o attractioncolortask.o dropchiptask.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o 
 	@echo "building target main.x"
-	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lrealsense2 -o main.x robot.o map.o task.o navigator.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o 
+	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lrealsense2 -o main.x robot.o map.o task.o navigator.o dropchiptask.o navigatetotask.o pathcorrectiontask.o attractioncolortask.o posecorrectiontask.o taskmanager.o -lrt
 
 map.o: $(PROJHEADERS)
 	@echo "building target map.o"
@@ -34,13 +34,20 @@ posecorrectiontask.o: $(PROJHEADERS)
 
 taskmanager.o: $(PROJHEADERS)
 	@echo "building target taskmanager.o"
-	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/taskmanager.cpp -O3 -L$(USRLIBS) -lrealsense2 
+	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/taskmanager.cpp -O3 -L$(USRLIBS) -lrealsense2
 
 robot.o: ./src/robot.cpp $(PROJHEADERS) 
-	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/robot.cpp -O3 -L$(USRLIBS) -lrealsense2
+	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/robot.cpp -O3 -L$(USRLIBS) -lrealsense2 
 
 navigator.o: ./src/navigator.cpp $(PROJHEADERS) 
 	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/navigator.cpp -O3 -L$(USRLIBS) -lrealsense2
+
+dropchiptask.o:	$(PROJHEADERS)
+	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/dropchiptask.cpp -O3 -L$(USRLIBS) -lrealsense2
+
+attractioncolortask.o: $(PROJHEADERS)
+	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/attractioncolortask.cpp -O3 -L$(USRLIBS) -lrealsense2 -lrt
+
 
 clean:
 	rm -rf *.o *.x

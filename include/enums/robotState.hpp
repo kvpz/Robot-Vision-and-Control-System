@@ -8,7 +8,11 @@ enum RobotState {
     MOVE_RIGHT,
     ROTATE_CW,
     ROTATE_CCW,
-    STOP
+    STOP,
+    OPENING_RIGHT_RECEPTACLE,
+    OPENING_LEFT_RECEPTACLE,
+    CLOSING_RIGHT_RECEPTACLE,
+    CLOSING_LEFT_RECEPTACLE
 };
 
 static std::string RobotStateToString(RobotState state) 
@@ -26,6 +30,14 @@ static std::string RobotStateToString(RobotState state)
         return "ROTATE_CW";
       case ROTATE_CCW:
         return "ROTATE_CCW";
+      case OPENING_RIGHT_RECEPTACLE:
+        return "OPENING_RIGHT_RECEPTACLE";
+      case OPENING_LEFT_RECEPTACLE:
+        return "OPENING_LEFT_RECEPTACLE";
+      case CLOSING_RIGHT_RECEPTACLE:
+        return "CLOSING_RIGHT_RECEPTACLE";
+      case CLOSING_LEFT_RECEPTACLE:
+        return "CLOSING_LEFT_RECEPTACLE";
       case STOP:
         return "STOP";
       default:

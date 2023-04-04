@@ -1,8 +1,15 @@
 #include "navigatetotask.hpp"
 
+NavigateToTask::NavigateToTask()
+:  destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE), 
+    Task(TaskType::NAVIGATETO, NAVIGATETOTTASK_PRIORITY) 
+{}
+
 NavigateToTask::NavigateToTask(double endpointOrientation, 
                                bool endpointOrientationRequirement) 
-    : isRobotAtEndpoint(false), Task(NAVIGATETO), destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE)
+    : isRobotAtEndpoint(false), 
+    Task(NAVIGATETO, NAVIGATETOTTASK_PRIORITY), 
+    destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE)
 {
     isEndpointOrientationRequired = endpointOrientationRequirement;
     endpointDesiredOrientation = endpointOrientation;
@@ -12,13 +19,17 @@ NavigateToTask::NavigateToTask(double endpointOrientation,
     }
 }
 
-NavigateToTask::NavigateToTask(XYPoint xy, double endpointOrientation, bool endpointOrientationRequired)
-    : isRobotAtEndpoint(false), Task(NAVIGATETO), destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE)
+NavigateToTask::NavigateToTask(XYPoint xy, 
+                               double endpointOrientation, 
+                               bool endpointOrientationRequired, TravelDirection travelDir)
+    : isRobotAtEndpoint(false), Task(NAVIGATETO, NAVIGATETOTTASK_PRIORITY), 
+    destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE)
 {    
     endpoint.setX(xy.getX());
     endpoint.setY(xy.getY());
     endpointDesiredOrientation = endpointOrientation;
     isEndpointOrientationRequired = endpointOrientationRequired;
+    travelDirection = travelDir;
 }
 
 
@@ -39,6 +50,8 @@ void NavigateToTask::notStarted(std::shared_ptr<Map> map,
     double robotDistanceToEndpoint = distance(map->getRobotCurrentLocation(), map->getNextDestinationXY());
     //double robot_orientation_minus_destination = navigator->robotAngularDistanceToOrientation(map); //- map->getDestinationOrientation(); //navigator->getAngleToDestination();
 
+    // give the navigator information about robot's required travel direction
+    navigator->setTravelDirection(travelDirection);
 /*
     if(robotDistanceToEndpoint < 70.0 && 
        navigator->robotAngularDistanceToEndpoint(map, true) > 130.0)
@@ -68,6 +81,8 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
                                 std::shared_ptr<Navigator> navigator, 
                                 RobotState& nextRobotState)
 {    
+    suspendedCounter = 0;
+
     switch(navigator->isRobotOnPath(map)) {
         case NEAR:
             // fix endpoint if the task requires it
@@ -80,6 +95,7 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
                     !approximately(map->getRobotOrientation(), map->getDestinationOrientation(), destinationOrientationTolerance)) {
                 status = TaskStatus::SUSPENDED;
                 newTaskRequest = POSECORRECTION;
+                nextRobotState = STOP;
             }
             else {
                 status = TaskStatus::COMPLETE;
@@ -89,10 +105,11 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
 
         case ON_PATH:
             status = TaskStatus::INPROGRESS;
-            //nextRobotState = MOVE_FORWARD;
-            nextRobotState = MOVE_BACKWARD;
+            if(travelDirection == TravelDirection::forward)
+                nextRobotState = MOVE_FORWARD;
+            else if(travelDirection == TravelDirection::backward)
+                nextRobotState = MOVE_BACKWARD;
             break;
-            
         case OFF_PATH:
             status = TaskStatus::SUSPENDED;
             newTaskRequest = PATHCORRECTION;
@@ -103,7 +120,7 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
     if(DEBUG_NAVIGATETOTASK) {
         printTaskInfo("NavigateToTask::inProgress");
     }
-}
+} 
 
 /*
     This is where the task makes the decision as to what type
@@ -113,8 +130,13 @@ void NavigateToTask::suspended(std::shared_ptr<Map> map,
                                std::shared_ptr<Navigator> navigator, 
                                RobotState& nextRobotState, TaskType& nextTaskType) 
 {
-    nextTaskType = newTaskRequest;
-    nextRobotState = STOP;
+    // the suspended state procedure should only run once
+    // after the task has been suspended. If the task is set back in progress,
+    // then the suspend procedure can execute once again.
+    if(suspendedCounter++ < 1) {
+        nextTaskType = newTaskRequest;
+        nextRobotState = STOP;
+    }
 }
 
 /*

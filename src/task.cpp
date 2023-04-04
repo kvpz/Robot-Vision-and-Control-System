@@ -1,7 +1,13 @@
 #include "task.hpp"
 
-Task::Task(TaskType ttype)
-    : status(TaskStatus::NOTSTARTED), taskType(ttype)
+Task::Task() 
+ : status(TaskStatus::NOTSTARTED),
+ taskType(NA), priority_(UINT_MAX)
+ {}
+
+Task::Task(TaskType ttype, unsigned int priority)
+    : status(TaskStatus::NOTSTARTED), taskType(ttype),
+    priority_(priority)
 {
 }
 
@@ -37,8 +43,8 @@ void Task::printTaskInfo(Task& task)
         case PATHCORRECTION:
             std::cout << "\n====== PathCorrection Task Updater ======\n";
             break;  
-        case DROPPAYLOAD:
-            std::cout << "\n====== Drop Payload Task Updater ======\n";
+        case DROPCHIP:
+            std::cout << "\n====== Drop Chip Task Updater ======\n";
             break;
         case GRASP:
             std::cout << "\n====== Grasp Task Updater ======\n";
@@ -53,4 +59,9 @@ void Task::printTaskInfo(Task& task)
     std::cout << "Task name: " << task.getName() << "\n";
     std::cout << "=================================\n";
     std::cout << std::endl;
+}
+
+void Task::printTaskInfo()
+{
+    printTaskInfo(*this);
 }

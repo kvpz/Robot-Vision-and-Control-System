@@ -1,7 +1,7 @@
 #include "pathcorrectiontask.hpp"
 
 PathCorrectionTask::PathCorrectionTask()
-    : Task(PATHCORRECTION)
+    : Task(PATHCORRECTION, PATHCORRECTIONTASK_PRIORITY)
 {
     correcting_position = false;
 }
@@ -28,20 +28,21 @@ void PathCorrectionTask::inProgress(std::shared_ptr<Map> map,
             status = TaskStatus::INPROGRESS;
             // decide whether to rotate CW or CCW
             if(correcting_position == false) {
-                if(navigator->getIsTravelDirectionForward() && 
-                    navigator->robotAngularDistanceToEndpoint(map, false) < ORIENTATION_RANGE_TOLERANCE) {
+                double angularDistanceToEndpoint = navigator->robotAngularDistanceToEndpoint(map, false);
+                if(navigator->getTravelDirection() == TravelDirection::forward && 
+                    angularDistanceToEndpoint < ORIENTATION_RANGE_TOLERANCE) {
                     nextRobotState = ROTATE_CW;
                 }
-                else if (navigator->getIsTravelDirectionForward() && 
-                    navigator->robotAngularDistanceToEndpoint(map, false) > -1.0 * ORIENTATION_RANGE_TOLERANCE){
+                else if (navigator->getTravelDirection() == TravelDirection::forward && 
+                    angularDistanceToEndpoint > -1.0 * ORIENTATION_RANGE_TOLERANCE){
                     nextRobotState = ROTATE_CCW;
                 }
-                else if(!navigator->getIsTravelDirectionForward() && 
-                    navigator->robotAngularDistanceToEndpoint(map, true) < ORIENTATION_RANGE_TOLERANCE) {
+                else if(navigator->getTravelDirection() == TravelDirection::backward && 
+                    angularDistanceToEndpoint < ORIENTATION_RANGE_TOLERANCE) {
                     nextRobotState = ROTATE_CW;
                 }
-                else if (!navigator->getIsTravelDirectionForward() && 
-                    navigator->robotAngularDistanceToEndpoint(map, true) > -1.0 * ORIENTATION_RANGE_TOLERANCE){
+                else if (navigator->getTravelDirection() == TravelDirection::backward && 
+                    angularDistanceToEndpoint > -1.0 * ORIENTATION_RANGE_TOLERANCE){
                     nextRobotState = ROTATE_CCW;
                 }
                 else {
