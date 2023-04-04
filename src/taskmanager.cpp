@@ -23,7 +23,7 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
                                      std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
 {
     TaskType nextTaskType = NA;
-    //std::vector<std::unique_ptr<Task>> tasksToDelete;
+    std::vector<std::unique_ptr<Task>> tasksToDelete;
 
     for(auto& task : high_priority_tasks) { 
         // read obj detection data from message queue
@@ -50,7 +50,7 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
             case TaskStatus::COMPLETE:
                 task->complete(map, navigator, nextRobotState, nextTaskType);
                 handleCompletedTask(map, navigator, nextRobotState, nextTaskType);
-                //tasksToDelete.push_back(std::move(task));
+                tasksToDelete.push_back(std::move(task));
                 break;
         } // switch
 
