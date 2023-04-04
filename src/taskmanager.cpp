@@ -262,7 +262,6 @@ void TaskManager::handleSuspendedTask(std::shared_ptr<Map> map,
                                        std::shared_ptr<Navigator> navigator, 
                                        RobotState& nextRobotState, TaskType& nextTaskType)
 {
-    std::cout << "handling suspended task " << taskTypeToString(currentTaskType) << std::endl;
     if(nextTaskType != NA)
         scheduleNewTask(nextTaskType, map);
 }
@@ -278,24 +277,17 @@ void TaskManager::handleCompletedTask(std::shared_ptr<Map> map,
     for(auto i = high_priority_tasks.begin(); i != high_priority_tasks.end(); ++i) {
         if((*i)->getPriority() != currentTaskPriority)
             continue;
-        if((*i)->getTaskType() != currentTaskType)
+        if((*i)->getTaskType() != currentTaskType) // self-standing condition if multiset tasks are unique
             continue;
-        // current task has been found
 
-        std::cout << "handleCompleted Task : " << taskTypeToString((*i)->getTaskType()) << std::endl;
         if((*i)->getTaskType() == PATHCORRECTION) {
             // find the navigate to task in the high priority queue and change
             // its status to IN PROGRESS from SUSPENDED
             for(auto pqi = high_priority_tasks.begin(); pqi != high_priority_tasks.end(); ++pqi) {
                 if((*pqi)->getTaskType() == NAVIGATETO) {
-                    std::cout << "found next task NAVIGATETO" << std::endl;
                     // next task after a pose or path correction task should be 
                     // a navigateTo task
                     (*pqi)->setStatus(TaskStatus::INPROGRESS);
-                    // pop the current task
-                    std::cout << "before erase" << std::endl;
-                    //high_priority_tasks.erase(i);
-                    std::cout << "after erase" << std::endl;
                     break;
                 }
             }
