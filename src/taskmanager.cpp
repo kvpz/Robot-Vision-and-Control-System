@@ -46,10 +46,8 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
                 break;
 
             case TaskStatus::COMPLETE:
-                std::cout << "TaskStatus::COMPLETE" << std::endl;
                 (*task)->complete(map, navigator, nextRobotState, nextTaskType);
                 handleCompletedTask(map, navigator, nextRobotState, nextTaskType);
-                //tasksToDelete.push_back(std::move(task));
                 (*task)->setReadyForDeletion(true);
                 ++task;
                 break;
@@ -79,7 +77,9 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
         }
     }
     
-    // add tasks to high priority task data structure
+    // TODO: add tasks to high priority task data structure
+    // tasks should be added to the high priority data structure after iterating
+    // through it.
     
 
     if(DEBUG_TASKMANAGER) {
@@ -187,6 +187,7 @@ void TaskManager::importTasksFromJSON(std::string filename)
             }
             catch(boost::property_tree::ptree_bad_path& e){
                 std::cout << "[ERROR] start_time node not found" << std::endl;
+                startTime = "";
             }
 
             if(startTime == "now") {

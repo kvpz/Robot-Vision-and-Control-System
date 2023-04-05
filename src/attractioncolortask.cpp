@@ -2,10 +2,11 @@
 
 AttractionColorTask::AttractionColorTask(const char* messageQueueName)
     : attraction_color_mq_name(messageQueueName), 
-    attraction_color_mq(mq_open(attraction_color_mq_name, O_CREAT | O_RDONLY | O_NONBLOCK, 0666, nullptr)),
+    attraction_color_mq(mq_open(messageQueueName, O_CREAT | O_RDONLY | O_NONBLOCK, 0666, nullptr)),
     Task(TaskType::ATTRACTIONCOLOR, ATTRACTIONCOLORTASK_PRIORITY)
 {
     // this function initializes the message queue for reading
+    std::cout << "(AttractionColor constructor) mq name: " << attraction_color_mq_name << std::endl;
 
 }
 
@@ -15,7 +16,8 @@ void AttractionColorTask::notStarted(std::shared_ptr<Map> map,
 {
     // start receiving data from the message queue that contains
     // color data from each frame 
-
+    std::cout << "(attractionColorTask::not started) in not started" << std::endl;
+    status = TaskStatus::INPROGRESS;
 }
 
 void AttractionColorTask::inProgress(std::shared_ptr<Map> map, 
@@ -118,6 +120,7 @@ AttractionColors AttractionColorTask::getAttractionColorMQData()
   memset(buffer, 0, mq_msg_size);
   if (mq_receive(attraction_color_mq, buffer, mq_max_size, nullptr) == -1) {
     //std::cerr << "Error receiving message from queue: " << strerror(errno) << std::endl;
+    std::cout << "Error receiving message from queue: " << strerror(errno) << std::endl;
     //mq_close(attraction_color_mq);
     //return 1;
   }
