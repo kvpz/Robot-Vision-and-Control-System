@@ -7,8 +7,7 @@
 #include "enums/robotState.hpp"
 #include "navigator.hpp"
 #include "map.hpp"
-
-#define DEBUG_DROPCHIPTOTASK false
+#include "settings.hpp"
 
 #define DROPCHIPTASK_PRIORITY 3
 

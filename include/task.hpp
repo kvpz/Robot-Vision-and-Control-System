@@ -11,8 +11,7 @@
 #include "enums/taskstatus.hpp"
 #include "enums/robotState.hpp"
 #include "map.hpp"
-
-#define DEBUG_TASK false 
+#include "settings.hpp"
 
 class Task
 {

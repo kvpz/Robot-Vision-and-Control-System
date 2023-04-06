@@ -7,10 +7,7 @@
 #include "enums/robotState.hpp"
 #include "navigator.hpp"
 #include "map.hpp"
-
-#define DEBUG_NAVIGATETOTASK false
-
-#define ORIENTATION_RANGE_TOLERANCE 3.0
+#include "settings.hpp"
 
 #define NAVIGATETOTTASK_PRIORITY 3
 

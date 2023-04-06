@@ -8,8 +8,7 @@
 #include "enums/robotState.hpp"
 #include "enums/tasktype.hpp"
 #include "map.hpp"
-
-#define ATTRACTIONCOLORTASK_PRIORITY 2
+#include "settings.hpp"
 
 /*
     This runs only under the following conditions:

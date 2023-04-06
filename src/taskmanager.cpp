@@ -273,15 +273,17 @@ void TaskManager::handleInProgressTask(std::shared_ptr<Map> map,
                                        std::shared_ptr<Navigator> navigator, 
                                        RobotState& nextRobotState, TaskType& nextTaskType)
 {
-
+    // experiment. testing if this code would be better here than in handleSuspendTask
+    if(nextTaskType != NA)
+        scheduleNewTask(nextTaskType, map);
 }
 
 void TaskManager::handleSuspendedTask(std::shared_ptr<Map> map, 
                                        std::shared_ptr<Navigator> navigator, 
                                        RobotState& nextRobotState, TaskType& nextTaskType)
 {
-    if(nextTaskType != NA)
-        scheduleNewTask(nextTaskType, map);
+    //if(nextTaskType != NA)
+    //    scheduleNewTask(nextTaskType, map);
 }
 
 void TaskManager::handleCompletedTask(std::shared_ptr<Map> map, 

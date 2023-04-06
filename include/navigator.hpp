@@ -8,10 +8,7 @@
 #include "enums/robotOrientationAtEndpoint.hpp"
 #include "map.hpp"
 #include "utility.hpp"
-
-#define NAVDEBUG false
-
-#define ORIENTATION_RANGE_TOLERANCE 2.0
+#include "settings.hpp"
 
 class Navigator
 {

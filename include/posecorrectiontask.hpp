@@ -4,10 +4,7 @@
 #include "enums/robotOrientationAtEndpoint.hpp"
 #include "navigator.hpp"
 #include "map.hpp"
-
-#define POSECORRECTIONTASK_PRIORITY 4
-
-#define POSECORRECTION_DEBUG true
+#include "settings.hpp"
 
 class PoseCorrectionTask : public Task
 {

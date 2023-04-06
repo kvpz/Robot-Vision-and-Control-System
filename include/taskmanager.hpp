@@ -17,9 +17,7 @@
 #include "enums/tasktype.hpp"
 #include "enums/robotState.hpp"
 #include "map.hpp"
-
-
-#define DEBUG_TASKMANAGER true
+#include "settings.hpp"
 
 class Task;
 /*
@@ -78,9 +76,17 @@ private:
     //std::stack<std::unique_ptr<Task>> task_queue;
     std::unique_ptr<Task> taskFactory(TaskType ttype);
 
-    std::multiset<std::unique_ptr<Task>, 
-        decltype([](const auto& a, const auto& b) { return (a->getPriority() < b->getPriority()); })> 
-        high_priority_tasks;
+    //std::multiset<std::unique_ptr<Task>, 
+    //    decltype([](const auto& a, const auto& b) { return (a->getPriority() < b->getPriority()); })> 
+    //    high_priority_tasks;
+
+    struct TaskComparator {
+        bool operator()(const std::unique_ptr<Task>& a, const std::unique_ptr<Task>& b) const {
+            return (a->getPriority() < b->getPriority());
+        }
+    };
+
+    std::multiset<std::unique_ptr<Task>, TaskComparator> high_priority_tasks;
 
     std::deque<std::unique_ptr<Task>> low_priority_tasks;
 

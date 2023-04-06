@@ -7,10 +7,7 @@
 //#include "enums/robotState.hpp"
 #include "navigator.hpp"
 #include "map.hpp"
-
-#define DEBUG_PICKUPOBJECTTASK false
-
-#define PICKUPOBJECTTASK_PRIORITY 3
+#include "settings.hpp"
 
 class PickupObjectTask : public Task
 {
@@ -18,10 +15,12 @@ public:
     PickupObjectTask();
 
     virtual void notStarted(std::shared_ptr<Map> map, 
-                            std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) override;
+                            std::shared_ptr<Navigator> navigator, 
+                            RobotState& nextRobotState) override;
 
     virtual void inProgress(std::shared_ptr<Map> map, 
-                            std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) override;
+                            std::shared_ptr<Navigator> navigator, 
+                            RobotState& nextRobotState) override;
 
     virtual void suspended(std::shared_ptr<Map> map, 
                            std::shared_ptr<Navigator> navigator, 

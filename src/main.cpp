@@ -8,8 +8,7 @@
 #include "robot.hpp"
 #include "taskmanager.hpp"
 #include "example-utils.hpp"
-
-#define DEBUG_MAIN false
+#include "settings.hpp"
 
 double _180_over_PI = 180.0 / M_PI;
 double _PI_over_180 = M_PI / 180.0;

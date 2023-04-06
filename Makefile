@@ -1,11 +1,16 @@
-WARN	:= #-W -Wall -Wconversion -pedantic
+WARN	:= -pedantic #-W -Wall -Wconversion -pedantic
 CC	:= g++ -std=c++2a #g++ -std=c++17
 USRLIBS	:= /usr/lib 
 RSHEADERS := /usr/include/librealsense2
-PROJHEADERS := /home/ieeefiu/Documents/perrito/include
-#PROJHEADERS := /home/kevin/Documents/perrito/include 
 INCLUDE = -I$(RSHEADERS) -I$(PROJHEADERS)
-SRC = /home/ieeefiu/Documents/perrito/src
+
+# IEEE Intel NUC specifics
+#SRC = /home/ieeefiu/Documents/perrito/src
+#PROJHEADERS := /home/ieeefiu/Documents/perrito/include
+
+# Kevin computer specifics
+SRC = /home/kevin/Documents/perrito/src
+PROJHEADERS := /home/kevin/Documents/perrito/include
 
 ALL: main.x
 

@@ -2,8 +2,6 @@
 #define UTILTY_HPP
 #include <cmath>
 
-#define UTILITYDEBUG false
-
 // *********************************
 // Math related functions
 // *********************************

@@ -10,8 +10,7 @@
 #include "enums/attractionColors.hpp"
 #include "map.hpp"
 #include "navigator.hpp"
-
-#define ROBOTDEBUG true
+#include "settings.hpp"
 
 enum class Speed {
     a='a', b,c,d,e,f

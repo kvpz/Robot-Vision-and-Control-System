@@ -4,10 +4,7 @@
 #include "enums/robotPoseToWaypoint.hpp"
 #include "map.hpp"
 #include "enums/travelDirection.hpp"
-
-#define ORIENTATION_RANGE_TOLERANCE 2.0
-
-#define PATHCORRECTIONTASK_PRIORITY 4
+#include "settings.hpp"
 
 class PathCorrectionTask : public Task
 {
