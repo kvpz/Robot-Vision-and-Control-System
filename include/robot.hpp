@@ -11,7 +11,7 @@
 #include "map.hpp"
 #include "navigator.hpp"
 
-#define ROBOTDEBUG false
+#define ROBOTDEBUG true
 
 enum class Speed {
     a='a', b,c,d,e,f

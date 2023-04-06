@@ -93,6 +93,9 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
             }
             else if(isEndpointOrientationRequired && 
                     !approximately(map->getRobotOrientation(), map->getDestinationOrientation(), destinationOrientationTolerance)) {
+                // note: the task scheduler may get stuck on this task because 
+                // the robot may no longer be at the endpoint after pose correction.
+                // fix: only run once?
                 status = TaskStatus::SUSPENDED;
                 newTaskRequest = POSECORRECTION;
                 nextRobotState = STOP;
@@ -110,6 +113,7 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
             else if(travelDirection == TravelDirection::backward)
                 nextRobotState = MOVE_BACKWARD;
             break;
+
         case OFF_PATH:
             status = TaskStatus::SUSPENDED;
             newTaskRequest = PATHCORRECTION;
