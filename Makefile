@@ -5,12 +5,12 @@ RSHEADERS := /usr/include/librealsense2
 INCLUDE = -I$(RSHEADERS) -I$(PROJHEADERS)
 
 # IEEE Intel NUC specifics
-#SRC = /home/ieeefiu/Documents/perrito/src
-#PROJHEADERS := /home/ieeefiu/Documents/perrito/include
+SRC = /home/ieeefiu/Documents/perrito/src
+PROJHEADERS := /home/ieeefiu/Documents/perrito/include
 
 # Kevin computer specifics
-SRC = /home/kevin/Documents/perrito/src
-PROJHEADERS := /home/kevin/Documents/perrito/include
+#SRC = /home/kevin/Documents/perrito/src
+#PROJHEADERS := /home/kevin/Documents/perrito/include
 
 ALL: main.x
 
