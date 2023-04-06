@@ -13,6 +13,9 @@ Robot::Robot(double xpos, double ypos, double orientation)
     map->setRobotOrientation(orientation);
     //attraction_color_mq = mq_open(attraction_color_mq_name, O_CREAT | O_RDWR | O_NONBLOCK, 0666, nullptr);
 
+    // mandibles assummed to be closed!
+    leftMandibleState = MandibleState::closed;
+    rightMandibleState = MandibleState::closed;
 }
 
 void Robot::run()

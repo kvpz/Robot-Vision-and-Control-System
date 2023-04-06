@@ -4,7 +4,7 @@
 enum TaskType {
         NAVIGATETO, DROPCHIP, GRASP, STACKPED,
         PATHCORRECTION, POSECORRECTION, ATTRACTIONCOLOR, 
-        PICKUPOBJECT, FOLLOWOBJECT, OBJECTSEARCH, NA
+        PICKUPOBJECT, FOLLOWOBJECT, OBJECTSEARCH, CONTROLMANDIBLES, NA
 };
 
 static std::string taskTypeToString(TaskType ttype) 
@@ -30,6 +30,8 @@ static std::string taskTypeToString(TaskType ttype)
     return "followobject";
   case OBJECTSEARCH:
     return "objectsearch";
+  case CONTROLMANDIBLES:
+    return "controlmandibles";
   case NA:
     return "NA";
   default:
@@ -47,6 +49,7 @@ static TaskType taskTypeToEnum(std::string ttype)
     else if(ttype == "pickupobject") return PICKUPOBJECT;
     else if(ttype == "followobject") return FOLLOWOBJECT;
     else if(ttype == "objectsearch") return OBJECTSEARCH;
+    else if(ttype == "controlmandibles") return CONTROLMANDIBLES;
     else return NA;
 }
 

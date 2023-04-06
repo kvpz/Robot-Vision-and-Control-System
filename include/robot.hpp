@@ -11,6 +11,7 @@
 #include "map.hpp"
 #include "navigator.hpp"
 #include "settings.hpp"
+#include "mandibles.hpp"
 
 enum class Speed {
     a='a', b,c,d,e,f
@@ -71,7 +72,8 @@ private:
     std::shared_ptr<Navigator> navigator;
     std::shared_ptr<Map> map;
 
-
+    MandibleState leftMandibleState;
+    MandibleState rightMandibleState;
 };
 
 
