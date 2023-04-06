@@ -1,7 +1,7 @@
 #include "objectsearchtask.hpp"
 
 ObjectSearchTask::ObjectSearchTask()
-    : taskType(OBJECTSEARCH)
+    : Task(TaskType::OBJECTSEARCH, OBJECTSEARCHTASK_PRIORITY)
 {
     
 }

@@ -40,3 +40,13 @@
 
 // Main class settings
 #define DEBUG_MAIN false
+
+// Pick up object task settings
+#define PICKUPOBJECTTASK_PRIORITY 3
+
+// Object search task settings
+#define OBJECTSEARCHTASK_PRIORITY 3
+
+// Follow object task settings
+#define FOLLOWOBJECTTASK_PRIORITY 3
+

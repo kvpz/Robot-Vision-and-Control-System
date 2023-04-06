@@ -1,7 +1,7 @@
 #include "followobjecttask.hpp"
 
 FollowObjectTask::FollowObjectTask()
-    : taskType(FOLLOWOBJECT)
+    : Task(TaskType::FOLLOWOBJECT, FOLLOWOBJECTTASK_PRIORITY)
 {
     
 }
