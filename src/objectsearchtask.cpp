@@ -27,11 +27,11 @@ void ObjectSearchTask::inProgress(std::shared_ptr<Map> map,
         XYPoint xypoint;
 
         Object obj;
-        obj.object = object["object"].asString();
+        //stringToObjectType(object["object"].asString());
         xypoint.setX(object["x1"].asInt());
-        xypoint.setY(object["x2"].asInt());
-        xypoint.setX(object["x1"].asInt());
-        xypoint.setY(object["x2"].asInt());
+        xypoint.setY(object["y1"].asInt());
+        xypoint.setX(object["x2"].asInt());
+        xypoint.setY(object["y2"].asInt());
         obj.distance = object["distance"].asInt();
         objects.push_back(obj);
     }

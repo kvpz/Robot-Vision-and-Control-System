@@ -3,7 +3,7 @@
 
 #include "robot.hpp"
 #include "task.hpp"
-#include "objects.hpp"
+#include "enums/objects.hpp"
 //#include "enums/robotPoseToWaypoint.hpp"
 //#include "enums/robotState.hpp"
 #include "navigator.hpp"

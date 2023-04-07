@@ -4,7 +4,7 @@
 #include <map>
 #include <unordered_map>
 #include "xypoint.hpp"
-#include "objects.hpp"
+#include "enums/objects.hpp"
 #include "enums/attractionColors.hpp"
 
 struct XYPointComparator {
