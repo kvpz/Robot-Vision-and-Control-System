@@ -67,3 +67,9 @@ void Map::setIsEndpointOrientationRequired(bool value)
 {
     isEndpointOrientationRequired = value;
 }
+
+bool Map::addObjectDetected(ObjectType objectType, XYPoint xypoint)
+{
+    occupancyGrid.insert(xypoint, objectType);
+    //objectMap.insert(objectType, xypoint);
+}

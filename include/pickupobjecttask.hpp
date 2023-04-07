@@ -12,7 +12,7 @@
 class PickupObjectTask : public Task
 {
 public:
-    PickupObjectTask();
+    PickupObjectTask(ObjectType);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
@@ -31,11 +31,8 @@ public:
                           RobotState& nextRobotState, TaskType& nextTaskType) override;
 
 private:
-
-    // payload location data
-    XYPoint payloadLocation;
-    double endpointOrientation;
-    bool endpointOrientationRequirement;
+    // Desired object info
+    ObjectType desiredObjectType;
 
 
 };

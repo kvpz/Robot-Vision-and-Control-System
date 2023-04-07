@@ -3,7 +3,7 @@
 
 // data that affects robot movement
 enum class MandibleState {
-    open, closed
+    open, closed, error
 };
 
 static std::string MandibleStateToString(MandibleState mandibleState) 
@@ -29,7 +29,7 @@ static MandibleState stringToMandibleState(std::string mandibleState)
         return MandibleState::closed;
     }
     else {
-        return TravelDirection::error;
+        return MandibleState::error;
     }
 
 }

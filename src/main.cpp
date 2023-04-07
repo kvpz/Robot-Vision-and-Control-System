@@ -9,6 +9,8 @@
 #include "taskmanager.hpp"
 #include "example-utils.hpp"
 #include "settings.hpp"
+#include <chrono>
+#include <boost/timer/timer.hpp>
 
 double _180_over_PI = 180.0 / M_PI;
 double _PI_over_180 = M_PI / 180.0;
@@ -113,6 +115,7 @@ int main(int argc, char* argv[]) try
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));			  
 
     while(1) {
+      boost::timer::cpu_timer timer;
       if(!robot->hasTasks()) {
         break;
       }
@@ -121,6 +124,8 @@ int main(int argc, char* argv[]) try
       std::this_thread::sleep_for(std::chrono::milliseconds(10));	
       robot->printStatus();
       robot->getTaskManager()->printHighPriorityTasks();
+      boost::timer::cpu_times elapsed = timer.elapsed();
+      std::cout << "Elapsed time (main loop): " << (elapsed.wall / 1e9) << " seconds\n" << std::endl;
     }
 	
     

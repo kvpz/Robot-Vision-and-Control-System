@@ -11,7 +11,7 @@
 #include "map.hpp"
 #include "navigator.hpp"
 #include "settings.hpp"
-#include "mandibles.hpp"
+#include "enums/mandibles.hpp"
 
 enum class Speed {
     a='a', b,c,d,e,f
@@ -47,6 +47,9 @@ public:
     std::shared_ptr<TaskManager> getTaskManager();
     std::shared_ptr<Map>         getMap();
     std::shared_ptr<Navigator>   getNavigator();
+
+    MandibleState getLeftMandibleState() { return leftMandibleState; }
+    MandibleState getRightMandibleState() { return rightMandibleState; }
 
     // setters (inlined)
 

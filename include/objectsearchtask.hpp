@@ -9,11 +9,14 @@
 #include "navigator.hpp"
 #include "map.hpp"
 #include "settings.hpp"
+#include <json/json.h>
+#include <mqueue.h>
+#include <sstream>
 
 class ObjectSearchTask : public Task
 {
 public:
-    ObjectSearchTask();
+    ObjectSearchTask(ObjectType);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
@@ -31,10 +34,17 @@ public:
                           std::shared_ptr<Navigator> navigator, 
                           RobotState& nextRobotState, TaskType& nextTaskType) override;
 
+    bool find_objects(const std::vector<Object>& objects);
+
+    Json::Value getObjectMQData();
+
 private:
     // target object type
     ObjectType objectType;
 
+    // message queue and name
+    mqd_t object_mq;
+    const char* object_mq_name;
 
 };
 

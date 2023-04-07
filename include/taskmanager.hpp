@@ -1,7 +1,6 @@
 #ifndef TASKMANAGER_HPP
 #define TASKMANAGER_HPP
 #include <iostream>
-#include <stack>
 #include <vector>
 #include <queue>
 #include <utility>
@@ -18,6 +17,10 @@
 #include "enums/robotState.hpp"
 #include "map.hpp"
 #include "settings.hpp"
+#include "enums/mandibles.hpp"
+#include "controlmandiblestask.hpp"
+
+//#include "taskimporter.hpp"
 
 class Task;
 /*
@@ -73,12 +76,7 @@ private:
     std::mutex mutex_;
     std::condition_variable condition_;
 
-    //std::stack<std::unique_ptr<Task>> task_queue;
     std::unique_ptr<Task> taskFactory(TaskType ttype);
-
-    //std::multiset<std::unique_ptr<Task>, 
-    //    decltype([](const auto& a, const auto& b) { return (a->getPriority() < b->getPriority()); })> 
-    //    high_priority_tasks;
 
     struct TaskComparator {
         bool operator()(const std::unique_ptr<Task>& a, const std::unique_ptr<Task>& b) const {

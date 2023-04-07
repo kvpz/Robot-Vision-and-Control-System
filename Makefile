@@ -14,9 +14,9 @@ PROJHEADERS := /home/ieeefiu/Documents/perrito/include
 
 ALL: main.x
 
-main.x: $(SRC)/main.cpp robot.o map.o task.o navigator.o attractioncolortask.o dropchiptask.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o pickupobjecttask.o objectsearchtask.o followobjecttask.o
+main.x: $(SRC)/main.cpp robot.o map.o task.o navigator.o attractioncolortask.o dropchiptask.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o pickupobjecttask.o objectsearchtask.o followobjecttask.o controlmandiblestask.o
 	@echo "building target main.x"
-	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lrealsense2 -o main.x robot.o map.o task.o navigator.o dropchiptask.o navigatetotask.o pathcorrectiontask.o attractioncolortask.o posecorrectiontask.o pickupobjecttask.o objectsearchtask.o followobjecttask.o taskmanager.o -lrt
+	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lboost_timer -lboost_system -lrealsense2 -o main.x robot.o map.o task.o navigator.o dropchiptask.o navigatetotask.o pathcorrectiontask.o attractioncolortask.o posecorrectiontask.o pickupobjecttask.o objectsearchtask.o followobjecttask.o controlmandiblestask.o taskmanager.o -lrt
 
 map.o: $(SRC)/map.cpp $(PROJHEADERS)
 	@echo "building target map.o"
@@ -58,11 +58,13 @@ pickupobjecttask.o: $(SRC)/pickupobjecttask.cpp $(PROJHEADERS)
 	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/pickupobjecttask.cpp -O3 -L$(USRLIBS) -lrealsense2 -lrt
 
 objectsearchtask.o: $(SRC)/objectsearchtask.cpp $(PROJHEADERS)
-	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/objectsearchtask.cpp -O3 -L$(USRLIBS) -lrealsense2 -lrt
+	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/objectsearchtask.cpp -O3 -L$(USRLIBS) -lrealsense2 -lrt -ljsoncpp
 
 followobjecttask.o: $(SRC)/followobjecttask.cpp $(PROJHEADERS)
 	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/followobjecttask.cpp -O3 -L$(USRLIBS) -lrealsense2 -lrt
 
+controlmandiblestask.o: $(SRC)/controlmandiblestask.cpp $(PROJHEADERS)
+	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/controlmandiblestask.cpp -O3 -L$(USRLIBS) -lrealsense2 -lrt
 
 clean:
 	rm -rf *.o *.x

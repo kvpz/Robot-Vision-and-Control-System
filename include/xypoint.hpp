@@ -22,7 +22,7 @@ struct XYPoint
   inline void setY(double _y) { y = _y; }
 
   // constructors
-  XYPoint() = default;
+  XYPoint();
   XYPoint(double x, double y) : x(x), y(y) {}
 
   // copy constructor

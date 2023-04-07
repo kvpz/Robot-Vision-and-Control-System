@@ -1,6 +1,6 @@
 #include "pickupobjecttask.hpp"
 
-PickupObjectTask::PickupObjectTask()
+PickupObjectTask::PickupObjectTask(ObjectType objectType)
     : Task(TaskType::PICKUPOBJECT, PICKUPOBJECTTASK_PRIORITY)
 {
     

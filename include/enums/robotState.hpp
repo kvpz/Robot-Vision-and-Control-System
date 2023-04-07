@@ -42,6 +42,14 @@ static std::string RobotStateToString(RobotState state)
         return "CLOSING_RIGHT_RECEPTACLE";
       case CLOSING_LEFT_RECEPTACLE:
         return "CLOSING_LEFT_RECEPTACLE";
+      case OPENING_LEFT_MANDIBLE:
+        return "OPENING_LEFT_MANDIBLE";
+      case OPENING_RIGHT_MANDIBLE:
+        return "OPENING_RIGHT_MANDIBLE";
+      case CLOSING_LEFT_MANDIBLE:
+        return "CLOSING_LEFT_MANDIBLE";
+      case CLOSING_RIGHT_MANDIBLE:
+        return "CLOSING_RIGHT_MANDIBLE";
       case STOP:
         return "STOP";
       default:

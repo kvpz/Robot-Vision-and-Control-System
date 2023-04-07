@@ -2,7 +2,7 @@
 
 AttractionColorTask::AttractionColorTask(const char* messageQueueName)
     : attraction_color_mq_name(messageQueueName), 
-    attraction_color_mq(mq_open(messageQueueName, O_CREAT | O_RDONLY | O_NONBLOCK, 0666, nullptr)),
+    attraction_color_mq(mq_open(messageQueueName, O_CREAT | O_RDWR | O_NONBLOCK, 0666, nullptr)),
     Task(TaskType::ATTRACTIONCOLOR, ATTRACTIONCOLORTASK_PRIORITY)
 {
     // this function initializes the message queue for reading

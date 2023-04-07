@@ -111,25 +111,30 @@ void TaskManager::addTask(std::unique_ptr<Task> task)
 */
 void TaskManager::importTasksFromJSON(std::string filename)
 {
+    //TaskImporter::importTasksFromJSON(filename, low_priority_tasks, high_priority_tasks);
+    
     boost::property_tree::ptree pt;
     boost::property_tree::read_json(filename, pt);
     //std::vector<std::unique_ptr<Task>> task_vector;
-    
-    // navigateTo task JSON keys
-    double endpoint_x;
-    double endpoint_y;
-    double endpoint_orientation;
-    bool endpoint_orientation_required;
-    TravelDirection travelDirection;
-    
-    // attraction color detection task JSON keys
-    std::string mqname;
-    int priority;
-    std::string startTime;
 
     for (const auto& taskkey : pt) {
+        // navigateTo task JSON keys
+        double endpoint_x;
+        double endpoint_y;
+        double endpoint_orientation;
+        bool endpoint_orientation_required;
+        TravelDirection travelDirection;
+
+        // attraction color detection task JSON keys
+        std::string mqname;
+        int priority;
+        std::string startTime;
         TaskType taskType = taskTypeToEnum(taskkey.second.get_child("type").get_value<std::string>());
 
+        // control mandibles task
+        MandibleState leftMandibleDesiredState;
+        MandibleState rightMandibleDesiredState;
+        
         if(taskType == NAVIGATETO) {
             // parse the json object for navigateto task
             endpoint_x = taskkey.second.get_child("endpoint").get_child("x").get_value<double>();
@@ -197,10 +202,32 @@ void TaskManager::importTasksFromJSON(std::string filename)
                 low_priority_tasks.emplace_back(std::make_unique<AttractionColorTask>(mqname.c_str()));
             }
         }
+        else if(taskType == CONTROLMANDIBLES) {
+            endpoint_x = taskkey.second.get_child("action_point").get_child("x").get_value<double>();
+            endpoint_y = taskkey.second.get_child("action_point").get_child("y").get_value<double>();
+            endpoint_orientation = taskkey.second.get_child("action_point").get_child("yaw").get_value<double>();
+            endpoint_orientation_required = taskkey.second.get_child("action_point_settings").get_child("orientation_required").get_value<bool>();
+            leftMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("left").get_value<std::string>());
+            rightMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("right").get_value<std::string>());
+            startTime = taskkey.second.get_child("start_time").get_value<std::string>();
+
+            if(startTime == "now") {
+                high_priority_tasks.insert(std::make_unique<ControlMandiblesTask>(MandibleState::closed, 
+                                           MandibleState::closed,
+                                           MandibleState::closed,
+                                           MandibleState::closed,
+                                           *(new XYPoint(endpoint_x, endpoint_y)), endpoint_orientation));
+            }
+            else {
+                low_priority_tasks.emplace_back(std::make_unique<ControlMandiblesTask>(MandibleState::closed, 
+                                           MandibleState::closed,
+                                           MandibleState::closed,
+                                           MandibleState::closed,
+                                           *(new XYPoint(endpoint_x, endpoint_y)), endpoint_orientation));
+            }
+        }
     }
 
-    if(DEBUG_TASKMANAGER) std::cout << "======== TaskManager::importTasksFromJson ========" << std::endl;
-    if(DEBUG_TASKMANAGER) std::cout << "====== end TaskManager::importTasksFromJson ========" << std::endl;
 }
 
 

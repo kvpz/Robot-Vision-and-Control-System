@@ -1,0 +1,71 @@
+{
+    "0": {
+        "type": "attractioncolor",
+        "mqname": "/attraction_color_queue",
+        "priority": 1,
+        "start_time": "now"
+    },
+    // Turn and run straight west to either green or red zone
+    "1": {
+        "type": "navigateto",
+        "endpoint": {"x": 180, "y": 60, "yaw": 90},
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2,
+        "start_time": "now"
+    },
+    // Rotate to face east and drop corresponding chips
+    "2": {
+        "type": "dropchip",
+        "priority": 3,
+        "start_time": "now"
+    },
+    // Open left mandible
+    "3": {
+        "type": "controlmandible",
+        "priority": 4,
+        "action_point": {"x": 25, "y": 30, "yaw": 90},
+        "left": "open",
+        "right": "closed"
+    },
+    // Turn and run straight north to other chip zone
+    "4": {
+        "type": "navigateto",
+        "endpoint": {"x": , "y": , "yaw": },
+        "endpoint_settings": {"orientation_required": false},
+        "move_direction": "forward",
+        "priority": 5,
+        "start_time": "now"
+    },
+    // Rotate to face east and drop corresponding chips
+    "5": {
+        "type": "dropchip",
+        "priority": 6
+    },
+    // Open right mandible
+    "6": {
+        "type": "controlmandible",
+        "priority": 7,
+        "action_point": {"x": , "y": , "yaw": },
+        "left": "open",
+        "right": "open"
+    },
+    // Run straight to north-east recycling
+    "7": {
+        "type": "navigateto",
+        "endpoint": {"x": , "y": , "yaw": },
+        "endpoint_settings": {"orientation_required": false},
+        "move_direction": "forward",
+        "priority": 8,
+        "start_time": "now"
+    },
+    // Backup
+    "8": {
+        "type": "navigateto",
+        "endpoint": {"x": , "y": , "yaw": },
+        "endpoint_settings": {"orientation_required": false},
+        "move_direction": "forward",
+        "priority": 9,
+        "start_time": "now"
+    }
+}

@@ -7,6 +7,20 @@
 #include "objects.hpp"
 #include "enums/attractionColors.hpp"
 
+struct XYPointComparator {
+    bool operator()(const XYPoint& xy1, const XYPoint& xy2) {
+        bool isXDiffNear = approximately(xy1.getX(), xy2.getX(), 3.0);
+        bool isYDiffNear = approximately(xy1.getY(), xy2.getY(), 3.0);
+        if(isXDiffNear || isYDiffNear) {
+            // don't map
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+};
+
 class Map
 {
 public:
@@ -24,6 +38,20 @@ public:
     double getDestinationOrientation();
 
     XYPoint getNextDestinationXY();
+    
+    AttractionColors getBottomLeftAttractionColor() {
+        return bottomLeftAttractionColor;
+    }
+
+    AttractionColors getTopLeftAttractionColor() {
+        return topLeftAttractionColor;
+    }
+
+    bool isAttractionColorKnown() const
+    {
+        return bottomLeftAttractionColor != AttractionColors::NONE || 
+            topLeftAttractionColor != AttractionColors::NONE;
+    }
 
     // setters
     void setRobotCurrentCoordinate(double x, double y);
@@ -38,14 +66,6 @@ public:
 
     void setIsEndpointOrientationRequired(bool value) ;
 
-    AttractionColors getBottomLeftAttractionColor() {
-        return bottomLeftAttractionColor;
-    }
-
-    AttractionColors getTopLeftAttractionColor() {
-        return topLeftAttractionColor;
-    }
-
     void setBottomLeftAttractionColor(AttractionColors attractionColor) {
         bottomLeftAttractionColor = attractionColor;
     }
@@ -54,11 +74,11 @@ public:
         topLeftAttractionColor = attractionColor;
     }
 
-    bool isAttractionColorKnown() const
-    {
-        return bottomLeftAttractionColor != AttractionColors::NONE || 
-            topLeftAttractionColor != AttractionColors::NONE;
-    }
+    bool addObjectDetected(ObjectType, XYPoint);   
+    //void deleteObject(XYPoint);
+
+    std::multimap<XYPoint, ObjectType, XYPointComparator> getOccupancyGrid() { return occupancyGrid; }
+    //std::unordered_multimap<ObjectType, XYPoint> getObjectMap() { return objectMap; }
 
 private:
     // robot current position data
@@ -71,7 +91,9 @@ private:
     bool isEndpointOrientationRequired;
     
     std::map<size_t, XYPoint> pointsVisited;
-    //std::unordered_map<std::pair<int, int>, ObjectType> occupancyGrid;
+
+    std::multimap<XYPoint, ObjectType, XYPointComparator> occupancyGrid;
+    //std::unordered_multimap<ObjectType, XYPoint> objectMap;
 
     // data about areas of interest
     AttractionColors bottomLeftAttractionColor;
