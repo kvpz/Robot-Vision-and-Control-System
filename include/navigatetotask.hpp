@@ -1,13 +1,13 @@
 #ifndef NAVIGATETASK_HPP
 #define NAVIGATETASK_HPP
 
-#include "robot.hpp"
 #include "task.hpp"
 #include "enums/robotPoseToWaypoint.hpp"
 #include "enums/robotState.hpp"
 #include "navigator.hpp"
 #include "map.hpp"
 #include "settings.hpp"
+#include "robot.hpp"
 
 #define NAVIGATETOTTASK_PRIORITY 3
 

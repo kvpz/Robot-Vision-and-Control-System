@@ -4,6 +4,8 @@
 #include "posecorrectiontask.hpp"
 #include "dropchiptask.hpp"
 #include "attractioncolortask.hpp"
+#include "objectsearchtask.hpp"
+#include "controlmandiblestask.hpp"
 
 /*
     function: void TaskManager::executeCurrentTask
@@ -225,6 +227,9 @@ void TaskManager::importTasksFromJSON(std::string filename)
                                            MandibleState::closed,
                                            *(new XYPoint(endpoint_x, endpoint_y)), endpoint_orientation));
             }
+        }
+        else if(taskType == OBJECTSEARCH) {
+            high_priority_tasks.insert(std::make_unique<ObjectSearchTask>());
         }
     }
 

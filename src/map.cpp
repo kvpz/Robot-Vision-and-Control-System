@@ -68,8 +68,38 @@ void Map::setIsEndpointOrientationRequired(bool value)
     isEndpointOrientationRequired = value;
 }
 
-bool Map::addObjectDetected(ObjectType objectType, XYPoint xypoint)
+bool Map::addObjectDetected(ObjectType objectType, const XYPoint& xypoint)
 {
-    occupancyGrid.insert(xypoint, objectType);
-    //objectMap.insert(objectType, xypoint);
+    bool isObjectInMap = false;
+
+    for(const auto& a : occupancyGrid) {
+        XYPoint xy = a.first;
+
+        //bool isXDiffNear = approximately(xypoint.getX(), xy.getX(), 3.0);
+        //bool isYDiffNear = approximately(xypoint.getY(), xy.getY(), 3.0);
+        double precision = 3.0;
+        bool isXDiffNear = (xypoint.getX() > (xy.getX() - precision)) && (xypoint.getX() < (xy.getX() + precision));
+        bool isYDiffNear = (xypoint.getY() > (xy.getY() - precision)) && (xypoint.getY() < (xy.getY() + precision));
+        
+        if(isXDiffNear && isYDiffNear) {
+            isObjectInMap = true;
+            return false;
+            break;
+        }
+    }
+
+    if(!isObjectInMap) {
+        auto itr = occupancyGrid.insert(std::pair(xypoint, objectType));
+        objectMap.emplace(std::pair(objectType, xypoint));
+        if(itr != occupancyGrid.end())
+            return true;
+        else    
+            return false;
+    }
+    else {
+        return false;
+    }
+
+
+    
 }

@@ -13,10 +13,13 @@
 #include <mqueue.h>
 #include <sstream>
 
+struct XYPoint;
+
 class ObjectSearchTask : public Task
 {
 public:
-    ObjectSearchTask(ObjectType);
+    ObjectSearchTask();
+    //ObjectSearchTask(ObjectType);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
@@ -34,9 +37,13 @@ public:
                           std::shared_ptr<Navigator> navigator, 
                           RobotState& nextRobotState, TaskType& nextTaskType) override;
 
-    bool find_objects(const std::vector<Object>& objects);
+    //bool find_objects(const std::vector<Object>& objects);
 
     Json::Value getObjectMQData();
+
+    void setObjectGlobalPosition(std::shared_ptr<Map> map, 
+                                    ObjectType objectType,
+                                    double distanceToObject);
 
 private:
     // target object type

@@ -1,7 +1,7 @@
 {
     "0": {
         "type": "attractioncolor",
-        "mqname": "/attraction_color_queue_1",
+        "mqname": "/attraction_color_queue",
         "priority": 1,
         "start_time": "now"
     },

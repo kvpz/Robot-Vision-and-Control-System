@@ -46,8 +46,7 @@
 
 // Object search task settings
 #define OBJECTSEARCHTASK_PRIORITY 3
+#define OBJECTSEARCH_MESSAGE_QUEUE "/object_detection_queue"
 
 // Follow object task settings
 #define FOLLOWOBJECTTASK_PRIORITY 3
-
-// 
