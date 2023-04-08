@@ -36,7 +36,14 @@ void ObjectSearchTask::inProgress(std::shared_ptr<Map> map,
             xypoint2.setX(object["x2"].asInt());
             xypoint2.setY(object["y2"].asInt());
 
-            setObjectGlobalPosition(map, objectType, object["distance"].asDouble());
+            // add the object to the map only if the robot is facing the object
+            // check if the center of the object is near the center of the frame
+            std::cout << "bounding box center xy: " << xypoint1.getX() << " + " << "abs("
+                    << xypoint2.getX() << " - " << xypoint1.getX() << ") / 2" << std::endl;
+            int boundingBoxCenterXY = xypoint1.getX() + ((xypoint2.getX() - xypoint1.getX()) / 2);
+            std::cout << "bounding box center: " << boundingBoxCenterXY << std::endl;
+            if(boundingBoxCenterXY < 440 && boundingBoxCenterXY > 400)
+                setObjectGlobalPosition(map, objectType, object["distance"].asDouble());
         }
     }
 
