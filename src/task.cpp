@@ -38,10 +38,10 @@ void Task::printTaskInfo(Task& task)
     // print status of this type of task
     switch(task.getTaskType()) {
         case NAVIGATETO:
-            std::cout << "\n====== Travel Task Updater ======\n";
+            std::cout << "\n====== NavigateTo Task ======\n";
             break;
         case PATHCORRECTION:
-            std::cout << "\n====== PathCorrection Task Updater ======\n";
+            std::cout << "\n====== PathCorrection Task ======\n";
             break;  
         case POSECORRECTION:
             std::cout << "\n====== PoseCorrection Task ======\n";
@@ -50,13 +50,16 @@ void Task::printTaskInfo(Task& task)
             std::cout << "\n====== AttractionColor Task ======\n";
             break;
         case DROPCHIP:
-            std::cout << "\n====== Drop Chip Task Updater ======\n";
+            std::cout << "\n====== Drop Chip Task ======\n";
             break;
         case GRASP:
-            std::cout << "\n====== Grasp Task Updater ======\n";
+            std::cout << "\n====== Grasp Task ======\n";
             break;
         case STACKPED: 
-            std::cout << "\n====== Stack Pedestal Task Updater ======\n";
+            std::cout << "\n====== Stack Pedestal Task ======\n";
+            break;
+        case CONTROLMANDIBLES:
+            std::cout << "\n====== Control Mandibles Task ======\n";
             break;
     }
 

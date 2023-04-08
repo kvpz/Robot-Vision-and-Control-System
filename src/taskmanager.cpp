@@ -205,24 +205,24 @@ void TaskManager::importTasksFromJSON(std::string filename)
             }
         }
         else if(taskType == CONTROLMANDIBLES) {
+            std::cout << "parsing control mandibles task" << std::endl;
             endpoint_x = taskkey.second.get_child("action_point").get_child("x").get_value<double>();
             endpoint_y = taskkey.second.get_child("action_point").get_child("y").get_value<double>();
             endpoint_orientation = taskkey.second.get_child("action_point").get_child("yaw").get_value<double>();
-            endpoint_orientation_required = taskkey.second.get_child("action_point_settings").get_child("orientation_required").get_value<bool>();
             leftMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("left").get_value<std::string>());
             rightMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("right").get_value<std::string>());
             startTime = taskkey.second.get_child("start_time").get_value<std::string>();
 
             if(startTime == "now") {
-                high_priority_tasks.insert(std::make_unique<ControlMandiblesTask>(MandibleState::closed, 
-                                           MandibleState::closed,
+                high_priority_tasks.insert(std::make_unique<ControlMandiblesTask>(leftMandibleDesiredState, 
+                                           rightMandibleDesiredState,
                                            MandibleState::closed,
                                            MandibleState::closed,
                                            *(new XYPoint(endpoint_x, endpoint_y)), endpoint_orientation));
             }
             else {
-                low_priority_tasks.emplace_back(std::make_unique<ControlMandiblesTask>(MandibleState::closed, 
-                                           MandibleState::closed,
+                low_priority_tasks.emplace_back(std::make_unique<ControlMandiblesTask>(leftMandibleDesiredState, 
+                                           rightMandibleDesiredState,
                                            MandibleState::closed,
                                            MandibleState::closed,
                                            *(new XYPoint(endpoint_x, endpoint_y)), endpoint_orientation));

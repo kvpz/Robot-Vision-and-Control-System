@@ -33,6 +33,8 @@ public:
                           std::shared_ptr<Navigator> navigator, 
                           RobotState& nextRobotState, TaskType& nextTaskType) override;
 
+    void printTaskInfo(std::string taskStateName);
+
 private:
     // mandibles to open
     MandibleState desiredLeftMandibleState;
@@ -46,6 +48,8 @@ private:
     double actionPointProximityTolerance;
     
     bool inActionState;
+
+    unsigned int actionStateSteps;
 };
 
 #endif

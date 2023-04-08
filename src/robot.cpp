@@ -51,6 +51,18 @@ void Robot::run()
       case CLOSING_LEFT_RECEPTACLE:
         close_left_receptacle();
         break;
+      case OPENING_LEFT_MANDIBLE:
+        open_left_mandible();
+        break;
+      case OPENING_RIGHT_MANDIBLE:
+        open_right_mandible();
+        break;
+      case CLOSING_LEFT_MANDIBLE:
+        close_left_mandible();
+        break;
+      case CLOSING_RIGHT_MANDIBLE:
+        close_right_mandible();
+        break;
       case STOP:
         stop();
         break;
@@ -67,6 +79,10 @@ void Robot::open_left_receptacle()   { comport->send_command("4"); }
 void Robot::close_left_receptacle()  { comport->send_command("3"); }
 void Robot::open_right_receptacle()  { comport->send_command("1"); }
 void Robot::close_right_receptacle() { comport->send_command("2"); }
+void Robot::open_left_mandible()     { comport->send_command("7"); }
+void Robot::open_right_mandible()    { comport->send_command("6"); }
+void Robot::close_left_mandible()    { comport->send_command("8"); }
+void Robot::close_right_mandible()   { comport->send_command("5"); }
 void Robot::stop()                   { comport->send_command("S"); }
 
 double Robot::getX() const { return map->getNextDestinationXY().getX(); }

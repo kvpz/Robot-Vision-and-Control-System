@@ -33,6 +33,10 @@ public:
     void close_left_receptacle();
     void open_right_receptacle();
     void close_right_receptacle();
+    void open_left_mandible();
+    void open_right_mandible();
+    void close_left_mandible();
+    void close_right_mandible();
     void stop();
 
     // getters (inlined)
