@@ -140,7 +140,7 @@
     },
     "20": {
         "type": "dropchip",
-        "endpoint": {"x": 15, "y": 15, "yaw": 45 },
+        "endpoint": {"x": 18, "y": 18, "yaw": 45 },
 	    "endpoint_settings":  {"orientation_required": true },
         "move_direction": "backward"
     },
@@ -153,7 +153,20 @@
     },
     "22": {
         "type": "navigateto",
-        "endpoint": {"x": 15, "y": 105, "yaw": 315 },
+        "endpoint": {"x": 20, "y": 105, "yaw": 315 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward",
+        "priority": 2
+    },
+    "23": {
+        "type": "dropchip",
+        "endpoint": {"x": 20, "y": 105, "yaw": 315 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward"
+    },
+    "24": {
+        "type": "navigateto",
+        "endpoint": {"x": 50, "y": 50, "yaw": 315 },
 	    "endpoint_settings":  {"orientation_required": true },
         "move_direction": "backward",
         "priority": 2

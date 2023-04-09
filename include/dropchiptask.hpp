@@ -41,7 +41,7 @@ private:
     unsigned int runtime;
     bool isDeployingPayload;
     inline static unsigned redDeploymentAttempts = 0;
-    inline static unsigned greenDeploymentAttempts = 0;
+    inline static unsigned greenDeploymentAttempts = 1;
 
     // payload location data
     XYPoint payloadLocation;

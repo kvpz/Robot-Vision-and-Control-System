@@ -40,12 +40,14 @@ void DropChipTask::inProgress(std::shared_ptr<Map> map,
                         std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
 {
     // if robot not at the attraction xypoint, create NavigateTo task
-    if(!navigator->isRobotNearPoint(map)) {
+    /*if(!navigator->isRobotNearPoint(map)) {
         nextRobotState = RobotState::STOP;
         status = TaskStatus::SUSPENDED;
         newTaskRequest = TaskType::NAVIGATETO;
     }
-    else if(isDeployingPayload == false) {
+    */
+    //else 
+    if(isDeployingPayload == false) {
         if(redDeploymentAttempts == 0 && attractionColor == AttractionColors::RED) { 
             nextRobotState = OPENING_LEFT_RECEPTACLE; // dispense left chips
             ++redDeploymentAttempts;
@@ -75,6 +77,7 @@ void DropChipTask::inProgress(std::shared_ptr<Map> map,
         if(attractionColor == AttractionColors::RED) { 
             nextRobotState = CLOSING_LEFT_RECEPTACLE; 
             status = TaskStatus::COMPLETE;
+            //newTaskRequest = TaskType::NAVIGATETO;
         }
         else if (attractionColor == AttractionColors::GREEN) {
             nextRobotState = CLOSING_RIGHT_RECEPTACLE; 
@@ -92,7 +95,7 @@ void DropChipTask::suspended(std::shared_ptr<Map> map,
     // The robot can enter a suspended state if it is not near the deployment endpoint
     // if the robot is not near the point where it should drop the chips, a navigateTo
     // task should be requested
-    nextTaskType = newTaskRequest;
+    //nextTaskType = newTaskRequest;
     nextRobotState = STOP;
 }
 

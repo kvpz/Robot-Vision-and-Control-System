@@ -296,15 +296,15 @@ void TaskManager::parseAttractionColorTask(boost::property_tree::ptree::value_ty
     }
 }
 
-void TaskManager::()
+void TaskManager::parseControlMandiblesTask(boost::property_tree::ptree::value_type taskkey)
 {
     std::cout << "parsing control mandibles task" << std::endl;
     double endpoint_x = taskkey.second.get_child("action_point").get_child("x").get_value<double>();
     double endpoint_y = taskkey.second.get_child("action_point").get_child("y").get_value<double>();
     XYPoint xypoint(endpoint_x, endpoint_y);
     double endpoint_orientation = taskkey.second.get_child("action_point").get_child("yaw").get_value<double>();
-    std::string leftMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("left").get_value<std::string>());
-    std::string rightMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("right").get_value<std::string>());
+    MandibleState leftMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("left").get_value<std::string>());
+    MandibleState rightMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("right").get_value<std::string>());
     double actionPointProximityTolerance = taskkey.second.get_child("action_point_tolerance").get_value<double>();
     std::string startTime = taskkey.second.get_child("start_time").get_value<std::string>();
 
@@ -392,10 +392,6 @@ void TaskManager::handleCompletedTask(std::shared_ptr<Map> map,
                     break;
                 }
             }
-        }
-        else if((*i)->getTaskType() == DROPCHIP) {
-            // pop drop chip task
-            
         }
         else if(nextTaskType != NA) {
             //high_priority_tasks.erase(i);
