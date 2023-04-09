@@ -144,53 +144,10 @@ void TaskManager::importTasksFromJSON(std::string filename)
             parseDropChipTask(taskkey);
         }
         else if(taskType == ATTRACTIONCOLOR) {
-            // In the future the attraction color detection task type can 
-            // contain info about the following:
-            // (1) approximate location of the attractions
-            // (2) region of pixels to observe from the video frame
-            mqname = taskkey.second.get_child("mqname").get_value<std::string>();
-            priority = taskkey.second.get_child("priority").get_value<int>();
-            try {
-                startTime = taskkey.second.get_child("start_time").get_value<std::string>();
-            }
-            catch(boost::property_tree::ptree_bad_path& e){
-                std::cout << "[ERROR] start_time node not found" << std::endl;
-                startTime = "";
-            }
-
-            if(startTime == "now") {
-                high_priority_tasks.insert(std::make_unique<AttractionColorTask>(mqname.c_str()));
-            }
-            else {
-                low_priority_tasks.emplace_back(std::make_unique<AttractionColorTask>(mqname.c_str()));
-            }
+            parseAttractionColorTask(taskkey);
         }
         else if(taskType == CONTROLMANDIBLES) {
-            std::cout << "parsing control mandibles task" << std::endl;
-            endpoint_x = taskkey.second.get_child("action_point").get_child("x").get_value<double>();
-            endpoint_y = taskkey.second.get_child("action_point").get_child("y").get_value<double>();
-            endpoint_orientation = taskkey.second.get_child("action_point").get_child("yaw").get_value<double>();
-            leftMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("left").get_value<std::string>());
-            rightMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("right").get_value<std::string>());
-            double actionPointProximityTolerance = taskkey.second.get_child("action_point_tolerance").get_value<double>();
-            startTime = taskkey.second.get_child("start_time").get_value<std::string>();
-
-            if(startTime == "now") {
-                high_priority_tasks.insert(std::make_unique<ControlMandiblesTask>(leftMandibleDesiredState, 
-                                           rightMandibleDesiredState,
-                                           MandibleState::closed,
-                                           MandibleState::closed,
-                                           *(new XYPoint(endpoint_x, endpoint_y)), 
-                                           endpoint_orientation, actionPointProximityTolerance));
-            }
-            else {
-                low_priority_tasks.emplace_back(std::make_unique<ControlMandiblesTask>(leftMandibleDesiredState, 
-                                           rightMandibleDesiredState,
-                                           MandibleState::closed,
-                                           MandibleState::closed,
-                                           *(new XYPoint(endpoint_x, endpoint_y)), 
-                                           endpoint_orientation, actionPointProximityTolerance));
-            }
+            parseControlMandiblesTask(taskkey);
         }
         else if(taskType == OBJECTSEARCH) {
             high_priority_tasks.insert(std::make_unique<ObjectSearchTask>());
@@ -311,6 +268,62 @@ void TaskManager::parseDropChipTask(boost::property_tree::ptree::value_type task
     low_priority_tasks.emplace_back(std::make_unique<DropChipTask>(xypoint, 
                                     endpoint_orientation, 
                                     endpoint_orientation_required));
+}
+
+void TaskManager::parseAttractionColorTask(boost::property_tree::ptree::value_type taskkey)
+{
+    // In the future the attraction color detection task type can 
+    // contain info about the following:
+    // (1) approximate location of the attractions
+    // (2) region of pixels to observe from the video frame
+    std::string mqname = taskkey.second.get_child("mqname").get_value<std::string>();
+    int priority = taskkey.second.get_child("priority").get_value<int>();
+    std::string startTime;
+
+    try {
+        startTime = taskkey.second.get_child("start_time").get_value<std::string>();
+    }
+    catch(boost::property_tree::ptree_bad_path& e){
+        std::cout << "[ERROR] start_time node not found" << std::endl;
+        startTime = "";
+    }
+
+    if(startTime == "now") {
+        high_priority_tasks.insert(std::make_unique<AttractionColorTask>(mqname.c_str()));
+    }
+    else {
+        low_priority_tasks.emplace_back(std::make_unique<AttractionColorTask>(mqname.c_str()));
+    }
+}
+
+void TaskManager::()
+{
+    std::cout << "parsing control mandibles task" << std::endl;
+    double endpoint_x = taskkey.second.get_child("action_point").get_child("x").get_value<double>();
+    double endpoint_y = taskkey.second.get_child("action_point").get_child("y").get_value<double>();
+    XYPoint xypoint(endpoint_x, endpoint_y);
+    double endpoint_orientation = taskkey.second.get_child("action_point").get_child("yaw").get_value<double>();
+    std::string leftMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("left").get_value<std::string>());
+    std::string rightMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("right").get_value<std::string>());
+    double actionPointProximityTolerance = taskkey.second.get_child("action_point_tolerance").get_value<double>();
+    std::string startTime = taskkey.second.get_child("start_time").get_value<std::string>();
+
+    if(startTime == "now") {
+        high_priority_tasks.insert(std::make_unique<ControlMandiblesTask>(leftMandibleDesiredState, 
+                                rightMandibleDesiredState,
+                                MandibleState::closed,
+                                MandibleState::closed,
+                                xypoint, 
+                                endpoint_orientation, actionPointProximityTolerance));
+    }
+    else {
+        low_priority_tasks.emplace_back(std::make_unique<ControlMandiblesTask>(leftMandibleDesiredState, 
+                                rightMandibleDesiredState,
+                                MandibleState::closed,
+                                MandibleState::closed,
+                                xypoint, 
+                                endpoint_orientation, actionPointProximityTolerance));
+    }
 }
 
 void TaskManager::handleNotStartedTask(std::shared_ptr<Map> map, 

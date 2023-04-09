@@ -108,6 +108,8 @@ private:
 
     void parseNavigateToTask(boost::property_tree::ptree::value_type taskkey);
     void parseDropChipTask(boost::property_tree::ptree::value_type taskkey);
+    void parseAttractionColorTask(boost::property_tree::ptree::value_type taskkey);
+    void parseControlMandiblesTask(boost::property_tree::ptree::value_type taskkey);
 
 };
 
