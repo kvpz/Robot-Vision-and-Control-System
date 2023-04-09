@@ -21,16 +21,17 @@ public:
 
     RobotPoseToWaypoint isRobotOnPath(const std::shared_ptr<Map> map);
 
-    //RobotOrientationAtEndpoint 
-    bool isRobotOriented(std::shared_ptr<Map> map); //, double endpointOrientation);
+    bool isRobotOriented(std::shared_ptr<Map> map);
 
-    RobotOrientationAtEndpoint getRobotOrientationToEndpoint(std::shared_ptr<Map> map);
+    RobotOrientationAtEndpoint getRobotOrientationAtEndpoint(std::shared_ptr<Map> map);
 
     double getAngleToDestination(std::shared_ptr<Map> map);
 
     void setTravelDirection(TravelDirection direction) { travelDirection = direction; }
     
     TravelDirection getTravelDirection() { return travelDirection; }
+
+    bool isRobotNearPoint(std::shared_ptr<Map> map);
 
 private:
     TravelDirection travelDirection;

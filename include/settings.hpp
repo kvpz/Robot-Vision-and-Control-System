@@ -1,10 +1,9 @@
-
-#define ORIENTATION_RANGE_TOLERANCE 2.0 // PathCorrection task
-//#define ORIENTATION_RANGE_TOLERANCE 2.0 // Navigator action class
-//#define ORIENTATION_RANGE_TOLERANCE 3.0 // NavigateTo task
-
 // Path correction task settings
 #define PATHCORRECTIONTASK_PRIORITY 4
+#define ORIENTATION_RANGE_TOLERANCE 4.0 // PathCorrection task
+//#define ORIENTATION_RANGE_TOLERANCE 2.0 // Navigator action class
+//#define ORIENTATION_RANGE_TOLERANCE 3.0 // NavigateTo task
+#define ON_PATH_TOLERANCE 4.0
 
 // Attraction color task settings
 #define ATTRACTIONCOLORTASK_PRIORITY 2
@@ -16,7 +15,7 @@
 #define DEBUG_NAVIGATETOTASK false
 
 // Navigator helper action class settings
-#define NAVDEBUG false
+#define NAVDEBUG true
 
 // Pick up object task settings
 #define DEBUG_PICKUPOBJECTTASK false
@@ -25,6 +24,7 @@
 // Pose correction task settings
 #define POSECORRECTIONTASK_PRIORITY 4
 #define POSECORRECTION_DEBUG true
+#define ENDPOINT_ORIENTATION_TOLERANCE 4.0
 
 // Robot class settings
 #define ROBOTDEBUG true

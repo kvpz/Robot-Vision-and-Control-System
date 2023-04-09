@@ -48,7 +48,8 @@ private:
     double endpointOrientation;
     bool endpointOrientationRequirement;
 
-
+    // suspended state reasons
+    TaskType newTaskRequest;
 };
 
 #endif

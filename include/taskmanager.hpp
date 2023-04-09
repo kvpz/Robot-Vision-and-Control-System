@@ -105,6 +105,10 @@ private:
     void handleCompletedTask(std::shared_ptr<Map> map, 
                              std::shared_ptr<Navigator> navigator, 
                              RobotState& nextRobotState, TaskType& nextTaskType);
+
+    void parseNavigateToTask(boost::property_tree::ptree::value_type taskkey);
+    void parseDropChipTask(boost::property_tree::ptree::value_type taskkey);
+
 };
 
 

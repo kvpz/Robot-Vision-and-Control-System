@@ -87,6 +87,7 @@ public:
     void setRobotOrientation(double o);
 
     void setDestinationXY(double destx, double desty);
+    void setDestinationXY(XYPoint xypoint);
 
     void setDestinationDesiredOrientation(double theta);
 

@@ -22,7 +22,7 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
     //std::vector<std::unique_ptr<Task>> tasksToDelete;
 
     //for(auto& task : high_priority_tasks) {
-    for(auto task = high_priority_tasks.begin(); task != high_priority_tasks.end(); ) { 
+    for(auto task = high_priority_tasks.begin(); task != high_priority_tasks.end(); ++task) { 
         // read obj detection data from message queue
         currentTaskPriority = (*task)->getPriority();
         currentTaskType = (*task)->getTaskType();
@@ -32,32 +32,27 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
             case TaskStatus::NOTSTARTED:
                 (*task)->notStarted(map, navigator, nextRobotState);
                 handleNotStartedTask(map, navigator, nextRobotState, nextTaskType);
-                ++task;
                 break;   
                 
             case TaskStatus::INPROGRESS:
                 (*task)->inProgress(map, navigator, nextRobotState);
                 handleInProgressTask(map, navigator, nextRobotState, nextTaskType);
-                ++task;
                 break;
 
             case TaskStatus::SUSPENDED:
                 (*task)->suspended(map, navigator, nextRobotState, nextTaskType);
                 handleSuspendedTask(map, navigator, nextRobotState, nextTaskType);
-                ++task;
                 break;
 
             case TaskStatus::COMPLETE:
                 (*task)->complete(map, navigator, nextRobotState, nextTaskType);
                 handleCompletedTask(map, navigator, nextRobotState, nextTaskType);
                 (*task)->setReadyForDeletion(true);
-                ++task;
                 break;
         } // switch
     }
 
     // delete all completed tasks from the high priority list
-    //std::cout << "(taskmanager::executetask) here" << std::endl;
     for(auto task = high_priority_tasks.begin(); task != high_priority_tasks.end(); ) {
         if((*task)->isReadyForDeletion()) {
             if((*task)->getTaskType() == TaskType::NAVIGATETO) {
@@ -65,7 +60,12 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
                 task = high_priority_tasks.erase(task);
                 high_priority_tasks.insert(std::move(low_priority_tasks.front()));
                 low_priority_tasks.pop_front();
-                //++task;
+            }
+            else if((*task)->getTaskType() == TaskType::DROPCHIP) {
+                std::cout << "(executingTask) erasing dropchip task" << std::endl;
+                task = high_priority_tasks.erase(task);
+                high_priority_tasks.insert(std::move(low_priority_tasks.front()));
+                low_priority_tasks.pop_front();
             }
             else {
                 std::cout << "(executingTask) erasing task " 
@@ -138,49 +138,10 @@ void TaskManager::importTasksFromJSON(std::string filename)
         MandibleState rightMandibleDesiredState;
         
         if(taskType == NAVIGATETO) {
-            // parse the json object for navigateto task
-            endpoint_x = taskkey.second.get_child("endpoint").get_child("x").get_value<double>();
-            endpoint_y = taskkey.second.get_child("endpoint").get_child("y").get_value<double>();
-            endpoint_orientation = taskkey.second.get_child("endpoint").get_child("yaw").get_value<double>();
-            endpoint_orientation_required = taskkey.second.get_child("endpoint_settings").get_child("orientation_required").get_value<bool>();
-            travelDirection = stringToTravelDirection(taskkey.second.get_child("move_direction").get_value<std::string>());
-            XYPoint xypoint(endpoint_x, endpoint_y);
-
-            try {
-                startTime = taskkey.second.get_child("start_time").get_value<std::string>();
-            }
-            catch(boost::property_tree::ptree_bad_path& e){
-                std::cout << "[ERROR] start_time node not found" << std::endl;
-                startTime = "";
-            }
-
-            if(startTime == "now") {
-                // add to high priority queue
-                high_priority_tasks.insert(std::make_unique<NavigateToTask>(xypoint, 
-                                                endpoint_orientation, 
-                                                endpoint_orientation_required,
-                                                travelDirection));
-            }
-            else {
-                // add to lower priority queue
-                low_priority_tasks.emplace_back(std::make_unique<NavigateToTask>(xypoint, 
-                                                endpoint_orientation, 
-                                                endpoint_orientation_required,
-                                                travelDirection));
-            }
+            parseNavigateToTask(taskkey);
         }
         else if(taskType == DROPCHIP) {        
-            // parse the json object for navigateto task
-            endpoint_x = taskkey.second.get_child("endpoint").get_child("x").get_value<double>();
-            endpoint_y = taskkey.second.get_child("endpoint").get_child("y").get_value<double>();
-            endpoint_orientation = taskkey.second.get_child("endpoint").get_child("yaw").get_value<double>();
-            endpoint_orientation_required = taskkey.second.get_child("endpoint_settings").get_child("orientation_required").get_value<bool>();
-            travelDirection = stringToTravelDirection(taskkey.second.get_child("move_direction").get_value<std::string>());
-            XYPoint xypoint(endpoint_x, endpoint_y);
-            low_priority_tasks.emplace_back(std::make_unique<DropChipTask>(xypoint, 
-                                            endpoint_orientation, 
-                                            endpoint_orientation_required));
-            
+            parseDropChipTask(taskkey);
         }
         else if(taskType == ATTRACTIONCOLOR) {
             // In the future the attraction color detection task type can 
@@ -211,6 +172,7 @@ void TaskManager::importTasksFromJSON(std::string filename)
             endpoint_orientation = taskkey.second.get_child("action_point").get_child("yaw").get_value<double>();
             leftMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("left").get_value<std::string>());
             rightMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("right").get_value<std::string>());
+            double actionPointProximityTolerance = taskkey.second.get_child("action_point_tolerance").get_value<double>();
             startTime = taskkey.second.get_child("start_time").get_value<std::string>();
 
             if(startTime == "now") {
@@ -218,14 +180,16 @@ void TaskManager::importTasksFromJSON(std::string filename)
                                            rightMandibleDesiredState,
                                            MandibleState::closed,
                                            MandibleState::closed,
-                                           *(new XYPoint(endpoint_x, endpoint_y)), endpoint_orientation));
+                                           *(new XYPoint(endpoint_x, endpoint_y)), 
+                                           endpoint_orientation, actionPointProximityTolerance));
             }
             else {
                 low_priority_tasks.emplace_back(std::make_unique<ControlMandiblesTask>(leftMandibleDesiredState, 
                                            rightMandibleDesiredState,
                                            MandibleState::closed,
                                            MandibleState::closed,
-                                           *(new XYPoint(endpoint_x, endpoint_y)), endpoint_orientation));
+                                           *(new XYPoint(endpoint_x, endpoint_y)), 
+                                           endpoint_orientation, actionPointProximityTolerance));
             }
         }
         else if(taskType == OBJECTSEARCH) {
@@ -294,6 +258,60 @@ void TaskManager::scheduleNewTask(TaskType tasktype, std::shared_ptr<Map> map)
     }            
 }
 
+void TaskManager::parseNavigateToTask(boost::property_tree::ptree::value_type taskkey)
+{
+    // parse the json object for navigateto task
+    double endpoint_x = taskkey.second.get_child("endpoint").get_child("x").get_value<double>();
+    double endpoint_y = taskkey.second.get_child("endpoint").get_child("y").get_value<double>();
+    XYPoint xypoint(endpoint_x, endpoint_y);
+    double endpoint_orientation = taskkey.second.get_child("endpoint").get_child("yaw").get_value<double>();
+    bool endpoint_orientation_required = taskkey.second.get_child("endpoint_settings").get_child("orientation_required").get_value<bool>();
+    TravelDirection travelDirection = stringToTravelDirection(taskkey.second.get_child("move_direction").get_value<std::string>());    
+    std::string startTime;
+
+    try {
+        startTime = taskkey.second.get_child("start_time").get_value<std::string>();
+    }
+    catch(boost::property_tree::ptree_bad_path& e){
+        std::cout << "[ERROR] start_time node not found" << std::endl;
+        startTime = "";
+    }
+
+    if(startTime == "now") {
+        // add to high priority queue
+        high_priority_tasks.insert(std::make_unique<NavigateToTask>(xypoint, 
+                                        endpoint_orientation, 
+                                        endpoint_orientation_required,
+                                        travelDirection));
+    }
+    else if(!startTime.empty()) {
+        // The start time will be a value in seconds. 
+        // The task is placed in a data structure where tasks are
+        // sorted by time.
+
+    }
+    else {
+        // add to lower priority queue if no start time was provided
+        low_priority_tasks.emplace_back(std::make_unique<NavigateToTask>(xypoint, 
+                                        endpoint_orientation, 
+                                        endpoint_orientation_required,
+                                        travelDirection));
+    }
+}
+
+void TaskManager::parseDropChipTask(boost::property_tree::ptree::value_type taskkey) 
+{
+    // parse the json object for navigateto task
+    double endpoint_x = taskkey.second.get_child("endpoint").get_child("x").get_value<double>();
+    double endpoint_y = taskkey.second.get_child("endpoint").get_child("y").get_value<double>();
+    double endpoint_orientation = taskkey.second.get_child("endpoint").get_child("yaw").get_value<double>();
+    bool endpoint_orientation_required = taskkey.second.get_child("endpoint_settings").get_child("orientation_required").get_value<bool>();
+    TravelDirection travelDirection = stringToTravelDirection(taskkey.second.get_child("move_direction").get_value<std::string>());
+    XYPoint xypoint(endpoint_x, endpoint_y);
+    low_priority_tasks.emplace_back(std::make_unique<DropChipTask>(xypoint, 
+                                    endpoint_orientation, 
+                                    endpoint_orientation_required));
+}
 
 void TaskManager::handleNotStartedTask(std::shared_ptr<Map> map, 
                                        std::shared_ptr<Navigator> navigator, 
@@ -361,6 +379,10 @@ void TaskManager::handleCompletedTask(std::shared_ptr<Map> map,
                     break;
                 }
             }
+        }
+        else if((*i)->getTaskType() == DROPCHIP) {
+            // pop drop chip task
+            
         }
         else if(nextTaskType != NA) {
             //high_priority_tasks.erase(i);

@@ -4,7 +4,8 @@ ControlMandiblesTask::ControlMandiblesTask(MandibleState desiredLeftState,
                                            MandibleState desiredRightState,
                                            MandibleState currentLeftMandibleState,
                                            MandibleState currentRightMandibleState,
-                                           XYPoint xy, double endpointOrientation)
+                                           XYPoint xy, double endpointOrientation,
+                                           double actionPointProximityTolerance)
     : Task(TaskType::CONTROLMANDIBLES, OBJECTSEARCHTASK_PRIORITY)
 {
     desiredLeftMandibleState = desiredLeftState;
@@ -13,6 +14,7 @@ ControlMandiblesTask::ControlMandiblesTask(MandibleState desiredLeftState,
     actionPointOrientation = endpointOrientation;
     inActionState = false;
     actionStateSteps = 0;
+    this->actionPointProximityTolerance = actionPointProximityTolerance;
 }
 
 void ControlMandiblesTask::notStarted(std::shared_ptr<Map> map, 
@@ -30,7 +32,6 @@ void ControlMandiblesTask::inProgress(std::shared_ptr<Map> map,
     // if robot is at the location this task requires it to be
     // and it is in the correct orientation, open mandible(s)
     // Proximity tolerance should be statically defined in settings.hpp
-
     bool isRobotNearActionPoint = 
         approximately(map->RobotX(), actionPoint.getX(), actionPointProximityTolerance) &&
         approximately(map->RobotY(), actionPoint.getY(), actionPointProximityTolerance);

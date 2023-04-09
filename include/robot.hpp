@@ -14,7 +14,7 @@
 #include "enums/mandibles.hpp"
 
 enum class Speed {
-    a='a', b,c,d,e,f
+    a='a', b,c,d,e,f,g
 };
 
 class Robot {

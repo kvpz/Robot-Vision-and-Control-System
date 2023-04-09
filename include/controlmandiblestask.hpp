@@ -15,7 +15,8 @@ public:
                          MandibleState desiredRightState,
                          MandibleState currentLeftMandibleState,
                          MandibleState currentRightMandibleState,
-                         XYPoint xy, double endpointOrientation);
+                         XYPoint xy, double endpointOrientation,
+                         double actionPointProximityTolerance);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 

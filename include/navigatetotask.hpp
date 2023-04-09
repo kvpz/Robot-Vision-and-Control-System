@@ -71,6 +71,7 @@ private:
     unsigned int inProgressCounter;
     unsigned int suspendedCounter;
     unsigned int completedCounter;
+    unsigned int totalPoseCorrectionsCompleted;
 };
 
 #endif

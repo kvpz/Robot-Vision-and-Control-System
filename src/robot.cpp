@@ -71,8 +71,8 @@ void Robot::run()
 
 void Robot::move_forward()           { comport->send_command("F"); }
 void Robot::move_backward()          { comport->send_command("B"); }
-void Robot::move_left()              { comport->send_command("L"); }
-void Robot::move_right()             { comport->send_command("R"); }
+void Robot::move_left()              { comport->send_command("R"); }
+void Robot::move_right()             { comport->send_command("L"); }
 void Robot::rotate_CW()              { comport->send_command("C"); }
 void Robot::rotate_CCW()             { comport->send_command("Z"); }
 void Robot::open_left_receptacle()   { comport->send_command("4"); }
@@ -128,12 +128,12 @@ void Robot::executeCurrentTask()
   // speed control
   if(taskManager->getCurrentTaskType() == POSECORRECTION ||
      taskManager->getCurrentTaskType() == PATHCORRECTION) {
-      if(speed != Speed::b)
-        comport->send_command("c");
+      if(speed != Speed::d)
+        comport->send_command("d");
   }
   else {
-    if(speed != Speed::f)
-      comport->send_command("f");
+    if(speed != Speed::g)
+      comport->send_command("g");
   }
 }
 

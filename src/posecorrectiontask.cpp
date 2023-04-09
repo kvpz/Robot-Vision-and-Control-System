@@ -12,14 +12,16 @@ void PoseCorrectionTask::notStarted(std::shared_ptr<Map> map,
 {
     status = TaskStatus::INPROGRESS;
     // slow down robot motor PWM speed
+    // check to see how far off the robot's orientation is to the endpoint required orientation
+
 }
 
 void PoseCorrectionTask::inProgress(std::shared_ptr<Map> map, 
                                     std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
 {        
-    navigator->isRobotOriented(map);
+    //navigator->isRobotOriented(map);
     // assign robot new state depending on its orientation relative to waypoint
-    switch(navigator->getRobotOrientationToEndpoint(map)) {
+    switch(navigator->getRobotOrientationAtEndpoint(map)) {
         case ORIENTED:
             status = TaskStatus::COMPLETE;
             nextRobotState = STOP;

@@ -99,6 +99,7 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
                 status = TaskStatus::SUSPENDED;
                 newTaskRequest = POSECORRECTION;
                 nextRobotState = STOP;
+                ++totalPoseCorrectionsCompleted;
             }
             else {
                 status = TaskStatus::COMPLETE;
@@ -112,12 +113,24 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
                 nextRobotState = MOVE_FORWARD;
             else if(travelDirection == TravelDirection::backward)
                 nextRobotState = MOVE_BACKWARD;
+            else if(travelDirection == TravelDirection::leftward)
+                nextRobotState = MOVE_LEFT;
+            else if(travelDirection == TravelDirection::rightward)
+                nextRobotState = MOVE_RIGHT;
             break;
 
         case OFF_PATH:
-            status = TaskStatus::SUSPENDED;
-            newTaskRequest = PATHCORRECTION;
-            nextRobotState = STOP;
+            // NavigateTo task should no longer do path correction after 
+            // pose correction has been completed.
+            if(totalPoseCorrectionsCompleted > 0) {
+                status = TaskStatus::COMPLETE;
+                nextRobotState = STOP;
+            }
+            else {
+                status = TaskStatus::SUSPENDED;
+                newTaskRequest = PATHCORRECTION;
+                nextRobotState = STOP;
+            }
             break;
     }
 
