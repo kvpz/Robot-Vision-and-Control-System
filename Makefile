@@ -14,9 +14,9 @@ PROJHEADERS := /home/ieeefiu/Documents/perrito/include
 
 ALL: main.x
 
-main.x: $(SRC)/main.cpp robot.o map.o task.o navigator.o attractioncolortask.o dropchiptask.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o pickupobjecttask.o objectsearchtask.o followobjecttask.o controlmandiblestask.o
+main.x: $(SRC)/main.cpp robot.o map.o task.o navigator.o attractioncolortask.o dropchiptask.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o pickupobjecttask.o objectsearchtask.o followobjecttask.o controlmandiblestask.o controlwingstask.o
 	@echo "building target main.x"
-	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lboost_timer -lboost_system -lrealsense2 -o main.x robot.o map.o task.o navigator.o dropchiptask.o navigatetotask.o pathcorrectiontask.o attractioncolortask.o posecorrectiontask.o pickupobjecttask.o objectsearchtask.o followobjecttask.o controlmandiblestask.o taskmanager.o -lrt -ljsoncpp
+	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lboost_timer -lboost_system -lrealsense2 -o main.x robot.o map.o task.o navigator.o dropchiptask.o navigatetotask.o pathcorrectiontask.o attractioncolortask.o posecorrectiontask.o pickupobjecttask.o objectsearchtask.o followobjecttask.o controlmandiblestask.o controlwingstask.o taskmanager.o -lrt -ljsoncpp
 
 map.o: $(SRC)/map.cpp $(PROJHEADERS)
 	@echo "building target map.o"
@@ -65,6 +65,10 @@ followobjecttask.o: $(SRC)/followobjecttask.cpp $(PROJHEADERS)
 
 controlmandiblestask.o: $(SRC)/controlmandiblestask.cpp $(PROJHEADERS)
 	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/controlmandiblestask.cpp -O3 -L$(USRLIBS) -lrealsense2 -lrt
+
+controlwingstask.o: $(SRC)/controlwingstask.cpp $(PROJHEADERS)
+	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/controlwingstask.cpp -O3 -L$(USRLIBS) -lrealsense2 
+
 
 clean:
 	rm -rf *.o *.x

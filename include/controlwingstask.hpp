@@ -1,25 +1,21 @@
-#ifndef OBJECTSEARCHTASK_HPP
-#define OBJECTSEARCHTASK_HPP
+#ifndef CONTROLWINGSTASK_HPP
+#define CONTROLWINGSTASK_HPP
 
-#include "robot.hpp"
 #include "task.hpp"
-#include "enums/objects.hpp"
-//#include "enums/robotPoseToWaypoint.hpp"
-//#include "enums/robotState.hpp"
 #include "navigator.hpp"
 #include "map.hpp"
 #include "settings.hpp"
-#include <json/json.h>
-#include <mqueue.h>
-#include <sstream>
+#include "xypoint.hpp"
+#include "enums/wings.hpp"
 
-struct XYPoint;
 
-class ObjectSearchTask : public Task
+class ControlWingsTask : public Task
 {
 public:
-    ObjectSearchTask();
-    //ObjectSearchTask(ObjectType);
+    ControlWingsTask(WingState desiredLeftState, 
+                         WingState desiredRightState,
+                         XYPoint xy,
+                         double actionPointProximityTolerance);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
@@ -37,24 +33,22 @@ public:
                           std::shared_ptr<Navigator> navigator, 
                           RobotState& nextRobotState, TaskType& nextTaskType) override;
 
-    //bool find_objects(const std::vector<Object>& objects);
-
-    Json::Value getObjectMQData();
-
-    void setObjectGlobalPosition(std::shared_ptr<Map> map, 
-                                    ObjectType objectType,
-                                    double distanceToObject);
-
-    virtual void printTaskInfo() override;
+    virtual void printTaskInfo() override; //std::string taskStateName);
 
 private:
-    // target object type
-    ObjectType objectType;
+    // mandibles to open
+    WingState desiredLeftWingState;
+    WingState desiredRightWingState;
+    WingState currentLeftWingState;
+    WingState currentRightWingState;
 
-    // message queue and name
-    mqd_t object_mq;
-    const char* object_mq_name;
+    // conditions for opening mandibles
+    XYPoint actionPoint;
+    double actionPointProximityTolerance;
+    
+    bool inActionState;
 
+    unsigned int actionStateSteps;
 };
 
 #endif

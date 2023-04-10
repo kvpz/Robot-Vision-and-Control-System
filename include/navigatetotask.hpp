@@ -45,7 +45,7 @@ public:
         endpoint.setY(desty);
     }
 
-    void printTaskInfo(std::string taskStateName);
+    virtual void printTaskInfo() override;
 
 private:
     // map data (this data gets stored in robot map)
@@ -72,6 +72,8 @@ private:
     unsigned int suspendedCounter;
     unsigned int completedCounter;
     unsigned int totalPoseCorrectionsCompleted;
+
+    unsigned int lastPathCorrection;
 };
 
 #endif

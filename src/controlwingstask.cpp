@@ -1,31 +1,28 @@
-#include "controlmandiblestask.hpp"
+#include "controlwingstask.hpp"
 
-ControlMandiblesTask::ControlMandiblesTask(MandibleState desiredLeftState, 
-                                           MandibleState desiredRightState,
-                                           MandibleState currentLeftMandibleState,
-                                           MandibleState currentRightMandibleState,
-                                           XYPoint xy, double endpointOrientation,
+ControlWingsTask::ControlWingsTask(WingState desiredLeftState, 
+                                           WingState desiredRightState,
+                                           XYPoint xy,
                                            double actionPointProximityTolerance)
-    : Task(TaskType::CONTROLMANDIBLES, OBJECTSEARCHTASK_PRIORITY)
+    : Task(TaskType::CONTROLWINGS, CONTROLWINGTASK_PRIORITY)
 {
-    desiredLeftMandibleState = desiredLeftState;
-    desiredRightMandibleState = desiredRightState;
+    desiredLeftWingState = desiredLeftState;
+    desiredRightWingState = desiredRightState;
     actionPoint = xy;
-    actionPointOrientation = endpointOrientation;
     inActionState = false;
     actionStateSteps = 0;
     this->actionPointProximityTolerance = actionPointProximityTolerance;
 }
 
-void ControlMandiblesTask::notStarted(std::shared_ptr<Map> map, 
+void ControlWingsTask::notStarted(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
                         RobotState& nextRobotState)
 {
-    printTaskInfo(); //"ControlMandiblesTask::InProgress");        
+    printTaskInfo();       
     status = TaskStatus::INPROGRESS;
 }
 
-void ControlMandiblesTask::inProgress(std::shared_ptr<Map> map, 
+void ControlWingsTask::inProgress(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
                         RobotState& nextRobotState)
 {
@@ -44,35 +41,34 @@ void ControlMandiblesTask::inProgress(std::shared_ptr<Map> map,
         inActionState = true;
 
         // open/close mandibles
-        if(desiredLeftMandibleState == MandibleState::open &&
-           desiredRightMandibleState == MandibleState::open) {
-            std::cout << "opening both mandibles" << std::endl;
+        if(desiredLeftWingState == WingState::open &&
+           desiredRightWingState == WingState::open) {
             switch(actionStateSteps++) {
                 case 0:
                     // open right mandible on state machine tick
                     // if action task step 1 not complete:
-                    nextRobotState = RobotState::OPENING_RIGHT_MANDIBLE;
+                    nextRobotState = RobotState::OPENING_RIGHT_WING;
                     break;
                 case 1: 
                     // open left mandible on next state machine tick
                     // if action task step 2 not complete
-                    nextRobotState = RobotState::OPENING_LEFT_MANDIBLE;
+                    nextRobotState = RobotState::OPENING_LEFT_WING;
                     status = TaskStatus::COMPLETE;
                     break;
             }
         }
-        else if(desiredLeftMandibleState == MandibleState::open &&
-                desiredRightMandibleState == MandibleState::closed) {
+        else if(desiredLeftWingState == WingState::open &&
+                desiredRightWingState == WingState::closed) {
             // open right mandible on state machine tick
             // open left mandible on state machine tick
             // close right mandible on state machine tick
         }
-        else if(desiredLeftMandibleState == MandibleState::closed &&
-                desiredRightMandibleState == MandibleState::open) {
+        else if(desiredLeftWingState == WingState::closed &&
+                desiredRightWingState == WingState::open) {
             // open right mandible on state machine tick
         }
-        else if(desiredLeftMandibleState == MandibleState::closed &&
-                desiredRightMandibleState == MandibleState::closed) {
+        else if(desiredLeftWingState == WingState::closed &&
+                desiredRightWingState == WingState::closed) {
             // open right mandible on state machine tick
             // open left mandible on state machine tick
             // close right mandible on state machine tick
@@ -82,29 +78,27 @@ void ControlMandiblesTask::inProgress(std::shared_ptr<Map> map,
     printTaskInfo(); //"ControlMandiblesTask::InProgress");        
 }
 
-void ControlMandiblesTask::suspended(std::shared_ptr<Map> map, 
+void ControlWingsTask::suspended(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
     
 }
 
-void ControlMandiblesTask::complete(std::shared_ptr<Map> map, 
+void ControlWingsTask::complete(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
 
 }
 
-void ControlMandiblesTask::printTaskInfo() //std::string taskStateName)
+void ControlWingsTask::printTaskInfo() //std::string taskStateName)
 {
-    if(DEBUG_NAVIGATETOTASK) {
+    if(DEBUG_CONTROLWINGSTASK) {
         //Task::printTaskInfo();
         //std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
         std::cout << "status: " << statusToString(this->getStatus()) << "\n";
         std::cout << "action point: " << actionPoint << "\n";
-        std::cout << "action point desired orientation: " << actionPointOrientation << "\n";
-        //std::cout << "is robot at action point: " << isRobotAtEndpoint << "\n";
         std::cout << "is robot performing action: " << inActionState << "\n";
         std::cout << "action point proximity tolerance: " << actionPointProximityTolerance << "\n";
         std::cout << "\n==========================================\n" << std::endl;

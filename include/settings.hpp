@@ -50,3 +50,7 @@
 
 // Follow object task settings
 #define FOLLOWOBJECTTASK_PRIORITY 3
+
+// Control wings task settings
+#define CONTROLWINGTASK_PRIORITY 3
+#define DEBUG_CONTROLWINGSTASK true

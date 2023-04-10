@@ -8,14 +8,14 @@ NavigateToTask::NavigateToTask()
 NavigateToTask::NavigateToTask(double endpointOrientation, 
                                bool endpointOrientationRequirement) 
     : isRobotAtEndpoint(false), 
-    Task(NAVIGATETO, NAVIGATETOTTASK_PRIORITY), 
+    Task(TaskType::NAVIGATETO, NAVIGATETOTTASK_PRIORITY), 
     destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE)
 {
     isEndpointOrientationRequired = endpointOrientationRequirement;
     endpointDesiredOrientation = endpointOrientation;
 
     if(DEBUG_NAVIGATETOTASK) {
-        printTaskInfo("NavigateToTask::NavigateToTask");        
+        printTaskInfo(); //"NavigateToTask::NavigateToTask");        
     }
 }
 
@@ -69,7 +69,7 @@ void NavigateToTask::notStarted(std::shared_ptr<Map> map,
         (1) implement optimal travel direction
     */
     if(DEBUG_NAVIGATETOTASK) {
-       printTaskInfo("NavigateToTask::NavigateToTask");        
+       printTaskInfo(); //"NavigateToTask::NavigateToTask");        
     }
 }
 
@@ -122,20 +122,37 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
         case OFF_PATH:
             // NavigateTo task should no longer do path correction after 
             // pose correction has been completed.
+            //lastPathCorrection += 10;
+
             if(totalPoseCorrectionsCompleted > 0) {
                 status = TaskStatus::COMPLETE;
                 nextRobotState = STOP;
             }
+            //else if(lastPathCorrection > 500) {
             else {
                 status = TaskStatus::SUSPENDED;
                 newTaskRequest = PATHCORRECTION;
                 nextRobotState = STOP;
+                lastPathCorrection = 0;
             }
+            /*
+            else {
+                status = TaskStatus::INPROGRESS;
+                if(travelDirection == TravelDirection::forward)
+                    nextRobotState = MOVE_FORWARD;
+                else if(travelDirection == TravelDirection::backward)
+                    nextRobotState = MOVE_BACKWARD;
+                else if(travelDirection == TravelDirection::leftward)
+                    nextRobotState = MOVE_LEFT;
+                else if(travelDirection == TravelDirection::rightward)
+                    nextRobotState = MOVE_RIGHT;
+            }
+            */
             break;
     }
 
     if(DEBUG_NAVIGATETOTASK) {
-        printTaskInfo("NavigateToTask::inProgress");
+        printTaskInfo(); //"NavigateToTask::inProgress");
     }
 } 
 
@@ -178,14 +195,15 @@ void NavigateToTask::complete(std::shared_ptr<Map> map,
 
     if(DEBUG_NAVIGATETOTASK) {
         std::cout << "\n======= NavigateToTask::complete =======\n" << std::endl;
-        printTaskInfo("NavigateToTask::complete");
+        printTaskInfo(); //"NavigateToTask::complete");
     }
 }
 
-void NavigateToTask::printTaskInfo(std::string taskStateName)
+void NavigateToTask::printTaskInfo()
 {
-        if(DEBUG_NAVIGATETOTASK) {
-        std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
+    if(DEBUG_NAVIGATETOTASK) {
+        //Task::printTaskInfo();
+        //std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
         std::cout << "status: " << statusToString(this->getStatus()) << "\n";
         std::cout << "endpoint: " << endpoint << "\n";
         std::cout << "endpoint desired orientation: " << endpointDesiredOrientation << "\n";

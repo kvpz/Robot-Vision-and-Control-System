@@ -70,7 +70,8 @@ void Task::printTaskInfo(Task& task)
     std::cout << std::endl;
 }
 
+
 void Task::printTaskInfo()
 {
-    printTaskInfo(*this);
+    //printTaskInfo(*this);
 }

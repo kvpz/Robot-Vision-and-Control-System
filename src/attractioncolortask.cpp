@@ -140,3 +140,14 @@ AttractionColors AttractionColorTask::getAttractionColorMQData()
 
   return result;
 }
+
+
+void AttractionColorTask::printTaskInfo()
+{
+    if(DEBUG_NAVIGATETOTASK) {
+        //Task::printTaskInfo();
+        //std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
+        std::cout << "status: " << statusToString(this->getStatus()) << "\n";
+        std::cout << "\n==========================================\n" << std::endl;
+    }
+}

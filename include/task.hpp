@@ -51,7 +51,7 @@ public:
 
   // debug functions
   void printTaskInfo(Task& task);
-  void printTaskInfo();
+  virtual void printTaskInfo();
   
 protected:
   TaskType taskType;

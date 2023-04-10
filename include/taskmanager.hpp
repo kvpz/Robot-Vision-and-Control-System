@@ -46,7 +46,8 @@ public:
     TaskManager(){};
 
     void executeCurrentTask(std::shared_ptr<Map> map, 
-                            std::shared_ptr<Navigator> navigator, RobotState& robotState);
+                            std::shared_ptr<Navigator> navigator, 
+                            std::vector<RobotState>& nextRobotStates);
 
     void addTask(std::unique_ptr<Task>);
 
@@ -110,6 +111,7 @@ private:
     void parseDropChipTask(boost::property_tree::ptree::value_type taskkey);
     void parseAttractionColorTask(boost::property_tree::ptree::value_type taskkey);
     void parseControlMandiblesTask(boost::property_tree::ptree::value_type taskkey);
+    void parseControlWingsTask(boost::property_tree::ptree::value_type taskkey);
 
 };
 

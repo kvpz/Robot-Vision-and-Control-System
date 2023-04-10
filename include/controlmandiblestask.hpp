@@ -34,7 +34,7 @@ public:
                           std::shared_ptr<Navigator> navigator, 
                           RobotState& nextRobotState, TaskType& nextTaskType) override;
 
-    void printTaskInfo(std::string taskStateName);
+    virtual void printTaskInfo() override; //std::string taskStateName);
 
 private:
     // mandibles to open

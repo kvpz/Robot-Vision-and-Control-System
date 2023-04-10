@@ -19,10 +19,10 @@
     },
     "3": {
         "type": "controlmandibles", 
-        "action_point": {"x": 60, "y": 22, "yaw": 90 },
+        "action_point": {"x": 60, "y": 21, "yaw": 90 },
         "left": "open",
         "right": "open",
-        "action_point_tolerance": 12.0,
+        "action_point_tolerance": 22.0,
         "priority": 3,
         "start_time": "now"
     },
@@ -170,6 +170,15 @@
 	    "endpoint_settings":  {"orientation_required": true },
         "move_direction": "backward",
         "priority": 2
+    },
+    "25": {
+        "type": "controlwings", 
+        "action_point": {"x": 35, "y": 65 },
+        "left": "open",
+        "right": "open",
+        "action_point_tolerance": 22.0,
+        "priority": 3,
+        "start_time": "now"
     }
 }
 

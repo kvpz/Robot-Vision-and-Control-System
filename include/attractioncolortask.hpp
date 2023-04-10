@@ -42,6 +42,8 @@ public:
                           RobotState& nextRobotState, 
                           TaskType& nextTaskType) override;
 
+    virtual void printTaskInfo() override;
+
 private:
     // message queue and name
     mqd_t attraction_color_mq;

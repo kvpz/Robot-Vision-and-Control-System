@@ -6,6 +6,7 @@
 #include "attractioncolortask.hpp"
 #include "objectsearchtask.hpp"
 #include "controlmandiblestask.hpp"
+#include "controlwingstask.hpp"
 
 /*
     function: void TaskManager::executeCurrentTask
@@ -16,58 +17,66 @@
     Not all tasks may achieve all status. 
 */
 void TaskManager::executeCurrentTask(std::shared_ptr<Map> map, 
-                                     std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
+                                     std::shared_ptr<Navigator> navigator, 
+                                     std::vector<RobotState>& nextRobotStates) 
 {
     TaskType nextTaskType = NA;
     //std::vector<std::unique_ptr<Task>> tasksToDelete;
+    //std::vector<RobotState> robotStates;
 
     //for(auto& task : high_priority_tasks) {
-    for(auto task = high_priority_tasks.begin(); task != high_priority_tasks.end(); ++task) { 
+    for(auto task = high_priority_tasks.begin(); task != high_priority_tasks.end(); ) { 
         // read obj detection data from message queue
         currentTaskPriority = (*task)->getPriority();
         currentTaskType = (*task)->getTaskType();
         currentTaskStatus = (*task)->getStatus();
-
+        RobotState nextRobotState;
+        
         switch((*task)->getStatus()) {
             case TaskStatus::NOTSTARTED:
                 (*task)->notStarted(map, navigator, nextRobotState);
                 handleNotStartedTask(map, navigator, nextRobotState, nextTaskType);
+                ++task;
+                nextRobotStates.push_back(nextRobotState);
                 break;   
                 
             case TaskStatus::INPROGRESS:
                 (*task)->inProgress(map, navigator, nextRobotState);
                 handleInProgressTask(map, navigator, nextRobotState, nextTaskType);
+                ++task;
+                nextRobotStates.push_back(nextRobotState);
                 break;
 
             case TaskStatus::SUSPENDED:
                 (*task)->suspended(map, navigator, nextRobotState, nextTaskType);
                 handleSuspendedTask(map, navigator, nextRobotState, nextTaskType);
+                ++task;
+                nextRobotStates.push_back(nextRobotState);
                 break;
 
             case TaskStatus::COMPLETE:
                 (*task)->complete(map, navigator, nextRobotState, nextTaskType);
                 handleCompletedTask(map, navigator, nextRobotState, nextTaskType);
                 (*task)->setReadyForDeletion(true);
+                ++task;
+                nextRobotStates.push_back(nextRobotState);
                 break;
         } // switch
+
+
     }
 
     // delete all completed tasks from the high priority list
     for(auto task = high_priority_tasks.begin(); task != high_priority_tasks.end(); ) {
         if((*task)->isReadyForDeletion()) {
-            if((*task)->getTaskType() == TaskType::NAVIGATETO) {
-                std::cout << "(executingTask) erasing navigateto task" << std::endl;
+            if((*task)->getTaskType() == TaskType::NAVIGATETO || 
+               (*task)->getTaskType() == TaskType::DROPCHIP) {
+                std::cout << "(executingTask) erasing " << (*task)->getName() << " task" << std::endl;
                 task = high_priority_tasks.erase(task);
                 high_priority_tasks.insert(std::move(low_priority_tasks.front()));
                 low_priority_tasks.pop_front();
             }
-            else if((*task)->getTaskType() == TaskType::DROPCHIP) {
-                std::cout << "(executingTask) erasing dropchip task" << std::endl;
-                task = high_priority_tasks.erase(task);
-                high_priority_tasks.insert(std::move(low_priority_tasks.front()));
-                low_priority_tasks.pop_front();
-            }
-            else {
+            else { // pose correction
                 std::cout << "(executingTask) erasing task " 
                         << taskTypeToString((*task)->getTaskType()) << std::endl;
                 // only if task Completed process has been executed
@@ -117,28 +126,14 @@ void TaskManager::importTasksFromJSON(std::string filename)
     
     boost::property_tree::ptree pt;
     boost::property_tree::read_json(filename, pt);
-    //std::vector<std::unique_ptr<Task>> task_vector;
+    unsigned int navigateTasksParsed = 0;
 
     for (const auto& taskkey : pt) {
-        // navigateTo task JSON keys
-        double endpoint_x;
-        double endpoint_y;
-        double endpoint_orientation;
-        bool endpoint_orientation_required;
-        TravelDirection travelDirection;
-
-        // attraction color detection task JSON keys
-        std::string mqname;
-        int priority;
-        std::string startTime;
         TaskType taskType = taskTypeToEnum(taskkey.second.get_child("type").get_value<std::string>());
-
-        // control mandibles task
-        MandibleState leftMandibleDesiredState;
-        MandibleState rightMandibleDesiredState;
         
         if(taskType == NAVIGATETO) {
             parseNavigateToTask(taskkey);
+            ++navigateTasksParsed;
         }
         else if(taskType == DROPCHIP) {        
             parseDropChipTask(taskkey);
@@ -152,6 +147,28 @@ void TaskManager::importTasksFromJSON(std::string filename)
         else if(taskType == OBJECTSEARCH) {
             high_priority_tasks.insert(std::make_unique<ObjectSearchTask>());
         }
+        else if(taskType == CONTROLWINGS) {
+            parseControlWingsTask(taskkey);
+        }
+    }
+
+    std::cout << "navigate tasks parsed: " << navigateTasksParsed << std::endl;
+    std::cout << "size of high priority queue: " << high_priority_tasks.size() << std::endl;
+    std::cout << "size of low priority queue: " << low_priority_tasks.size() << std::endl;
+
+    std::cout << "====== high priority queue items in order ======" << std::endl;
+    for(const auto& task : high_priority_tasks) {
+        std::cout << " > " << task->getName() << " " << task->getPriority() << std::endl;
+        task->printTaskInfo();
+        //if(task->getTaskType() == TaskType::NAVIGATETO)
+        //    ((std::unique_ptr<NavigateToTask>)(std::move(task))).printTaskInfo();
+
+    }
+
+    std::cout << "====== low priority queue items in order ======" << std::endl;
+    for(const auto& task : low_priority_tasks) {
+        std::cout << " > " << task->getName() << " " << task->getPriority() << std::endl;
+        task->printTaskInfo();
     }
 
 }
@@ -307,14 +324,16 @@ void TaskManager::parseControlMandiblesTask(boost::property_tree::ptree::value_t
     MandibleState rightMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("right").get_value<std::string>());
     double actionPointProximityTolerance = taskkey.second.get_child("action_point_tolerance").get_value<double>();
     std::string startTime = taskkey.second.get_child("start_time").get_value<std::string>();
+    
 
     if(startTime == "now") {
-        high_priority_tasks.insert(std::make_unique<ControlMandiblesTask>(leftMandibleDesiredState, 
+        auto itr = high_priority_tasks.insert(std::make_unique<ControlMandiblesTask>(leftMandibleDesiredState, 
                                 rightMandibleDesiredState,
                                 MandibleState::closed,
                                 MandibleState::closed,
                                 xypoint, 
                                 endpoint_orientation, actionPointProximityTolerance));
+        (*itr)->printTaskInfo();
     }
     else {
         low_priority_tasks.emplace_back(std::make_unique<ControlMandiblesTask>(leftMandibleDesiredState, 
@@ -323,6 +342,36 @@ void TaskManager::parseControlMandiblesTask(boost::property_tree::ptree::value_t
                                 MandibleState::closed,
                                 xypoint, 
                                 endpoint_orientation, actionPointProximityTolerance));
+        low_priority_tasks.back()->printTaskInfo();
+    }
+}
+
+void TaskManager::parseControlWingsTask(boost::property_tree::ptree::value_type taskkey)
+{
+    std::cout << "parsing control wings task" << std::endl;
+    double endpoint_x = taskkey.second.get_child("action_point").get_child("x").get_value<double>();
+    double endpoint_y = taskkey.second.get_child("action_point").get_child("y").get_value<double>();
+    XYPoint xypoint(endpoint_x, endpoint_y);
+    WingState leftWingDesiredState = stringToWingState(taskkey.second.get_child("left").get_value<std::string>());
+    WingState rightWingDesiredState = stringToWingState(taskkey.second.get_child("right").get_value<std::string>());
+    double actionPointProximityTolerance = taskkey.second.get_child("action_point_tolerance").get_value<double>();
+    std::string startTime = taskkey.second.get_child("start_time").get_value<std::string>();
+    
+    std::cout << "navigate: " << std::endl; 
+
+    if(startTime == "now") {
+        auto itr = high_priority_tasks.insert(std::make_unique<ControlWingsTask>(leftWingDesiredState, 
+                                rightWingDesiredState,
+                                xypoint, 
+                                actionPointProximityTolerance));
+        (*itr)->printTaskInfo();
+    }
+    else {
+        low_priority_tasks.emplace_back(std::make_unique<ControlWingsTask>(leftWingDesiredState, 
+                                rightWingDesiredState,
+                                xypoint,
+                                actionPointProximityTolerance));
+        low_priority_tasks.back()->printTaskInfo();
     }
 }
 
@@ -382,26 +431,18 @@ void TaskManager::handleCompletedTask(std::shared_ptr<Map> map,
         }
         else if((*i)->getTaskType() == POSECORRECTION) {
             // pop pose correction task
-            // high_priority_tasks.erase(i);
-            // pop the navigate to task that had created pose correction task
             for(auto pqi = high_priority_tasks.begin(); pqi != high_priority_tasks.end(); ++pqi) {
                 if((*pqi)->getTaskType() == NAVIGATETO) {
-                    //std::cout << "(handleCompletedTask) current task type is " << taskTypeToString(currentTaskType) << std::endl;
                     (*pqi)->setStatus(TaskStatus::INPROGRESS);
-                    //high_priority_tasks.erase(pqi);
                     break;
                 }
             }
         }
         else if(nextTaskType != NA) {
-            //high_priority_tasks.erase(i);
-            //task_queue.pop();
             scheduleNewTask(nextTaskType, map);
         }
         else {
             std::cout << "(handleCompletedTask) else ..." << std::endl;
-            //high_priority_tasks.erase(i);
-            //task_queue.pop();
         }
     }
 }

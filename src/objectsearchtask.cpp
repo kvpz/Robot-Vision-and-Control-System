@@ -172,3 +172,13 @@ void ObjectSearchTask::setObjectGlobalPosition(std::shared_ptr<Map> map,
     map->printOccupancyGrid();
     std::cout << "======== end map content =========" << std::endl;
 }
+
+void ObjectSearchTask::printTaskInfo()
+{
+    if(DEBUG_NAVIGATETOTASK) {
+        //Task::printTaskInfo();
+        //std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
+        std::cout << "status: " << statusToString(this->getStatus()) << "\n";
+        std::cout << "\n==========================================\n" << std::endl;
+    }
+}
