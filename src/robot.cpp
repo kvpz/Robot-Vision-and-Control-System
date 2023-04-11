@@ -70,39 +70,49 @@ void Robot::run()
         stop();
         break;
     }
-<<<<<<< HEAD
-=======
-  }
-
-double Robot::getRobotAngleToPoint(const Robot& robot, double x, double y, bool reverse) const
-{
-    return angleToPoint(robot.getX(), robot.getY(), x, y, robot.getOrientation(), reverse);
-}
-
-void Robot::move_forward()
-{
-    comport->send_command("F");
-}
-
-void Robot::stop()
-{
-    comport->send_command("S");
-}
-
-void Robot::rotate_CW()
-{
-    comport->send_command("C");
->>>>>>> a8622d46500c5fc75cf58fbefee2be32ba9f6fa8
 }
 
 void Robot::runManipulators() 
-{
+{   
+    float robot_rear_ortientation = 0;
+
+    if(getOrientation() < 180){
+      robot_rear_ortientation = getOrientation() + 180;
+    }
+    else{
+      robot_rear_ortientation = getOrientation() - 180;
+    }
+
     switch(manipulatorState) {
         case OPENING_LEFT_WING:
-          open_left_wing();
+
+          float left_wing_orientation = getOrientation() + 90;
+          float left_wing_global_position [2] = 0;
+          if(left_wing_orientation > 360){
+            left_wing_orientation = left_wing_orientation - 360;
+          }
+          left_wing_global_position[0] = 35*cos(left_wing_orientation) + getX() + 5*cos(robot_rear_ortientation);
+          left_wing_global_position[1] = 35*sin(left_wing_orientation) + getY() + 5*sin(robot_rear_ortientation);
+
+          if ((left_wing_global_position[0]>5 && left_wing_global_position[0]<235)
+              && (left_wing_global_position [1]>5 && left_wing_global_position[1]<115)){
+                open_left_wing();
+              }
           break;
         case OPENING_RIGHT_WING:
-          open_right_wing();
+          
+          float right_wing_orientation = getOrientation() - 90;
+          float right_wing_global_position [2] = 0;
+          if(right_wing_orientation < 0){
+            right_wing_orientation = right_wing_orientation + 360;
+          }
+          right_wing_global_position[0] = 35*cos(right_wing_orientation) + getX() + 5*cos(robot_rear_ortientation);
+          right_wing_global_position[1] = 35*sin(right_wing_orientation) + getY() + 5*sin(robot_rear_ortientation);
+
+          if ((right_wing_global_position[0]>5 && right_wing_global_position[0]<235)
+              && (right_wing_global_position[1]>5 && right_wing_global_position[1]<115)){
+                open_right_wing();
+              }
           break;
         case CLOSING_LEFT_WING:
           close_left_wing();
@@ -157,6 +167,11 @@ void Robot::setCurrentXY(double x, double y)
   map->setRobotCurrentCoordinate(x,y);
 }
 
+void Robot::setCurrentCamXY(current_cam_x, current_cam_y)
+{
+
+}
+
 void Robot::setOrientation(double o)
 {
   map->setRobotOrientation(o);
@@ -169,7 +184,6 @@ void Robot::setOrientation(double o)
 */
 void Robot::executeCurrentTask()
 {
-<<<<<<< HEAD
   RobotState nextRobotState = state;
   RobotState nextManipulatorState = manipulatorState;
   std::vector<RobotState> nextRobotStates;
@@ -191,36 +205,6 @@ void Robot::executeCurrentTask()
       }
       
   }
-=======
-    RobotPoseToWaypoint result = ON_PATH;
-    // check if robot position (x,y) approximately near destination
-    bool isYapproxnear = approximately(robotY, destY, 3.0, false);
-    bool isXapproxnear = approximately(robotX, destX, 3.0, false);
-    double angleToDestTolerance = 10.0;
-
-    angleToDest = getRobotAngleToPoint(*this, destX, destY, false);
-
-    if(isYapproxnear && isXapproxnear) {
-        // near the waypoint
-        result = NEAR;
-    }
-    else if (angleToDest < angleToDestTolerance && angleToDest > -1.0*angleToDestTolerance
-            && (!(robotX < (destX - 2.5)) || !(robotX > (destX + 2.5)))) { // robotY > destY && robotX == destX
-        // detect if drifting from path
-        std::cout << "\n(EXPERIMENTAL) condition\n" << std::endl;
-        result = ON_PATH;
-    }
-    else {
-        result = OFF_PATH;
-    }    
-
-    if(ROBOTDEBUG) {
-        std::cout << "\n====== isRobotOnPath ======\n";
-        std::cout << "result: " << printRobotPoseToWaypoint(result) << "\n";
-        std::cout << "(isRobotOnPath) angle to dest: " << angleToDest << "\n";
-        std::cout << "=============================\n" << std::endl;
-    }
->>>>>>> a8622d46500c5fc75cf58fbefee2be32ba9f6fa8
 
 /*
       // change robot state if it is different from current state
