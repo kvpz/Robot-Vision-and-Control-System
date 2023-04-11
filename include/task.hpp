@@ -3,20 +3,21 @@
 #include <iostream>
 #include <memory>
 #include <optional>
+#include <mqueue.h>
+#include <climits>
 #include "navigator.hpp"
 #include "xypoint.hpp"
 #include "enums/tasktype.hpp"
 #include "enums/taskstatus.hpp"
 #include "enums/robotState.hpp"
 #include "map.hpp"
-
-#define DEBUG_TASK false 
+#include "settings.hpp"
 
 class Task
 {
 public:
-  Task() : status(TaskStatus::NOTSTARTED){}
-  Task(TaskType ttype);
+  Task();
+  Task(TaskType ttype, unsigned int priority);
 
   // task state functions
   virtual void notStarted(std::shared_ptr<Map> map, 
@@ -34,18 +35,23 @@ public:
 
   virtual void complete(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
-                        RobotState& nextRobotState, 
+                        RobotState& nextRobotState,
                         TaskType& nextTaskType);
 
   // setters
   void setStatus(TaskStatus s);
+  void setReadyForDeletion(bool v) { readyToBeDeleted = v; }
 
   // getters
   TaskStatus getStatus() const;
   TaskType getTaskType() const;
   std::string getName();
+  unsigned int getPriority() { return priority_; }
+  bool isReadyForDeletion() { return readyToBeDeleted; }
 
+  // debug functions
   void printTaskInfo(Task& task);
+  virtual void printTaskInfo();
   
 protected:
   TaskType taskType;
@@ -54,6 +60,10 @@ protected:
 private:
   // task management data
   double expected_duration;
+  unsigned int priority_;
+  unsigned int id;
+
+  bool readyToBeDeleted;
 };
 
 #endif

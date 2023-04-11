@@ -1,21 +1,20 @@
 #ifndef NAVIGATETASK_HPP
 #define NAVIGATETASK_HPP
 
-#include "robot.hpp"
 #include "task.hpp"
 #include "enums/robotPoseToWaypoint.hpp"
 #include "enums/robotState.hpp"
 #include "navigator.hpp"
 #include "map.hpp"
+#include "settings.hpp"
+#include "robot.hpp"
 
-#define DEBUG_NAVIGATETOTASK true
-
-#define ORIENTATION_RANGE_TOLERANCE 2.0
+#define NAVIGATETOTTASK_PRIORITY 3
 
 class NavigateToTask : public Task
 {
 public:
-    NavigateToTask()  :  destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE) {}
+    NavigateToTask();
     NavigateToTask(double endpointOrientation, bool endpointOrientationRequirement);
     NavigateToTask(XYPoint xy, 
                    double endpointOrientation, 
@@ -46,7 +45,7 @@ public:
         endpoint.setY(desty);
     }
 
-    void printTaskInfo(std::string taskStateName);
+    virtual void printTaskInfo() override;
 
 private:
     // map data (this data gets stored in robot map)
@@ -66,6 +65,15 @@ private:
     double destinationOrientationTolerance;
 
     TravelDirection travelDirection;
+
+    // state execution counters
+    unsigned int notStartedCounter;
+    unsigned int inProgressCounter;
+    unsigned int suspendedCounter;
+    unsigned int completedCounter;
+    unsigned int totalPoseCorrectionsCompleted;
+
+    unsigned int lastPathCorrection;
 };
 
 #endif

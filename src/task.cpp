@@ -1,7 +1,13 @@
 #include "task.hpp"
 
-Task::Task(TaskType ttype)
-    : status(TaskStatus::NOTSTARTED), taskType(ttype)
+Task::Task() 
+ : status(TaskStatus::NOTSTARTED),
+ taskType(NA), priority_(UINT_MAX), readyToBeDeleted(false)
+ {}
+
+Task::Task(TaskType ttype, unsigned int priority)
+    : status(TaskStatus::NOTSTARTED), taskType(ttype),
+    priority_(priority), readyToBeDeleted(false)
 {
 }
 
@@ -32,19 +38,28 @@ void Task::printTaskInfo(Task& task)
     // print status of this type of task
     switch(task.getTaskType()) {
         case NAVIGATETO:
-            std::cout << "\n====== Travel Task Updater ======\n";
+            std::cout << "\n====== NavigateTo Task ======\n";
             break;
         case PATHCORRECTION:
-            std::cout << "\n====== PathCorrection Task Updater ======\n";
+            std::cout << "\n====== PathCorrection Task ======\n";
             break;  
+        case POSECORRECTION:
+            std::cout << "\n====== PoseCorrection Task ======\n";
+            break;
+        case ATTRACTIONCOLOR:
+            std::cout << "\n====== AttractionColor Task ======\n";
+            break;
         case DROPCHIP:
-            std::cout << "\n====== Drop Chip Task Updater ======\n";
+            std::cout << "\n====== Drop Chip Task ======\n";
             break;
         case GRASP:
-            std::cout << "\n====== Grasp Task Updater ======\n";
+            std::cout << "\n====== Grasp Task ======\n";
             break;
         case STACKPED: 
-            std::cout << "\n====== Stack Pedestal Task Updater ======\n";
+            std::cout << "\n====== Stack Pedestal Task ======\n";
+            break;
+        case CONTROLMANDIBLES:
+            std::cout << "\n====== Control Mandibles Task ======\n";
             break;
     }
 
@@ -53,4 +68,10 @@ void Task::printTaskInfo(Task& task)
     std::cout << "Task name: " << task.getName() << "\n";
     std::cout << "=================================\n";
     std::cout << std::endl;
+}
+
+
+void Task::printTaskInfo()
+{
+    //printTaskInfo(*this);
 }

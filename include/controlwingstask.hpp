@@ -1,15 +1,21 @@
-#ifndef POSECORRECTIONTASK_HPP
-#define POSECORRECTIONTASK_HPP
+#ifndef CONTROLWINGSTASK_HPP
+#define CONTROLWINGSTASK_HPP
+
 #include "task.hpp"
-#include "enums/robotOrientationAtEndpoint.hpp"
 #include "navigator.hpp"
 #include "map.hpp"
 #include "settings.hpp"
+#include "xypoint.hpp"
+#include "enums/wings.hpp"
 
-class PoseCorrectionTask : public Task
+
+class ControlWingsTask : public Task
 {
 public:
-    PoseCorrectionTask();
+    ControlWingsTask(WingState desiredLeftState, 
+                         WingState desiredRightState,
+                         XYPoint xy,
+                         double actionPointProximityTolerance);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
@@ -18,7 +24,7 @@ public:
     virtual void inProgress(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
                             RobotState& nextRobotState) override;
-      
+
     virtual void suspended(std::shared_ptr<Map> map, 
                            std::shared_ptr<Navigator> navigator, 
                            RobotState& nextRobotState, TaskType& nextTaskType) override;
@@ -27,10 +33,22 @@ public:
                           std::shared_ptr<Navigator> navigator, 
                           RobotState& nextRobotState, TaskType& nextTaskType) override;
 
+    virtual void printTaskInfo() override; //std::string taskStateName);
+
 private:
+    // mandibles to open
+    WingState desiredLeftWingState;
+    WingState desiredRightWingState;
+    WingState currentLeftWingState;
+    WingState currentRightWingState;
 
-    bool correcting_orientation = false;
+    // conditions for opening mandibles
+    XYPoint actionPoint;
+    double actionPointProximityTolerance;
+    
+    bool inActionState;
 
+    unsigned int actionStateSteps;
 };
 
 #endif

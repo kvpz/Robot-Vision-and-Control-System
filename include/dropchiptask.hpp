@@ -7,8 +7,9 @@
 #include "enums/robotState.hpp"
 #include "navigator.hpp"
 #include "map.hpp"
+#include "settings.hpp"
 
-#define DEBUG_DROPCHIPTOTASK true
+#define DROPCHIPTASK_PRIORITY 3
 
 class DropChipTask : public Task
 {
@@ -40,14 +41,15 @@ private:
     unsigned int runtime;
     bool isDeployingPayload;
     inline static unsigned redDeploymentAttempts = 0;
-    inline static unsigned greenDeploymentAttempts = 0;
+    inline static unsigned greenDeploymentAttempts = 1;
 
     // payload location data
     XYPoint payloadLocation;
     double endpointOrientation;
     bool endpointOrientationRequirement;
 
-
+    // suspended state reasons
+    TaskType newTaskRequest;
 };
 
 #endif

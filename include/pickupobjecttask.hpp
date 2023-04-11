@@ -1,15 +1,18 @@
-#ifndef POSECORRECTIONTASK_HPP
-#define POSECORRECTIONTASK_HPP
+#ifndef PICKUPOBJECTTASK_HPP
+#define PICKUPOBJECTTASK_HPP
+
+#include "robot.hpp"
 #include "task.hpp"
-#include "enums/robotOrientationAtEndpoint.hpp"
+//#include "enums/robotPoseToWaypoint.hpp"
+//#include "enums/robotState.hpp"
 #include "navigator.hpp"
 #include "map.hpp"
 #include "settings.hpp"
 
-class PoseCorrectionTask : public Task
+class PickupObjectTask : public Task
 {
 public:
-    PoseCorrectionTask();
+    PickupObjectTask(ObjectType);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
@@ -18,7 +21,7 @@ public:
     virtual void inProgress(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
                             RobotState& nextRobotState) override;
-      
+
     virtual void suspended(std::shared_ptr<Map> map, 
                            std::shared_ptr<Navigator> navigator, 
                            RobotState& nextRobotState, TaskType& nextTaskType) override;
@@ -28,8 +31,9 @@ public:
                           RobotState& nextRobotState, TaskType& nextTaskType) override;
 
 private:
+    // Desired object info
+    ObjectType desiredObjectType;
 
-    bool correcting_orientation = false;
 
 };
 

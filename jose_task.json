@@ -1,0 +1,10 @@
+{
+    "0": {
+        "type": "navigateto",
+        "endpoint": {"x": 187, "y": 30, "yaw": 315 },
+        "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 1,
+        "start_time": "now"
+    }
+}

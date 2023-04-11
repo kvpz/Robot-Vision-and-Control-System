@@ -4,11 +4,13 @@
 #include <vector>
 #include <utility>
 #include <memory>
+#include <mqueue.h>
 #include "robot.hpp"
 #include "taskmanager.hpp"
 #include "example-utils.hpp"
-
-#define DEBUG_MAIN false
+#include "settings.hpp"
+#include <chrono>
+#include <boost/timer/timer.hpp>
 
 double _180_over_PI = 180.0 / M_PI;
 double _PI_over_180 = M_PI / 180.0;
@@ -18,13 +20,19 @@ double x_robot_camera_offset = 120.0;
 double y_robot_camera_offset = 28.5; // 30.0
 double robot_initial_orientation = 90.0;
 
-int main() try
+int main(int argc, char* argv[]) try
 {
+    // get command line argument (tasks JSON file)
+    std::string taskFile = "tasks.json";
+    if(argc > 1) {
+      taskFile = argv[1];
+    }
+    // send tasks JSON file to task manager
+
     std::unique_ptr<Robot> robot = std::make_unique<Robot>(x_robot_camera_offset, y_robot_camera_offset, robot_initial_orientation);
-    std::cout << "Address of taskManager from getTaskManager: " << &(*robot->getTaskManager()) << std::endl;
+
     // load tasks from JSON file
-    robot->getTaskManager()->importTasksFromJSON("tasks.json");
-    std::cout << "Address of taskManager from getTaskManager: " << &(*robot->getTaskManager()) << std::endl;
+    robot->getTaskManager()->importTasksFromJSON(taskFile);
 
     // Setup T265 connection
     std::string serial_t265_str;
@@ -106,18 +114,18 @@ int main() try
     // allow time for camera to initialize
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));			  
 
-    //robot->setCurrentXY(x_robot_camera_offset, y_robot_camera_offset); // x,y are front of robot (camera location)
-
     while(1) {
+      boost::timer::cpu_timer timer;
       if(!robot->hasTasks()) {
         break;
       }
 
       robot->executeCurrentTask();
-
       std::this_thread::sleep_for(std::chrono::milliseconds(10));	
-
       robot->printStatus();
+      robot->getTaskManager()->printHighPriorityTasks();
+      boost::timer::cpu_times elapsed = timer.elapsed();
+      std::cout << "Elapsed time (main loop): " << (elapsed.wall / 1e9) << " seconds\n" << std::endl;
     }
 	
     
@@ -133,13 +141,3 @@ catch (const std::exception& e)
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
 }
-
-
-/*
-      if(DEBUG_MAIN) {
-        std::cout << "=========== Main Loop ============\n";
-        //std::cout << "task stack size: " << task_queue.size() << "\n";
-        //std::cout << "current task type: " << taskTypeToString(currentTask.getTaskType()) << "\n";
-        std::cout << "==================================" << std::endl;
-      }
-*/

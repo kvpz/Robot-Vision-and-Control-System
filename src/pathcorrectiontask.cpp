@@ -1,7 +1,7 @@
 #include "pathcorrectiontask.hpp"
 
 PathCorrectionTask::PathCorrectionTask()
-    : Task(PATHCORRECTION)
+    : Task(PATHCORRECTION, PATHCORRECTIONTASK_PRIORITY)
 {
     correcting_position = false;
 }
@@ -28,23 +28,25 @@ void PathCorrectionTask::inProgress(std::shared_ptr<Map> map,
             status = TaskStatus::INPROGRESS;
             // decide whether to rotate CW or CCW
             if(correcting_position == false) {
+                double angularDistanceToEndpoint = navigator->robotAngularDistanceToEndpoint(map, false);
                 if(navigator->getTravelDirection() == TravelDirection::forward && 
-                    navigator->robotAngularDistanceToEndpoint(map, false) < ORIENTATION_RANGE_TOLERANCE) {
+                    angularDistanceToEndpoint < ORIENTATION_RANGE_TOLERANCE) {
                     nextRobotState = ROTATE_CW;
                 }
                 else if (navigator->getTravelDirection() == TravelDirection::forward && 
-                    navigator->robotAngularDistanceToEndpoint(map, false) > -1.0 * ORIENTATION_RANGE_TOLERANCE){
+                    angularDistanceToEndpoint > -1.0 * ORIENTATION_RANGE_TOLERANCE){
                     nextRobotState = ROTATE_CCW;
                 }
                 else if(navigator->getTravelDirection() == TravelDirection::backward && 
-                    navigator->robotAngularDistanceToEndpoint(map, true) < ORIENTATION_RANGE_TOLERANCE) {
+                    angularDistanceToEndpoint < ORIENTATION_RANGE_TOLERANCE) {
                     nextRobotState = ROTATE_CW;
                 }
                 else if (navigator->getTravelDirection() == TravelDirection::backward && 
-                    navigator->robotAngularDistanceToEndpoint(map, true) > -1.0 * ORIENTATION_RANGE_TOLERANCE){
+                    angularDistanceToEndpoint > -1.0 * ORIENTATION_RANGE_TOLERANCE){
                     nextRobotState = ROTATE_CCW;
                 }
                 else {
+                    std::cout << "(pathcorrection::inprogress) status changed to COMPLETE" << std::endl;
                     status = TaskStatus::COMPLETE;
                     nextRobotState = STOP;
                 }

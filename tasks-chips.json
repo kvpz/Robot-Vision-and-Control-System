@@ -1,0 +1,59 @@
+{
+    "0": {
+        "type": "attractioncolor",
+        "mqname": "/attraction_color_queue",
+        "priority": 1,
+        "start_time": "now"
+    },
+    "1": {
+        "type": "navigateto",
+        "endpoint": {"x": 30, "y": 30, "yaw": 90},
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2,
+        "start_time": "now"
+    },
+    "3": {
+        "type": "controlmandible",
+        "priority": 4,
+        "action_point": {"x": 30, "y": 30, "yaw": 90},
+        "left": "open",
+        "right": "open",
+        "start_time": "now"
+    },
+    "4": {
+        "type": "navigateto",
+        "endpoint": {"x": , "y": , "yaw": },
+        "endpoint_settings": {"orientation_required": false},
+        "move_direction": "forward",
+        "priority": 5,
+        "start_time": "now"
+    },
+    "5": {
+        "type": "dropchip",
+        "priority": 6
+    },
+    "6": {
+        "type": "controlmandible",
+        "priority": 7,
+        "action_point": {"x": , "y": , "yaw": },
+        "left": "open",
+        "right": "open"
+    },
+    "7": {
+        "type": "navigateto",
+        "endpoint": {"x": , "y": , "yaw": },
+        "endpoint_settings": {"orientation_required": false},
+        "move_direction": "forward",
+        "priority": 8,
+        "start_time": "now"
+    },
+    "8": {
+        "type": "navigateto",
+        "endpoint": {"x": , "y": , "yaw": },
+        "endpoint_settings": {"orientation_required": false},
+        "move_direction": "forward",
+        "priority": 9,
+        "start_time": "now"
+    }
+}

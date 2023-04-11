@@ -1,21 +1,29 @@
 #include "navigatetotask.hpp"
 
+NavigateToTask::NavigateToTask()
+:  destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE), 
+    Task(TaskType::NAVIGATETO, NAVIGATETOTTASK_PRIORITY) 
+{}
+
 NavigateToTask::NavigateToTask(double endpointOrientation, 
                                bool endpointOrientationRequirement) 
-    : isRobotAtEndpoint(false), Task(NAVIGATETO), destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE)
+    : isRobotAtEndpoint(false), 
+    Task(TaskType::NAVIGATETO, NAVIGATETOTTASK_PRIORITY), 
+    destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE)
 {
     isEndpointOrientationRequired = endpointOrientationRequirement;
     endpointDesiredOrientation = endpointOrientation;
 
     if(DEBUG_NAVIGATETOTASK) {
-        printTaskInfo("NavigateToTask::NavigateToTask");        
+        printTaskInfo(); //"NavigateToTask::NavigateToTask");        
     }
 }
 
 NavigateToTask::NavigateToTask(XYPoint xy, 
                                double endpointOrientation, 
                                bool endpointOrientationRequired, TravelDirection travelDir)
-    : isRobotAtEndpoint(false), Task(NAVIGATETO), destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE)
+    : isRobotAtEndpoint(false), Task(NAVIGATETO, NAVIGATETOTTASK_PRIORITY), 
+    destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE)
 {    
     endpoint.setX(xy.getX());
     endpoint.setY(xy.getY());
@@ -61,7 +69,7 @@ void NavigateToTask::notStarted(std::shared_ptr<Map> map,
         (1) implement optimal travel direction
     */
     if(DEBUG_NAVIGATETOTASK) {
-       printTaskInfo("NavigateToTask::NavigateToTask");        
+       printTaskInfo(); //"NavigateToTask::NavigateToTask");        
     }
 }
 
@@ -73,6 +81,8 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
                                 std::shared_ptr<Navigator> navigator, 
                                 RobotState& nextRobotState)
 {    
+    suspendedCounter = 0;
+
     switch(navigator->isRobotOnPath(map)) {
         case NEAR:
             // fix endpoint if the task requires it
@@ -83,9 +93,13 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
             }
             else if(isEndpointOrientationRequired && 
                     !approximately(map->getRobotOrientation(), map->getDestinationOrientation(), destinationOrientationTolerance)) {
+                // note: the task scheduler may get stuck on this task because 
+                // the robot may no longer be at the endpoint after pose correction.
+                // fix: only run once?
                 status = TaskStatus::SUSPENDED;
                 newTaskRequest = POSECORRECTION;
                 nextRobotState = STOP;
+                ++totalPoseCorrectionsCompleted;
             }
             else {
                 status = TaskStatus::COMPLETE;
@@ -99,19 +113,48 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
                 nextRobotState = MOVE_FORWARD;
             else if(travelDirection == TravelDirection::backward)
                 nextRobotState = MOVE_BACKWARD;
+            else if(travelDirection == TravelDirection::leftward)
+                nextRobotState = MOVE_LEFT;
+            else if(travelDirection == TravelDirection::rightward)
+                nextRobotState = MOVE_RIGHT;
             break;
 
         case OFF_PATH:
-            status = TaskStatus::SUSPENDED;
-            newTaskRequest = PATHCORRECTION;
-            nextRobotState = STOP;
+            // NavigateTo task should no longer do path correction after 
+            // pose correction has been completed.
+            //lastPathCorrection += 10;
+
+            if(totalPoseCorrectionsCompleted > 0) {
+                status = TaskStatus::COMPLETE;
+                nextRobotState = STOP;
+            }
+            //else if(lastPathCorrection > 500) {
+            else {
+                status = TaskStatus::SUSPENDED;
+                newTaskRequest = PATHCORRECTION;
+                nextRobotState = STOP;
+                lastPathCorrection = 0;
+            }
+            /*
+            else {
+                status = TaskStatus::INPROGRESS;
+                if(travelDirection == TravelDirection::forward)
+                    nextRobotState = MOVE_FORWARD;
+                else if(travelDirection == TravelDirection::backward)
+                    nextRobotState = MOVE_BACKWARD;
+                else if(travelDirection == TravelDirection::leftward)
+                    nextRobotState = MOVE_LEFT;
+                else if(travelDirection == TravelDirection::rightward)
+                    nextRobotState = MOVE_RIGHT;
+            }
+            */
             break;
     }
 
     if(DEBUG_NAVIGATETOTASK) {
-        printTaskInfo("NavigateToTask::inProgress");
+        printTaskInfo(); //"NavigateToTask::inProgress");
     }
-}
+} 
 
 /*
     This is where the task makes the decision as to what type
@@ -121,8 +164,13 @@ void NavigateToTask::suspended(std::shared_ptr<Map> map,
                                std::shared_ptr<Navigator> navigator, 
                                RobotState& nextRobotState, TaskType& nextTaskType) 
 {
-    nextTaskType = newTaskRequest;
-    nextRobotState = STOP;
+    // the suspended state procedure should only run once
+    // after the task has been suspended. If the task is set back in progress,
+    // then the suspend procedure can execute once again.
+    if(suspendedCounter++ < 1) {
+        nextTaskType = newTaskRequest;
+        nextRobotState = STOP;
+    }
 }
 
 /*
@@ -147,14 +195,15 @@ void NavigateToTask::complete(std::shared_ptr<Map> map,
 
     if(DEBUG_NAVIGATETOTASK) {
         std::cout << "\n======= NavigateToTask::complete =======\n" << std::endl;
-        printTaskInfo("NavigateToTask::complete");
+        printTaskInfo(); //"NavigateToTask::complete");
     }
 }
 
-void NavigateToTask::printTaskInfo(std::string taskStateName)
+void NavigateToTask::printTaskInfo()
 {
-        if(DEBUG_NAVIGATETOTASK) {
-        std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
+    if(DEBUG_NAVIGATETOTASK) {
+        //Task::printTaskInfo();
+        //std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
         std::cout << "status: " << statusToString(this->getStatus()) << "\n";
         std::cout << "endpoint: " << endpoint << "\n";
         std::cout << "endpoint desired orientation: " << endpointDesiredOrientation << "\n";

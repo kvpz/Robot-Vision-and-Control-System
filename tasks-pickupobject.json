@@ -1,0 +1,17 @@
+{
+    "0": {
+        "type": "attractioncolor",
+        "mqname": "/attraction_color_queue",
+        "priority": 1,
+        "start_time": "now"
+    },
+    "1": {
+        "type": "navigateto",
+        "endpoint": {"x": 180, "y": 60, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2,
+        "start_time": "now"
+    }
+}
+

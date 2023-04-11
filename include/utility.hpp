@@ -1,14 +1,13 @@
 #ifndef UTILITY_HPP
-#define UTILTY_HPP
+#define UTILITY_HPP
 #include <cmath>
-
-#define UTILITYDEBUG false
 
 // *********************************
 // Math related functions
 // *********************************
-static inline bool approximately(double current, double expected, double precision)
+static bool approximately(double current, double expected, double precision)
 {
+  std::cout << "(approximately) current: " << current << " expected: " << expected << std::endl;
   return (current > (expected - precision)) && (current < (expected + precision));
 }
 
