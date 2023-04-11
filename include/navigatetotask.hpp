@@ -16,7 +16,7 @@ class NavigateToTask : public Task
 public:
     NavigateToTask();
     NavigateToTask(double endpointOrientation, bool endpointOrientationRequirement);
-    NavigateToTask(XYPoint xy, 
+    NavigateToTask(XYPoint<double> xy, 
                    double endpointOrientation, 
                    bool endpointOrientationRequirement, TravelDirection travelDirection);
 
@@ -49,7 +49,7 @@ public:
 
 private:
     // map data (this data gets stored in robot map)
-    XYPoint endpoint; 
+    XYPoint<double> endpoint; 
     double endpointDesiredOrientation; // angle
 
     // task behavioral state variables (affects how task executes decisions)

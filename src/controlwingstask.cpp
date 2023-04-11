@@ -2,7 +2,7 @@
 
 ControlWingsTask::ControlWingsTask(WingState desiredLeftState, 
                                            WingState desiredRightState,
-                                           XYPoint xy,
+                                           XYPoint<double> xy,
                                            double actionPointProximityTolerance)
     : Task(TaskType::CONTROLWINGS, CONTROLWINGTASK_PRIORITY)
 {

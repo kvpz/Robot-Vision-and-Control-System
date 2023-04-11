@@ -2,7 +2,7 @@
 
 DropChipTask::DropChipTask() : Task(DROPCHIP, DROPCHIPTASK_PRIORITY) {}
 
-DropChipTask::DropChipTask(XYPoint xy, 
+DropChipTask::DropChipTask(XYPoint<double> xy, 
                            double endpointOrientation, 
                            bool endpointOrientationRequirement)
     : Task(DROPCHIP, DROPCHIPTASK_PRIORITY)

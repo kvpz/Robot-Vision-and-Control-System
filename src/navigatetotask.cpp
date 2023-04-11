@@ -19,7 +19,7 @@ NavigateToTask::NavigateToTask(double endpointOrientation,
     }
 }
 
-NavigateToTask::NavigateToTask(XYPoint xy, 
+NavigateToTask::NavigateToTask(XYPoint<double> xy, 
                                double endpointOrientation, 
                                bool endpointOrientationRequired, TravelDirection travelDir)
     : isRobotAtEndpoint(false), Task(NAVIGATETO, NAVIGATETOTTASK_PRIORITY), 

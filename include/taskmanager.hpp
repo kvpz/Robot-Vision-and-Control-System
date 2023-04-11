@@ -112,8 +112,10 @@ private:
     void parseAttractionColorTask(boost::property_tree::ptree::value_type taskkey);
     void parseControlMandiblesTask(boost::property_tree::ptree::value_type taskkey);
     void parseControlWingsTask(boost::property_tree::ptree::value_type taskkey);
-
+    template<class T> 
+    void enqueueTask(std::unique_ptr<T> task, std::string startTime);
 };
+
 
 
 #endif

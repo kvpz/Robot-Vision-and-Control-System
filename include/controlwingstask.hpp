@@ -14,7 +14,7 @@ class ControlWingsTask : public Task
 public:
     ControlWingsTask(WingState desiredLeftState, 
                          WingState desiredRightState,
-                         XYPoint xy,
+                         XYPoint<double> xy,
                          double actionPointProximityTolerance);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
@@ -43,7 +43,7 @@ private:
     WingState currentRightWingState;
 
     // conditions for opening mandibles
-    XYPoint actionPoint;
+    XYPoint<double> actionPoint;
     double actionPointProximityTolerance;
     
     bool inActionState;

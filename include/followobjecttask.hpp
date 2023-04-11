@@ -35,7 +35,11 @@ private:
     // target object type
     ObjectType objectType;
 
+    // left and right x of the bounding frame around the object
+    unsigned int x1, x2;
 
+    // stop distance before object
+    double stopDistance;
 };
 
 #endif

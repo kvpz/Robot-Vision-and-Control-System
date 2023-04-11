@@ -4,7 +4,7 @@ ControlMandiblesTask::ControlMandiblesTask(MandibleState desiredLeftState,
                                            MandibleState desiredRightState,
                                            MandibleState currentLeftMandibleState,
                                            MandibleState currentRightMandibleState,
-                                           XYPoint xy, double endpointOrientation,
+                                           XYPoint<double> xy, double endpointOrientation,
                                            double actionPointProximityTolerance)
     : Task(TaskType::CONTROLMANDIBLES, CONTROLMANDIBLESTASK_PRIORITY)
 {

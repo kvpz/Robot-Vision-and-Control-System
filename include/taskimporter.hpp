@@ -18,7 +18,7 @@
 #include "enums/mandibles.hpp"
 #include "attractioncolortask.hpp"
 #include "dropchiptask.hpp"
-#include "objectsearchtask.hpp"
+#include "objectmappingtask.hpp"
 
 class TaskImporter
 {

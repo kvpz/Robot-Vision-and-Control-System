@@ -15,7 +15,7 @@ public:
                          MandibleState desiredRightState,
                          MandibleState currentLeftMandibleState,
                          MandibleState currentRightMandibleState,
-                         XYPoint xy, double endpointOrientation,
+                         XYPoint<double> xy, double endpointOrientation,
                          double actionPointProximityTolerance);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
@@ -44,7 +44,7 @@ private:
     MandibleState currentRightMandibleState;
 
     // conditions for opening mandibles
-    XYPoint actionPoint;
+    XYPoint<double> actionPoint;
     double actionPointOrientation;
     double actionPointProximityTolerance;
     

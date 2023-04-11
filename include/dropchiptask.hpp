@@ -15,7 +15,7 @@ class DropChipTask : public Task
 {
 public:
     DropChipTask();
-    DropChipTask(XYPoint xy, 
+    DropChipTask(XYPoint<double> xy, 
                 double endpointOrientation, 
                 bool endpointOrientationRequirement);
 
@@ -44,7 +44,7 @@ private:
     inline static unsigned greenDeploymentAttempts = 1;
 
     // payload location data
-    XYPoint payloadLocation;
+    XYPoint<double> payloadLocation;
     double endpointOrientation;
     bool endpointOrientationRequirement;
 
