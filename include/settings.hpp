@@ -54,3 +54,6 @@
 // Control wings task settings
 #define CONTROLWINGTASK_PRIORITY 3
 #define DEBUG_CONTROLWINGSTASK true
+
+// Control mandibles task settings
+#define CONTROLMANDIBLESTASK_PRIORITY 3

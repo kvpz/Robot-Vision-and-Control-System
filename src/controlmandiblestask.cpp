@@ -6,7 +6,7 @@ ControlMandiblesTask::ControlMandiblesTask(MandibleState desiredLeftState,
                                            MandibleState currentRightMandibleState,
                                            XYPoint xy, double endpointOrientation,
                                            double actionPointProximityTolerance)
-    : Task(TaskType::CONTROLMANDIBLES, OBJECTSEARCHTASK_PRIORITY)
+    : Task(TaskType::CONTROLMANDIBLES, CONTROLMANDIBLESTASK_PRIORITY)
 {
     desiredLeftMandibleState = desiredLeftState;
     desiredRightMandibleState = desiredRightState;
