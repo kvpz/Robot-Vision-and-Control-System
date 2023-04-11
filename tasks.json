@@ -1,11 +1,29 @@
 {
+    "0": {
+        "type": "attractioncolor",
+        "mqname": "/attraction_color_queue",
+        "priority": 1,
+        "start_time": "now"
+    },
     "1": {
-        "type": "travel",
-        "endpoint": {"x": 120, "y": 40, "yaw": 90 }
+        "type": "navigateto",
+        "endpoint": {"x": 20, "y": 20, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2,
+        "start_time": "now"
     },
     "2": {
-        "type": "travel",
-        "endpoint": {"x": 20, "y": 40, "yaw": 90 }
+        "type": "navigateto",
+        "endpoint": {"x": 25, "y": 25, "yaw": 45 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward"
+    },
+    "3": {
+        "type": "navigateto",
+        "endpoint": {"x": 30, "y": 30, "yaw": 0 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward"
     }
 }
 

@@ -1,25 +1,25 @@
- #ifndef TASKSTATUS_HPP
- #define TASKSTATUS_HPP
+#ifndef TASKSTATUS_HPP
+#define TASKSTATUS_HPP
 #include <string>
 
-enum Status {
+enum class TaskStatus:char {
     NOTSTARTED, COMPLETE, INPROGRESS, SUSPENDED
 };
 
-static std::string statusToString(Status status) 
+static std::string statusToString(TaskStatus status) 
 {
     switch(status) {
-        case NOTSTARTED:
+        case TaskStatus::NOTSTARTED:
         return "NOTSTARTED";
-        case COMPLETE:
+        case TaskStatus::COMPLETE:
         return "COMPLETE";
-        case INPROGRESS:
+        case TaskStatus::INPROGRESS:
         return "INPROGRESS";
-        case SUSPENDED:
+        case TaskStatus::SUSPENDED:
         return "SUSPENDED";
         default:
         return "ERROR";
     }
 }
 
-  #endif
+#endif

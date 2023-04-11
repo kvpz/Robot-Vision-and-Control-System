@@ -1,152 +1,40 @@
-#include "includes.hpp"
 #include <boost/asio.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
 #include <iostream>
 #include <stack>
 #include <vector>
 #include <utility>
+#include <memory>
+#include <mqueue.h>
 #include "robot.hpp"
-#include "task.hpp"
-#include "taskoperations.hpp"
-
-using namespace ROBOTASKS;
-
-#define DEBUG_MAIN false
+#include "taskmanager.hpp"
+#include "example-utils.hpp"
+#include "settings.hpp"
+#include <chrono>
+#include <boost/timer/timer.hpp>
 
 double _180_over_PI = 180.0 / M_PI;
 double _PI_over_180 = M_PI / 180.0;
 
 // xy offset from (0,0) xy base values initiated at startup of T265
-double x_offset = 120.0;
-double y_offset = 30.0;
+double x_robot_camera_offset = 120.0;
+double y_robot_camera_offset = 28.5; // 30.0
+double robot_initial_orientation = 90.0;
 
-std::stack<Task> task_queue;
-
-void travelTaskSuspendedState(Task& task) 
+int main(int argc, char* argv[]) try
 {
-  // if new task assumed to be CORRECTPATH
-  Task newTask(CORRECTPATH);
-  newTask.setEndpoint(task.getDestination().getX(),
-    task.getDestination().getY(), task.getEndpointOrientation());
-  task_queue.push(newTask);
-}
+    // get command line argument (tasks JSON file)
+    std::string taskFile = "tasks.json";
+    if(argc > 1) {
+      taskFile = argv[1];
+    }
+    // send tasks JSON file to task manager
 
-/*
-  When a robot has completed traveling to its endpoint, it then needs to 
-  correct its orientation so that it matches the orientation required
-  by the endpoint pose.
- */
-void travelTaskCompleteState(Task& task)
-{
-  Task newTask(ORIENT);
-  newTask.setEndpoint(task.getDestination().getX(), task.getDestination().getY(), task.getEndpointOrientation());
-  task_queue.push(newTask);
-}
+    std::unique_ptr<Robot> robot = std::make_unique<Robot>(x_robot_camera_offset, y_robot_camera_offset, robot_initial_orientation);
 
-void travelTaskManager(Task& task, Robot& robot, RobotState& nextRobotState)
-{
-  switch(task.getStatus()) {
-    case NOTSTARTED:
-      task.setStatus(INPROGRESS);
-      break;  
-    case INPROGRESS:
-      ROBOTASKS::TaskOperations::travel_task_updater(robot, task, nextRobotState);
-      break;
-    case SUSPENDED:
-      travelTaskSuspendedState(task);
-      break;
-    case COMPLETE:
-      task_queue.pop();
-      travelTaskCompleteState(task);
-      break;
-  }
-}
-
-void correctionTaskManager(Task& task, Robot& robot, RobotState& nextRobotState)
-{
-  switch(task.getStatus()) {
-    case NOTSTARTED:
-      task.setStatus(INPROGRESS);
-      break;  
-    case INPROGRESS:
-      ROBOTASKS::TaskOperations::correctpath_task_updater(robot, task, nextRobotState);
-      break;
-    case SUSPENDED:
-      //correction task cannot be suspended.
-      break;
-    case COMPLETE:
-      nextRobotState = STOP;
-      task_queue.pop();
-      task_queue.top().setStatus(INPROGRESS);
-      break;
-  }
-}
-
-void orientTaskManager(Task& task, Robot& robot, RobotState& nextRobotState)
-{
-    switch(task.getStatus()) {
-    case NOTSTARTED:
-      task.setStatus(INPROGRESS);
-      break;  
-    case INPROGRESS:
-      ROBOTASKS::TaskOperations::orient_task_updater(robot, task, nextRobotState);
-      break;
-    case SUSPENDED:
-      // orient task cannot be suspended.
-      break;
-    case COMPLETE:
-      nextRobotState = STOP;
-      task_queue.pop();
-      task_queue.top().setStatus(INPROGRESS);
-      break;
-  }
-}
-
-/*
-  importTasksFromJson
-
-  Read tasks from a json file. All tasks in the file are assumed to be in order.
-*/
-void importTasksFromJSON()
-{
-  boost::property_tree::ptree pt;
-  boost::property_tree::read_json("tasks.json", pt);
-  std::vector<Task> task_vector;
-
-  for (const auto& taskkey : pt) {
-    Task task(taskTypeToEnum(taskkey.second.get_child("type").get_value<std::string>()));
-    double endpoint_x = taskkey.second.get_child("endpoint").get_child("x").get_value<double>();
-    double endpoint_y = taskkey.second.get_child("endpoint").get_child("y").get_value<double>();
-    double endpoint_orientation = taskkey.second.get_child("endpoint").get_child("yaw").get_value<double>();
-    task.setEndpoint(endpoint_x, endpoint_y, endpoint_orientation);
-    task_vector.push_back(task);
-  }
-
-  // insert tasks 
-  for(auto v = task_vector.rbegin(); v != task_vector.rend(); ++v){
-    task_queue.push(*v);
-    ROBOTASKS::Task::printTaskInfo(task_queue.top());
-  }
-}
-
-void updateRobotState(Robot& robot, RobotState nextRobotState)
-{
-  if(robot.getState() != nextRobotState) {
-    robot.setState(nextRobotState);
-    robot.run();
-  }
-}
-
-int main() try
-{
-    Robot robot;
-    robot.setCurrentXY(x_offset, y_offset); // x,y are front of robot (camera location)
-    
     // load tasks from JSON file
-    importTasksFromJSON();
+    robot->getTaskManager()->importTasksFromJSON(taskFile);
 
-  // Setup T265 connection
+    // Setup T265 connection
     std::string serial_t265_str;
     
     if (!device_with_streams({ RS2_STREAM_POSE }, serial_t265_str))
@@ -175,23 +63,26 @@ int main() try
         if (rs2::pose_frame fp = frame.as<rs2::pose_frame>()) {
             rs2_pose pose_data = fp.get_pose_data();
 
-            double current_angle_quaternion = pose_data.rotation.y;
-          
             double w = pose_data.rotation.w;
             double x = -1.0 * pose_data.rotation.z;
             double y = pose_data.rotation.x;
             double z = -1.0 * pose_data.rotation.y;
             double yaw = atan((2.0 * (w*z + x*y)) /  (w*w + x*x - y*y - z*z)) * _180_over_PI;
-            robot.setOrientation(yaw_to_degrees(yaw, pose_data.rotation.y));
-            
-            double current_x = (pose_data.translation.x) * 100.0 + x_offset;
-            double current_y;
-            if(pose_data.translation.z < 0.0)
-              current_y = std::fabs(pose_data.translation.z) * 100.0 + y_offset;
-            else
-              current_y = y_offset - ((pose_data.translation.z) * 100.0);
+            double yaw_90_degree_offset = 90.0 - yaw;
 
-            int quadrant = quadrant_identifier(yaw, current_angle_quaternion);
+            // translate current x,y provided by camera to center of robot relative to global map
+            double current_x; // = (pose_data.translation.x) * 100.0 + x_robot_camera_offset;
+            double current_y;
+            if(pose_data.translation.z < 0.0) {
+              current_x = (pose_data.translation.x) * 100.0 + x_robot_camera_offset;
+              current_y = std::fabs(pose_data.translation.z) * 100.0 + y_robot_camera_offset;
+            }
+            else {
+              current_x = (pose_data.translation.x) * 100.0 + x_robot_camera_offset;
+              current_y = y_robot_camera_offset - ((pose_data.translation.z) * 100.0);
+            }
+            // calculate the (x,y) position
+            int quadrant = quadrant_identifier(yaw, pose_data.rotation.y);
             if(quadrant == 1) {
               current_x = current_x - 15.0 * std::cos((90.0 - yaw) * _PI_over_180);
               current_y = current_y - 15.0 * std::sin((90.0 - yaw) * _PI_over_180);
@@ -209,7 +100,11 @@ int main() try
               current_y = current_y + 15.0 * std::sin((90.0 + yaw) * _PI_over_180);
             }
 
-            robot.setCurrentXY(current_x, current_y);
+            // Transfer T265 data to robot
+            robot->setOrientation(yaw_to_degrees(yaw, pose_data.rotation.y));
+            robot->setCurrentXY(current_x, current_y);
+            // TODO: robot->getMap()->storeCurrentPositionInTime...
+            
         }
     };
 
@@ -220,37 +115,17 @@ int main() try
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));			  
 
     while(1) {
-      if (task_queue.empty())
+      boost::timer::cpu_timer timer;
+      if(!robot->hasTasks()) {
         break;
-
-      Task& currentTask = task_queue.top();
-      RobotState nextRobotState;
-
-      if(currentTask.getTaskType() == TRAVEL) {
-        travelTaskManager(currentTask, robot, nextRobotState);
-        // change robot behavior if a new state assigned by task scheduler
-	updateRobotState(robot, nextRobotState);
-      }
-      else if(currentTask.getTaskType() == CORRECTPATH) {
-        correctionTaskManager(currentTask, robot, nextRobotState);
-        //ROBOTASKS::TaskOperations::correctpath_task_updater(robot, currentTask, nextRobotState);
-        // change robot behavior if a new state assigned by task scheduler
-	updateRobotState(robot, nextRobotState);
-      }
-      else if(currentTask.getTaskType() == ORIENT) {
-	orientTaskManager(currentTask, robot, nextRobotState);
-	updateRobotState(robot, nextRobotState);
       }
 
+      robot->executeCurrentTask();
       std::this_thread::sleep_for(std::chrono::milliseconds(10));	
-
-      if(DEBUG_MAIN) {
-        std::cout << "=========== Main Loop ============\n";
-        std::cout << "task stack size: " << task_queue.size() << "\n";
-        std::cout << "current task type: " << taskTypeToString(currentTask.getTaskType()) << "\n";
-        std::cout << "==================================" << std::endl;
-        robot.printStatus();
-      }
+      robot->printStatus();
+      robot->getTaskManager()->printHighPriorityTasks();
+      boost::timer::cpu_times elapsed = timer.elapsed();
+      std::cout << "Elapsed time (main loop): " << (elapsed.wall / 1e9) << " seconds\n" << std::endl;
     }
 	
     
@@ -266,40 +141,3 @@ catch (const std::exception& e)
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
 }
-
-// compare general task requirement to robot's current state
-// (1) if robot is not near destination, keep traveling to location
-// (2) check if robot has dropped chips if [RED/GREEN]CHIPDROP task
-// (3) check if robot has recycled objects if RECYCLING task
-
-// check status of travel task and decide on robot state
-	  
-// robot has already been assigned a state
-
-// TRAVEL Subtasks
-// (1) if robot potentially stuck, undo travel
-// (2) if robot not following path (subtask), correct path
-// (2.1) set state STOP
-// (2.2) set state rotate_CW if current angle larger than expected
-// (2.3) set state rotate_CCW if current angle smaller than expected
-// path following is checked every t time or x distance. Path is not being
-// followed if orientation angle is much different than the previous reading.
-// (subtask)
-
-// if CHIPDROP task
-// CHIPDROP Subtasks
-// (1) if robot not in correct orientation, orient robot
-// (2) if robot has rotated and is not near position of attraction, orient robot
-// (3) 
-
-// if RECYCLE task
-// Verify the pincers are open. 
-
-/*
-  Notes:
-  Testing Results #1:
-  sampling: 400 ms
-  angle to destination tolerance: 4 degrees
-
-
-*/  
