@@ -66,15 +66,51 @@ static double yaw_to_degrees(double yaw, double quat_y)
   return 0.0;
 }
 
+static double angleToPoint(double x_robot, double y_robot, double x_destination, double y_destination, double robot_current_angle, bool reverse)
+{
+  double x_diff = x_destination - x_robot;
+  double y_diff = y_destination - y_robot;
+  double beta = 0.0;
+  double theta = 0.0;
 
 
-/*
-  This function calculates the angle between the robots current orientation and the
-  orientation required at the endpoint. It is assumed that the robot is at the endpoint
-  when this function is called hence the name. 
+  }
+  else if(x_diff < 0.0 && y_diff > 0.0) {
+    // second quadrant
+    beta = beta + 180.0;
+  }
+  else if(x_diff < 0.0 && y_diff < 0.0) {
+    // third quadrant
+    beta = beta + 180.0;
+  }
+  else {
+    // fourth quadrant
+    beta = beta + 360.0;
+  }
 
-  The angle is calculated by 
- */
+  if (reverse){
+    if (robot_current_angle < 180.0){
+      theta = beta - (robot_current_angle + 180.0);
+    }
+    else{
+      theta = beta - (robot_current_angle - 180.0);
+    }
+  }
+  else{
+     theta = beta - robot_current_angle;
+  }
+
+  if(theta < 0.0) {
+    if(std::fabs(theta) > 180.0) {
+      theta = 360 + theta;
+    }
+  }
+  else if(theta > 0.0) {
+    if(theta > 180.0) {
+      theta = theta - 360.0;
+    }
+  }
+
 static double angleToEndpointOrientation(double robotOrientation, double endpointDesiredOrientation)
 {
   // this information alone will not tell us if robot should rotate left or right

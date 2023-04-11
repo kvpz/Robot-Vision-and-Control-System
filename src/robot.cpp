@@ -70,6 +70,29 @@ void Robot::run()
         stop();
         break;
     }
+<<<<<<< HEAD
+=======
+  }
+
+double Robot::getRobotAngleToPoint(const Robot& robot, double x, double y, bool reverse) const
+{
+    return angleToPoint(robot.getX(), robot.getY(), x, y, robot.getOrientation(), reverse);
+}
+
+void Robot::move_forward()
+{
+    comport->send_command("F");
+}
+
+void Robot::stop()
+{
+    comport->send_command("S");
+}
+
+void Robot::rotate_CW()
+{
+    comport->send_command("C");
+>>>>>>> a8622d46500c5fc75cf58fbefee2be32ba9f6fa8
 }
 
 void Robot::runManipulators() 
@@ -146,6 +169,7 @@ void Robot::setOrientation(double o)
 */
 void Robot::executeCurrentTask()
 {
+<<<<<<< HEAD
   RobotState nextRobotState = state;
   RobotState nextManipulatorState = manipulatorState;
   std::vector<RobotState> nextRobotStates;
@@ -167,6 +191,36 @@ void Robot::executeCurrentTask()
       }
       
   }
+=======
+    RobotPoseToWaypoint result = ON_PATH;
+    // check if robot position (x,y) approximately near destination
+    bool isYapproxnear = approximately(robotY, destY, 3.0, false);
+    bool isXapproxnear = approximately(robotX, destX, 3.0, false);
+    double angleToDestTolerance = 10.0;
+
+    angleToDest = getRobotAngleToPoint(*this, destX, destY, false);
+
+    if(isYapproxnear && isXapproxnear) {
+        // near the waypoint
+        result = NEAR;
+    }
+    else if (angleToDest < angleToDestTolerance && angleToDest > -1.0*angleToDestTolerance
+            && (!(robotX < (destX - 2.5)) || !(robotX > (destX + 2.5)))) { // robotY > destY && robotX == destX
+        // detect if drifting from path
+        std::cout << "\n(EXPERIMENTAL) condition\n" << std::endl;
+        result = ON_PATH;
+    }
+    else {
+        result = OFF_PATH;
+    }    
+
+    if(ROBOTDEBUG) {
+        std::cout << "\n====== isRobotOnPath ======\n";
+        std::cout << "result: " << printRobotPoseToWaypoint(result) << "\n";
+        std::cout << "(isRobotOnPath) angle to dest: " << angleToDest << "\n";
+        std::cout << "=============================\n" << std::endl;
+    }
+>>>>>>> a8622d46500c5fc75cf58fbefee2be32ba9f6fa8
 
 /*
       // change robot state if it is different from current state
