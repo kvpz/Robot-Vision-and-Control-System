@@ -1,12 +1,9 @@
 #ifndef NAVIGATOR_HPP
 #define NAVIGATOR_HPP
-<<<<<<< HEAD
-=======
 #include <iostream>
 #include <memory>
 #include "enums/travelDirection.hpp"
 //#include "robot.hpp"
->>>>>>> kevin_dev_pickupobject_task
 #include "enums/robotPoseToWaypoint.hpp"
 #include "enums/robotOrientationAtEndpoint.hpp"
 #include "map.hpp"
