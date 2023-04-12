@@ -4,9 +4,9 @@ ControlMandiblesTask::ControlMandiblesTask(MandibleState desiredLeftState,
                                            MandibleState desiredRightState,
                                            MandibleState currentLeftMandibleState,
                                            MandibleState currentRightMandibleState,
-                                           XYPoint xy, double endpointOrientation,
+                                           XYPoint<double> xy, double endpointOrientation,
                                            double actionPointProximityTolerance)
-    : Task(TaskType::CONTROLMANDIBLES, OBJECTSEARCHTASK_PRIORITY)
+    : Task(TaskType::CONTROLMANDIBLES, CONTROLMANDIBLESTASK_PRIORITY)
 {
     desiredLeftMandibleState = desiredLeftState;
     desiredRightMandibleState = desiredRightState;
@@ -19,14 +19,16 @@ ControlMandiblesTask::ControlMandiblesTask(MandibleState desiredLeftState,
 
 void ControlMandiblesTask::notStarted(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
-    printTaskInfo(); //"ControlMandiblesTask::InProgress");        
+    //printTaskInfo(); //"ControlMandiblesTask::InProgress");        
     status = TaskStatus::INPROGRESS;
 }
 
 void ControlMandiblesTask::inProgress(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
     // if robot is at the location this task requires it to be
@@ -79,11 +81,12 @@ void ControlMandiblesTask::inProgress(std::shared_ptr<Map> map,
         }
     }
 
-    printTaskInfo(); //"ControlMandiblesTask::InProgress");        
+    //printTaskInfo(); //"ControlMandiblesTask::InProgress");        
 }
 
 void ControlMandiblesTask::suspended(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
     
@@ -91,6 +94,7 @@ void ControlMandiblesTask::suspended(std::shared_ptr<Map> map,
 
 void ControlMandiblesTask::complete(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
 
@@ -98,9 +102,8 @@ void ControlMandiblesTask::complete(std::shared_ptr<Map> map,
 
 void ControlMandiblesTask::printTaskInfo() //std::string taskStateName)
 {
-    if(DEBUG_NAVIGATETOTASK) {
-        //Task::printTaskInfo();
-        //std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
+    if(DEBUG_CONTROLMANDIBLESTASK) {
+        Task::printTaskInfo(*this);
         std::cout << "status: " << statusToString(this->getStatus()) << "\n";
         std::cout << "action point: " << actionPoint << "\n";
         std::cout << "action point desired orientation: " << actionPointOrientation << "\n";

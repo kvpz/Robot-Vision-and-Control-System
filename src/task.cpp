@@ -12,14 +12,20 @@ Task::Task(TaskType ttype, unsigned int priority)
 }
 
 void Task::notStarted(std::shared_ptr<Map> map, 
-                      std::shared_ptr<Navigator> navigator, RobotState& nextRobotState){}
+                      std::shared_ptr<Navigator> navigator, 
+                      std::shared_ptr<VisionData> visionData,
+                      RobotState& nextRobotState){}
 void Task::inProgress(std::shared_ptr<Map> map, 
-                      std::shared_ptr<Navigator> navigator, RobotState& nextRobotState){}
+                      std::shared_ptr<Navigator> navigator, 
+                      std::shared_ptr<VisionData> visionData,
+                      RobotState& nextRobotState){}
 void Task::suspended(std::shared_ptr<Map> map, 
                      std::shared_ptr<Navigator> navigator, 
+                     std::shared_ptr<VisionData> visionData,
                      RobotState& nextRobotState, TaskType& nextTaskType){}
 void Task::complete(std::shared_ptr<Map> map, 
                     std::shared_ptr<Navigator> navigator, 
+                    std::shared_ptr<VisionData> visionData,
                     RobotState& nextRobotState, TaskType& nextTaskType){}
 
 // setters
@@ -61,6 +67,18 @@ void Task::printTaskInfo(Task& task)
         case CONTROLMANDIBLES:
             std::cout << "\n====== Control Mandibles Task ======\n";
             break;
+        case FOLLOWOBJECT:
+            std::cout << "\n====== Follow Object Task =======\n";
+            break;
+        case PICKUPOBJECT:
+            std::cout << "\n====== Pickup Object Task =======\n";
+            break;
+        case CONTROLWINGS:
+            std::cout << "\n====== Control Wings Task =======\n";
+            break;
+        case OBJECTMAPPING:
+            std::cout << "\n====== Object Mapping Task =======\n";
+            break;
     }
 
 
@@ -73,5 +91,6 @@ void Task::printTaskInfo(Task& task)
 
 void Task::printTaskInfo()
 {
+    std::cout << "no task info available" << std::endl;
     //printTaskInfo(*this);
 }

@@ -7,6 +7,7 @@ Robot::Robot(double xpos, double ypos, double orientation)
     comport = std::make_unique<Comms>("/dev/ttyACM0");
     taskManager = std::make_shared<TaskManager>();
     navigator = std::make_unique<Navigator>();
+    vision = std::make_shared<VisionData>();
     //navigator->setIsTravelDirectionForward(false);
     map = std::make_unique<Map>();
     map->setRobotCurrentCoordinate(xpos, ypos);
@@ -151,7 +152,7 @@ void Robot::executeCurrentTask()
   std::vector<RobotState> nextRobotStates;
 
   //TODO: nextRobotState = taskManager->executeCurrentTask(map, navigator);
-  taskManager->executeCurrentTask(map, navigator, nextRobotStates);
+  taskManager->executeCurrentTask(map, navigator, vision, nextRobotStates);
 
   for(auto v : nextRobotStates) {
       
@@ -165,21 +166,8 @@ void Robot::executeCurrentTask()
           manipulatorState = v;
           runManipulators();
       }
-      
   }
 
-/*
-      // change robot state if it is different from current state
-      if(state != nextRobotState) {
-          state = nextRobotState;
-          run(); // alter robot state if it needs to be in a different
-      }
-
-      if(manipulatorState != nextManipulatorState) {
-          manipulatorState = nextManipulatorState;
-          runManipulators();
-      }
-*/
   // speed control
   if(taskManager->getCurrentTaskType() == POSECORRECTION ||
      taskManager->getCurrentTaskType() == PATHCORRECTION) {
@@ -196,6 +184,7 @@ void Robot::printStatus()
 {
     std::cout << "\n====== Robot Status ======\n";
     std::cout << "State: " << RobotStateToString(state) << "\n";
+    std::cout << "manipulator state: " << RobotManipulatorStateToString(manipulatorState) << "\n";
     std::cout << "current location: ("
               << map->RobotX() << ", "
               << map->RobotY() << ")\n";

@@ -10,20 +10,21 @@
 #define XYPOINT_H
 #include <iostream>
 
+template<typename T = double>
 struct XYPoint
 {
-  double x = 0.0;
-  double y = 0.0;
+  T x = 0.0;
+  T y = 0.0;
 
-  inline double getX() const { return x; }
-  inline double getY() const { return y; }
+  inline T getX() const { return x; }
+  inline T getY() const { return y; }
 
-  inline void setX(double _x) { x = _x; }
-  inline void setY(double _y) { y = _y; }
+  inline void setX(T _x) { x = _x; }
+  inline void setY(T _y) { y = _y; }
 
   // constructors
   XYPoint() = default;
-  XYPoint(double x, double y) : x(x), y(y) {}
+  XYPoint(T x, T y) : x(x), y(y) {}
 
   // copy constructor
   XYPoint(const XYPoint& other) : x(other.x), y(other.y) {}
@@ -38,7 +39,8 @@ struct XYPoint
   }
 };
 
-inline std::ostream& operator<<(std::ostream& os, const XYPoint& obj) {
+template<typename T>
+inline std::ostream& operator<<(std::ostream& os, const XYPoint<T>& obj) {
   os << "(" << obj.x << ", " << obj.y << ")";
   return os;
 }

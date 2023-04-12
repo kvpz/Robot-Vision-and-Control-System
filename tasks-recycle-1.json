@@ -6,7 +6,7 @@
         "start_time": "now"
     },
     "1": {
-        "type": "objectsearch",
+        "type": "objectmapping",
         "start_time": "now"
     },
     "2": {

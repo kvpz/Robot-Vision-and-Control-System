@@ -1,26 +1,26 @@
-#include "objectsearchtask.hpp"
+#include "objectmappingtask.hpp"
 #include <cmath>
-ObjectSearchTask::ObjectSearchTask()//ObjectType objectType)
-    : object_mq_name(OBJECTSEARCH_MESSAGE_QUEUE), 
-    object_mq(mq_open(OBJECTSEARCH_MESSAGE_QUEUE, O_CREAT | O_RDWR | O_NONBLOCK, 0666, nullptr)),
-    Task(TaskType::OBJECTSEARCH, OBJECTSEARCHTASK_PRIORITY)
+ObjectMappingTask::ObjectMappingTask()//ObjectType objectType)
+    : object_mq_name(OBJECTMAPPING_MESSAGE_QUEUE), 
+    object_mq(mq_open(OBJECTMAPPING_MESSAGE_QUEUE, O_CREAT | O_RDWR | O_NONBLOCK, 0666, nullptr)),
+    Task(TaskType::OBJECTMAPPING, OBJECTMAPPINGTASK_PRIORITY)
 {
     
 }
 
-void ObjectSearchTask::notStarted(std::shared_ptr<Map> map, 
+void ObjectMappingTask::notStarted(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
     status = TaskStatus::INPROGRESS;
 }
 
-void ObjectSearchTask::inProgress(std::shared_ptr<Map> map, 
+void ObjectMappingTask::inProgress(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
-    //std::cout << "(ObjectSearchTask::InProgress) starting" << std::endl;
-
     // get data from message queue
     Json::Value mqdata = getObjectMQData();
     // collect data for objects that are centered with the robot 
@@ -38,16 +38,15 @@ void ObjectSearchTask::inProgress(std::shared_ptr<Map> map,
 
             // add the object to the map only if the robot is facing the object
             // check if the center of the object is near the center of the frame
-            std::cout << "bounding box center xy: " << xypoint1.getX() << " + " << "abs("
-                    << xypoint2.getX() << " - " << xypoint1.getX() << ") / 2" << std::endl;
             int boundingBoxCenterXY = xypoint1.getX() + ((xypoint2.getX() - xypoint1.getX()) / 2);
-            std::cout << "bounding box center: " << boundingBoxCenterXY << std::endl;
+
+            // map object if it is nearly centered with the robot
             if(boundingBoxCenterXY < 440 && boundingBoxCenterXY > 400)
                 setObjectGlobalPosition(map, objectType, object["distance"].asDouble());
         }
     }
 
-    //std::cout << "(ObjectSearchTask::InProgress) ending" << std::endl;
+    //std::cout << "(ObjectMappingTask::InProgress) ending" << std::endl;
     /*
     if (!founded) {
         founded = find_objects(objects);
@@ -59,28 +58,30 @@ void ObjectSearchTask::inProgress(std::shared_ptr<Map> map,
 
 }
 
-void ObjectSearchTask::suspended(std::shared_ptr<Map> map, 
+void ObjectMappingTask::suspended(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
     
 }
 
-void ObjectSearchTask::complete(std::shared_ptr<Map> map, 
+void ObjectMappingTask::complete(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
     
 }
 
-Json::Value ObjectSearchTask::getObjectMQData()
+Json::Value ObjectMappingTask::getObjectMQData()
 {
-    std::cout << "(ObjectSearchTask::getObjectMQData) starting" << std::endl;
+    std::cout << "(ObjectMappingTask::getObjectMQData) starting" << std::endl;
     char message[40000];
     unsigned int priority;
     ssize_t bytes_received = mq_receive(object_mq, message, 40000, &priority);
 
-    std::cout << "(ObjectSearchTask::getObjectMQData) after mq_receive" << std::endl;
+    std::cout << "(ObjectMappingTask::getObjectMQData) after mq_receive" << std::endl;
 
 
     if (bytes_received == -1) {
@@ -88,7 +89,7 @@ Json::Value ObjectSearchTask::getObjectMQData()
         return Json::Value::null;
     }
     else if (bytes_received > 0) {
-        std::cout << "(ObjectSearchTask::getObjectMQData) data received" << std::endl;
+        std::cout << "(ObjectMappingTask::getObjectMQData) data received" << std::endl;
         message[bytes_received] = '\0';
         std::string decoded_message = std::string(message);
         // Convert the string to a list of dictionaries
@@ -111,7 +112,7 @@ Json::Value ObjectSearchTask::getObjectMQData()
 }
 
 /*
-bool ObjectSearchTask::find_objects(const std::vector<Object>& objects) {
+bool ObjectMappingTask::find_objects(const std::vector<Object>& objects) {
     std::vector<Object> ducks;
     std::vector<ObjectType> ducks;
 
@@ -157,7 +158,7 @@ bool ObjectSearchTask::find_objects(const std::vector<Object>& objects) {
 }
 */
 
-void ObjectSearchTask::setObjectGlobalPosition(std::shared_ptr<Map> map, 
+void ObjectMappingTask::setObjectGlobalPosition(std::shared_ptr<Map> map, 
                                                   ObjectType objectType,
                                                   double distanceToObject)
 {
@@ -173,11 +174,10 @@ void ObjectSearchTask::setObjectGlobalPosition(std::shared_ptr<Map> map,
     std::cout << "======== end map content =========" << std::endl;
 }
 
-void ObjectSearchTask::printTaskInfo()
+void ObjectMappingTask::printTaskInfo()
 {
-    if(DEBUG_NAVIGATETOTASK) {
-        //Task::printTaskInfo();
-        //std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
+    if(DEBUG_OBJECTMAPPINGTASK) {
+        Task::printTaskInfo(*this);
         std::cout << "status: " << statusToString(this->getStatus()) << "\n";
         std::cout << "\n==========================================\n" << std::endl;
     }

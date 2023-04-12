@@ -26,19 +26,23 @@ public:
 
     virtual void notStarted(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
+                            std::shared_ptr<VisionData> visionData,
                             RobotState& nextRobotState) override;
 
     virtual void inProgress(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
+                            std::shared_ptr<VisionData> visionData,
                             RobotState& nextRobotState) override;
 
     virtual void suspended(std::shared_ptr<Map> map, 
                            std::shared_ptr<Navigator> navigator, 
+                            std::shared_ptr<VisionData> visionData,
                            RobotState& nextRobotState, 
                            TaskType& nextTaskType) override;
 
     virtual void complete(std::shared_ptr<Map> map, 
                           std::shared_ptr<Navigator> navigator, 
+                          std::shared_ptr<VisionData> visionData,
                           RobotState& nextRobotState, 
                           TaskType& nextTaskType) override;
 
@@ -46,11 +50,11 @@ public:
 
 private:
     // message queue and name
-    mqd_t attraction_color_mq;
-    const char* attraction_color_mq_name;
+    //mqd_t attraction_color_mq;
+    //const char* attraction_color_mq_name;
 
     // functions using message queue
-    AttractionColors getAttractionColorMQData();
+    AttractionColors getAttractionColorMQData(std::shared_ptr<VisionData> visionData);
 
     // message queue data
     std::string mqMessage;

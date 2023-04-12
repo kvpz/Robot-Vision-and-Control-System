@@ -19,7 +19,7 @@ NavigateToTask::NavigateToTask(double endpointOrientation,
     }
 }
 
-NavigateToTask::NavigateToTask(XYPoint xy, 
+NavigateToTask::NavigateToTask(XYPoint<double> xy, 
                                double endpointOrientation, 
                                bool endpointOrientationRequired, TravelDirection travelDir)
     : isRobotAtEndpoint(false), Task(NAVIGATETO, NAVIGATETOTTASK_PRIORITY), 
@@ -38,7 +38,9 @@ NavigateToTask::NavigateToTask(XYPoint xy,
     contains information about the endpoint.
 */
 void NavigateToTask::notStarted(std::shared_ptr<Map> map, 
-                                std::shared_ptr<Navigator> navigator, RobotState& nextRobotState)
+                                std::shared_ptr<Navigator> navigator, 
+                                std::shared_ptr<VisionData> visionData,
+                                RobotState& nextRobotState)
 {
     // set next endpoint to navigate to in map
     map->setDestinationXY(endpoint.getX(), endpoint.getY());
@@ -79,6 +81,7 @@ void NavigateToTask::notStarted(std::shared_ptr<Map> map,
 */
 void NavigateToTask::inProgress(std::shared_ptr<Map> map, 
                                 std::shared_ptr<Navigator> navigator, 
+                                std::shared_ptr<VisionData> visionData,
                                 RobotState& nextRobotState)
 {    
     suspendedCounter = 0;
@@ -162,6 +165,7 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
 */
 void NavigateToTask::suspended(std::shared_ptr<Map> map, 
                                std::shared_ptr<Navigator> navigator, 
+                               std::shared_ptr<VisionData> visionData,
                                RobotState& nextRobotState, TaskType& nextTaskType) 
 {
     // the suspended state procedure should only run once
@@ -180,6 +184,7 @@ void NavigateToTask::suspended(std::shared_ptr<Map> map,
 */
 void NavigateToTask::complete(std::shared_ptr<Map> map, 
                               std::shared_ptr<Navigator> navigator, 
+                              std::shared_ptr<VisionData> visionData,
                               RobotState& nextRobotState, TaskType& nextTaskType) 
 {
     // What used to be the pose correction task is now embedded within this
@@ -202,8 +207,7 @@ void NavigateToTask::complete(std::shared_ptr<Map> map,
 void NavigateToTask::printTaskInfo()
 {
     if(DEBUG_NAVIGATETOTASK) {
-        //Task::printTaskInfo();
-        //std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
+        Task::printTaskInfo(*this);
         std::cout << "status: " << statusToString(this->getStatus()) << "\n";
         std::cout << "endpoint: " << endpoint << "\n";
         std::cout << "endpoint desired orientation: " << endpointDesiredOrientation << "\n";

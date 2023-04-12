@@ -13,6 +13,7 @@
 #include "settings.hpp"
 #include "enums/mandibles.hpp"
 #include "enums/wings.hpp"
+#include "visiondata.hpp"
 
 enum class Speed {
     a='a', b,c,d,e,f,g
@@ -83,16 +84,15 @@ private:
     RobotState manipulatorState;
     Speed speed;
 
-
-    // 
+    // essentials
     std::shared_ptr<TaskManager> taskManager;
     std::shared_ptr<Navigator> navigator;
     std::shared_ptr<Map> map;
+    std::shared_ptr<VisionData> vision;
 
-    // 
+    // manipulator states
     MandibleState leftMandibleState;
     MandibleState rightMandibleState;
-
     WingState leftWingState;
     WingState rightWingState;
 };
