@@ -49,17 +49,7 @@ public:
     virtual void printTaskInfo() override;
 
 private:
-    // message queue and name
-    //mqd_t attraction_color_mq;
-    //const char* attraction_color_mq_name;
 
-    // functions using message queue
-    AttractionColors getAttractionColorMQData(std::shared_ptr<VisionData> visionData);
-
-    // message queue data
-    std::string mqMessage;
-
-    // message queue attraction colors
 
 };
 

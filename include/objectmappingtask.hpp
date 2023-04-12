@@ -41,8 +41,6 @@ public:
 
     //bool find_objects(const std::vector<Object>& objects);
 
-    Json::Value getObjectMQData();
-
     void setObjectGlobalPosition(std::shared_ptr<Map> map, 
                                     ObjectType objectType,
                                     double distanceToObject);
@@ -52,10 +50,6 @@ public:
 private:
     // target object type
     ObjectType objectType;
-
-    // message queue and name
-    mqd_t object_mq;
-    const char* object_mq_name;
 
 };
 

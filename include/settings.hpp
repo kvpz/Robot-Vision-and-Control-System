@@ -6,10 +6,6 @@
 #define ON_PATH_TOLERANCE 4.0
 #define DEBUG_PATHCORRECTIONTASK true
 
-// Attraction color task settings
-#define ATTRACTIONCOLORTASK_PRIORITY 2
-#define DEBUG_ATTRACTIONCOLORTASK true
-
 // Drop chip task settings
 #define DEBUG_DROPCHIPTOTASK true
 
@@ -50,6 +46,11 @@
 #define OBJECTMAPPINGTASK_PRIORITY 3
 #define OBJECTMAPPING_MESSAGE_QUEUE "/object_detection_queue"
 #define DEBUG_OBJECTMAPPINGTASK true
+
+// Attraction color task settings
+#define ATTRACTIONCOLORTASK_PRIORITY 2
+#define ATTRACTIONCOLOR_MESSAGE_QUEUE "/attraction_color_queue"
+#define DEBUG_ATTRACTIONCOLORTASK true
 
 // Follow object task settings
 #define FOLLOWOBJECTTASK_PRIORITY 3

@@ -26,8 +26,9 @@ void AttractionColorTask::inProgress(std::shared_ptr<Map> map,
                         RobotState& nextRobotState) 
 {
     // get data from the message queue
-    AttractionColors detectedColor = getAttractionColorMQData(visionData);
-
+    //AttractionColors detectedColor = getAttractionColorMQData(visionData);
+    AttractionColors detectedColor = visionData->getAttractionColorDetected();
+    
     // if the last message reports a ratio of 
     // red and green (the color of the attractions) pixels that
     // represents a difference greater than 10% (hardcoded), then
@@ -109,41 +110,6 @@ void AttractionColorTask::complete(std::shared_ptr<Map> map,
 
     //mq_close(attraction_color_mq);
     //mq_unlink(attraction_color_mq_name);
-}
-
-
-    
-AttractionColors AttractionColorTask::getAttractionColorMQData(std::shared_ptr<VisionData> visionData)
-{
-  AttractionColors result = AttractionColors::NONE;
- /*
-  const int mq_max_size = 10000;
-  const int mq_msg_size = 102400;
-
-  char buffer[mq_msg_size];
-  memset(buffer, 0, mq_msg_size);
-  if (mq_receive(attraction_color_mq, buffer, mq_max_size, nullptr) == -1) {
-    //std::cerr << "Error receiving message from queue: " << strerror(errno) << std::endl;
-    std::cout << "Error receiving message from queue: " << strerror(errno) << std::endl;
-    //mq_close(attraction_color_mq);
-    //return 1;
-  }
-  else {
-    //std::string temp = buffer;
-    //if(temp == "R") {
-    if(buffer[0] == 'R') {
-      std::cout << "mq data attraction color red" << std::endl;
-      result = AttractionColors::RED;
-    }
-    //else if(temp == "G") {
-    else if(buffer[0] == 'G') {
-      std::cout << "mq data attraction color green" << std::endl;
-      result = AttractionColors::GREEN;
-    }
-  }
-  */
-
-  return result;
 }
 
 

@@ -1,9 +1,7 @@
 #include "objectmappingtask.hpp"
 #include <cmath>
-ObjectMappingTask::ObjectMappingTask()//ObjectType objectType)
-    : object_mq_name(OBJECTMAPPING_MESSAGE_QUEUE), 
-    object_mq(mq_open(OBJECTMAPPING_MESSAGE_QUEUE, O_CREAT | O_RDWR | O_NONBLOCK, 0666, nullptr)),
-    Task(TaskType::OBJECTMAPPING, OBJECTMAPPINGTASK_PRIORITY)
+ObjectMappingTask::ObjectMappingTask()
+    : Task(TaskType::OBJECTMAPPING, OBJECTMAPPINGTASK_PRIORITY)
 {
     
 }
@@ -21,41 +19,15 @@ void ObjectMappingTask::inProgress(std::shared_ptr<Map> map,
                         std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
-    // get data from message queue
-    Json::Value mqdata = getObjectMQData();
-    // collect data for objects that are centered with the robot 
-    if(mqdata != Json::Value::null) {
-        for (Json::Value& object : mqdata) {
-            XYPoint xypoint1;
-            XYPoint xypoint2;
-            ObjectType objectType(object["object"].asString());
+    std::multiset<BoundingBox> boundingBoxes = visionData->getObjectsDetected();
 
-            //objectType = *(new ObjectType(object["object"].asString()));
-            xypoint1.setX(object["x1"].asInt());
-            xypoint1.setY(object["y1"].asInt());
-            xypoint2.setX(object["x2"].asInt());
-            xypoint2.setY(object["y2"].asInt());
+    for(BoundingBox bbox : boundingBoxes) {
+        XYPoint<int> boundingBoxCenterXY = bbox.getCenterXY();
 
-            // add the object to the map only if the robot is facing the object
-            // check if the center of the object is near the center of the frame
-            int boundingBoxCenterXY = xypoint1.getX() + ((xypoint2.getX() - xypoint1.getX()) / 2);
-
-            // map object if it is nearly centered with the robot
-            if(boundingBoxCenterXY < 440 && boundingBoxCenterXY > 400)
-                setObjectGlobalPosition(map, objectType, object["distance"].asDouble());
-        }
+        // map object if it is nearly centered with the robot
+        if(boundingBoxCenterXY.getX() < 440 && boundingBoxCenterXY.getX() > 400)
+            setObjectGlobalPosition(map, bbox.getObjectType(), bbox.getDistanceFromCamera());
     }
-
-    //std::cout << "(ObjectMappingTask::InProgress) ending" << std::endl;
-    /*
-    if (!founded) {
-        founded = find_objects(objects);
-    } 
-    */
-    // calculate the global position of object(s) detected
-    // iterate through all calculated positions 
-    // add object(s) to map if there isn't a xy key with approximately the same value
-
 }
 
 void ObjectMappingTask::suspended(std::shared_ptr<Map> map, 
@@ -74,42 +46,6 @@ void ObjectMappingTask::complete(std::shared_ptr<Map> map,
     
 }
 
-Json::Value ObjectMappingTask::getObjectMQData()
-{
-    std::cout << "(ObjectMappingTask::getObjectMQData) starting" << std::endl;
-    char message[40000];
-    unsigned int priority;
-    ssize_t bytes_received = mq_receive(object_mq, message, 40000, &priority);
-
-    std::cout << "(ObjectMappingTask::getObjectMQData) after mq_receive" << std::endl;
-
-
-    if (bytes_received == -1) {
-        std::cerr << "mq_receive() failed: " << std::strerror(errno) << std::endl;
-        return Json::Value::null;
-    }
-    else if (bytes_received > 0) {
-        std::cout << "(ObjectMappingTask::getObjectMQData) data received" << std::endl;
-        message[bytes_received] = '\0';
-        std::string decoded_message = std::string(message);
-        // Convert the string to a list of dictionaries
-        Json::Value root;
-        Json::CharReaderBuilder builder;
-        const std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
-        std::string errors;
-        bool success = reader->parse(decoded_message.c_str(), decoded_message.c_str() + decoded_message.size(), &root, &errors);
-        if (!success) {
-            std::cerr << "Failed to parse JSON message: " << errors << std::endl;
-            return Json::Value::null;
-        }
-        else {
-            return root;
-        }
-    }
-    else { 
-        return Json::Value::null;
-    }
-}
 
 /*
 bool ObjectMappingTask::find_objects(const std::vector<Object>& objects) {
