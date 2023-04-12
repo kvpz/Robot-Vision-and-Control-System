@@ -47,6 +47,7 @@ public:
 
     void executeCurrentTask(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
+                            std::shared_ptr<VisionData> visionData,
                             std::vector<RobotState>& nextRobotStates);
 
     void addTask(std::unique_ptr<Task>);

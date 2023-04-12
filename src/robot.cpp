@@ -7,6 +7,7 @@ Robot::Robot(double xpos, double ypos, double orientation)
     comport = std::make_unique<Comms>("/dev/ttyACM0");
     taskManager = std::make_shared<TaskManager>();
     navigator = std::make_unique<Navigator>();
+    vision = std::make_shared<VisionData>();
     //navigator->setIsTravelDirectionForward(false);
     map = std::make_unique<Map>();
     map->setRobotCurrentCoordinate(xpos, ypos);
@@ -151,7 +152,7 @@ void Robot::executeCurrentTask()
   std::vector<RobotState> nextRobotStates;
 
   //TODO: nextRobotState = taskManager->executeCurrentTask(map, navigator);
-  taskManager->executeCurrentTask(map, navigator, nextRobotStates);
+  taskManager->executeCurrentTask(map, navigator, vision, nextRobotStates);
 
   for(auto v : nextRobotStates) {
       

@@ -8,7 +8,9 @@ PoseCorrectionTask::PoseCorrectionTask()
 }
 
 void PoseCorrectionTask::notStarted(std::shared_ptr<Map> map, 
-                                    std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
+                                    std::shared_ptr<Navigator> navigator, 
+                                    std::shared_ptr<VisionData> visionData,
+                                    RobotState& nextRobotState) 
 {
     status = TaskStatus::INPROGRESS;
     // slow down robot motor PWM speed
@@ -17,7 +19,9 @@ void PoseCorrectionTask::notStarted(std::shared_ptr<Map> map,
 }
 
 void PoseCorrectionTask::inProgress(std::shared_ptr<Map> map, 
-                                    std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
+                                    std::shared_ptr<Navigator> navigator, 
+                                    std::shared_ptr<VisionData> visionData,
+                                    RobotState& nextRobotState) 
 {        
     //navigator->isRobotOriented(map);
     // assign robot new state depending on its orientation relative to waypoint
@@ -42,6 +46,7 @@ void PoseCorrectionTask::inProgress(std::shared_ptr<Map> map,
     
 void PoseCorrectionTask::suspended(std::shared_ptr<Map> map, 
                                    std::shared_ptr<Navigator> navigator, 
+                                   std::shared_ptr<VisionData> visionData,
                                    RobotState& nextRobotState, TaskType& nextTaskType) 
 {
     // orient task cannot be suspended.
@@ -50,6 +55,7 @@ void PoseCorrectionTask::suspended(std::shared_ptr<Map> map,
 
 void PoseCorrectionTask::complete(std::shared_ptr<Map> map, 
                                   std::shared_ptr<Navigator> navigator, 
+                                  std::shared_ptr<VisionData> visionData,
                                   RobotState& nextRobotState, TaskType& nextTaskType) 
 {
     nextTaskType = NA;

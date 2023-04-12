@@ -11,10 +11,12 @@
 #include "enums/attractionColors.hpp"
 #include "utility.hpp"
 #include <mqueue.h>
-#include <json/json.h>
+#include <jsoncpp/json/json.h>
 #include <chrono>
 #include <ctime>
 #include "boundingbox.hpp"
+#include "settings.hpp"
+#include <memory>
 
 /*
     This class is used to read vision data from vision components
@@ -29,7 +31,9 @@ class VisionData
 public:
     VisionData();
 
-    std::multiset<BoundingBox, BoundingBoxCompare> getObjectsDetected();
+    std::multiset<BoundingBox> getObjectsDetected();
+
+    AttractionColors getAttractionColorMQData();
 
 private:
     
@@ -42,11 +46,16 @@ private:
     // 
 
     // vision message queues
+    // object detection message queue
     mqd_t object_detect_mq;
     const char* object_detect_mq_name;
 
+    // attraction color detection message queue
+    mqd_t attraction_color_mq;
+    const char* attraction_color_mq_name;
+
     // last time data was read from the message queue
-    std::chrono::system_clock::time_point last_read_from_mq;
+    std::chrono::system_clock::time_point last_read_from_object_mq;
 };
 
 #endif

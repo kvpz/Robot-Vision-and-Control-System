@@ -16,6 +16,7 @@ ControlWingsTask::ControlWingsTask(WingState desiredLeftState,
 
 void ControlWingsTask::notStarted(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
     printTaskInfo();       
@@ -24,6 +25,7 @@ void ControlWingsTask::notStarted(std::shared_ptr<Map> map,
 
 void ControlWingsTask::inProgress(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
     // if robot is at the location this task requires it to be
@@ -80,6 +82,7 @@ void ControlWingsTask::inProgress(std::shared_ptr<Map> map,
 
 void ControlWingsTask::suspended(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
     
@@ -87,6 +90,7 @@ void ControlWingsTask::suspended(std::shared_ptr<Map> map,
 
 void ControlWingsTask::complete(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
 

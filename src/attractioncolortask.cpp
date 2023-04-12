@@ -1,17 +1,17 @@
 #include "attractioncolortask.hpp"
 
 AttractionColorTask::AttractionColorTask(const char* messageQueueName)
-    : attraction_color_mq_name(messageQueueName), 
-    attraction_color_mq(mq_open(messageQueueName, O_CREAT | O_RDWR | O_NONBLOCK, 0666, nullptr)),
+    : //attraction_color_mq_name(messageQueueName), 
+    //attraction_color_mq(mq_open(messageQueueName, O_CREAT | O_RDWR | O_NONBLOCK, 0666, nullptr)),
     Task(TaskType::ATTRACTIONCOLOR, ATTRACTIONCOLORTASK_PRIORITY)
 {
     // this function initializes the message queue for reading
-    std::cout << "(AttractionColor constructor) mq name: " << attraction_color_mq_name << std::endl;
 
 }
 
 void AttractionColorTask::notStarted(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData, 
                         RobotState& nextRobotState)
 {
     // start receiving data from the message queue that contains
@@ -22,10 +22,11 @@ void AttractionColorTask::notStarted(std::shared_ptr<Map> map,
 
 void AttractionColorTask::inProgress(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState) 
 {
     // get data from the message queue
-    AttractionColors detectedColor = getAttractionColorMQData();
+    AttractionColors detectedColor = getAttractionColorMQData(visionData);
 
     // if the last message reports a ratio of 
     // red and green (the color of the attractions) pixels that
@@ -84,6 +85,7 @@ void AttractionColorTask::inProgress(std::shared_ptr<Map> map,
 
 void AttractionColorTask::suspended(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, 
                         TaskType& nextTaskType) 
 {
@@ -99,20 +101,22 @@ void AttractionColorTask::suspended(std::shared_ptr<Map> map,
 
 void AttractionColorTask::complete(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, 
                         TaskType& nextTaskType) 
 {
     // close the connection to the message queue
 
-    mq_close(attraction_color_mq);
-    mq_unlink(attraction_color_mq_name);
+    //mq_close(attraction_color_mq);
+    //mq_unlink(attraction_color_mq_name);
 }
 
 
     
-AttractionColors AttractionColorTask::getAttractionColorMQData()
+AttractionColors AttractionColorTask::getAttractionColorMQData(std::shared_ptr<VisionData> visionData)
 {
   AttractionColors result = AttractionColors::NONE;
+ /*
   const int mq_max_size = 10000;
   const int mq_msg_size = 102400;
 
@@ -137,6 +141,7 @@ AttractionColors AttractionColorTask::getAttractionColorMQData()
       result = AttractionColors::GREEN;
     }
   }
+  */
 
   return result;
 }

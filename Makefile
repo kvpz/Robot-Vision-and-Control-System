@@ -14,9 +14,9 @@ PROJHEADERS := /home/ieeefiu/Documents/perrito/include
 
 ALL: main.x
 
-main.x: $(SRC)/main.cpp robot.o map.o task.o navigator.o attractioncolortask.o dropchiptask.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o pickupobjecttask.o objectmappingtask.o followobjecttask.o controlmandiblestask.o controlwingstask.o
+main.x: $(SRC)/main.cpp robot.o map.o task.o navigator.o attractioncolortask.o dropchiptask.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o pickupobjecttask.o objectmappingtask.o followobjecttask.o controlmandiblestask.o visiondata.o controlwingstask.o
 	@echo "building target main.x"
-	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lboost_timer -lboost_system -lrealsense2 -o main.x robot.o map.o task.o navigator.o dropchiptask.o navigatetotask.o pathcorrectiontask.o attractioncolortask.o posecorrectiontask.o pickupobjecttask.o objectmappingtask.o followobjecttask.o controlmandiblestask.o controlwingstask.o taskmanager.o -lrt -ljsoncpp
+	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lboost_timer -lboost_system -lrealsense2 -o main.x robot.o map.o task.o navigator.o visiondata.o dropchiptask.o navigatetotask.o pathcorrectiontask.o attractioncolortask.o posecorrectiontask.o pickupobjecttask.o objectmappingtask.o followobjecttask.o controlmandiblestask.o controlwingstask.o taskmanager.o -lrt -ljsoncpp
 
 map.o: $(SRC)/map.cpp $(PROJHEADERS)
 	@echo "building target map.o"

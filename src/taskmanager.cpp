@@ -18,6 +18,7 @@
 */
 void TaskManager::executeCurrentTask(std::shared_ptr<Map> map, 
                                      std::shared_ptr<Navigator> navigator, 
+                                     std::shared_ptr<VisionData> visionData,
                                      std::vector<RobotState>& nextRobotStates) 
 {
     TaskType nextTaskType = NA;
@@ -34,28 +35,28 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
         
         switch((*task)->getStatus()) {
             case TaskStatus::NOTSTARTED:
-                (*task)->notStarted(map, navigator, nextRobotState);
+                (*task)->notStarted(map, navigator, visionData, nextRobotState);
                 handleNotStartedTask(map, navigator, nextRobotState, nextTaskType);
                 ++task;
                 nextRobotStates.push_back(nextRobotState);
                 break;   
                 
             case TaskStatus::INPROGRESS:
-                (*task)->inProgress(map, navigator, nextRobotState);
+                (*task)->inProgress(map, navigator,  visionData, nextRobotState);
                 handleInProgressTask(map, navigator, nextRobotState, nextTaskType);
                 ++task;
                 nextRobotStates.push_back(nextRobotState);
                 break;
 
             case TaskStatus::SUSPENDED:
-                (*task)->suspended(map, navigator, nextRobotState, nextTaskType);
+                (*task)->suspended(map, navigator, visionData, nextRobotState, nextTaskType);
                 handleSuspendedTask(map, navigator, nextRobotState, nextTaskType);
                 ++task;
                 nextRobotStates.push_back(nextRobotState);
                 break;
 
             case TaskStatus::COMPLETE:
-                (*task)->complete(map, navigator, nextRobotState, nextTaskType);
+                (*task)->complete(map, navigator, visionData, nextRobotState, nextTaskType);
                 handleCompletedTask(map, navigator, nextRobotState, nextTaskType);
                 (*task)->setReadyForDeletion(true);
                 ++task;

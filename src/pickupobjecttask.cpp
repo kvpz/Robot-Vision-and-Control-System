@@ -8,6 +8,7 @@ PickupObjectTask::PickupObjectTask(ObjectType objectType)
 
 void PickupObjectTask::notStarted(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
     
@@ -15,6 +16,7 @@ void PickupObjectTask::notStarted(std::shared_ptr<Map> map,
 
 void PickupObjectTask::inProgress(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
     
@@ -22,6 +24,7 @@ void PickupObjectTask::inProgress(std::shared_ptr<Map> map,
 
 void PickupObjectTask::suspended(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
     
@@ -29,6 +32,7 @@ void PickupObjectTask::suspended(std::shared_ptr<Map> map,
 
 void PickupObjectTask::complete(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
     

@@ -10,6 +10,7 @@ ObjectMappingTask::ObjectMappingTask()//ObjectType objectType)
 
 void ObjectMappingTask::notStarted(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
     status = TaskStatus::INPROGRESS;
@@ -17,6 +18,7 @@ void ObjectMappingTask::notStarted(std::shared_ptr<Map> map,
 
 void ObjectMappingTask::inProgress(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
     // get data from message queue
@@ -58,6 +60,7 @@ void ObjectMappingTask::inProgress(std::shared_ptr<Map> map,
 
 void ObjectMappingTask::suspended(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
     
@@ -65,6 +68,7 @@ void ObjectMappingTask::suspended(std::shared_ptr<Map> map,
 
 void ObjectMappingTask::complete(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
     

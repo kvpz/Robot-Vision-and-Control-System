@@ -1,9 +1,9 @@
 #include "visiondata.hpp"
 
 VisionData::VisionData()
-: object_mq_name(OBJECTMAPPING_MESSAGE_QUEUE), 
-  object_mq(mq_open(OBJECTMAPPING_MESSAGE_QUEUE, O_CREAT | O_RDWR | O_NONBLOCK, 0666, nullptr)),
-  last_read_from_mq(std::chrono::system_clock::now())
+: object_detect_mq_name(OBJECTMAPPING_MESSAGE_QUEUE), 
+  object_detect_mq(mq_open(OBJECTMAPPING_MESSAGE_QUEUE, O_CREAT | O_RDWR | O_NONBLOCK, 0666, nullptr)),
+  last_read_from_object_mq(std::chrono::system_clock::now())
 {
 
 }
@@ -20,7 +20,7 @@ VisionData::VisionData()
     if the data last collected was from a long time ago, then the function will
     return an empty multiset. 
 */
-std::multiset<BoundingBox, BoundingBoxCompare> VisionData::getObjectsDetected()
+std::multiset<BoundingBox> VisionData::getObjectsDetected()
 {
     // try reading from the message queue
     Json::Value objectMQData = getObjectMQData();
@@ -30,8 +30,8 @@ std::multiset<BoundingBox, BoundingBoxCompare> VisionData::getObjectsDetected()
     // collect data for objects that are centered with the robot 
     if(objectMQData != Json::Value::null) {
         for (Json::Value& object : objectMQData) {
-            XYPoint xypoint1;
-            XYPoint xypoint2;
+            XYPoint<int> xypoint1;
+            XYPoint<int> xypoint2;
             ObjectType objectType(object["object"].asString());
             xypoint1.setX(object["x1"].asInt());
             xypoint1.setY(object["y1"].asInt());
@@ -45,18 +45,16 @@ std::multiset<BoundingBox, BoundingBoxCompare> VisionData::getObjectsDetected()
             int boundingBoxCenterXY = xypoint1.getX() + ((xypoint2.getX() - xypoint1.getX()) / 2);
 
             // map object if it is nearly centered with the robot
-            if(boundingBoxCenterXY < 440 && boundingBoxCenterXY > 400)
-                setObjectGlobalPosition(map, objectType, object["distance"].asDouble());
+            //if(boundingBoxCenterXY < 440 && boundingBoxCenterXY > 400)
+            //    setObjectGlobalPosition(map, objectType, object["distance"].asDouble());
         }
     }
 
-    if(std::chrono::system_clock::now() > last_read_from_mq + std::chrono::seconds{3}){
+    if(std::chrono::system_clock::now() > last_read_from_object_mq + std::chrono::seconds{3}){
         // maybe clear the data structure
         return std::multiset<BoundingBox>();
     }
-    else if() {
 
-    }
 
     return boundingBoxes;
 }
@@ -65,7 +63,7 @@ Json::Value VisionData::getObjectMQData()
 {
     char message[40000];
     unsigned int priority;
-    ssize_t bytes_received = mq_receive(object_mq, message, 40000, &priority);
+    ssize_t bytes_received = mq_receive(object_detect_mq, message, 40000, &priority);
 
     if (bytes_received == -1) {
         //std::cerr << "mq_receive() failed: " << std::strerror(errno) << std::endl;
@@ -86,7 +84,7 @@ Json::Value VisionData::getObjectMQData()
             return Json::Value::null;
         }
         else {
-            last_read_from_mq = std::chrono::system_clock::now();
+            last_read_from_object_mq = std::chrono::system_clock::now();
             return root;
         }
     }

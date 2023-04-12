@@ -19,6 +19,7 @@ ControlMandiblesTask::ControlMandiblesTask(MandibleState desiredLeftState,
 
 void ControlMandiblesTask::notStarted(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
     printTaskInfo(); //"ControlMandiblesTask::InProgress");        
@@ -27,6 +28,7 @@ void ControlMandiblesTask::notStarted(std::shared_ptr<Map> map,
 
 void ControlMandiblesTask::inProgress(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
     // if robot is at the location this task requires it to be
@@ -84,6 +86,7 @@ void ControlMandiblesTask::inProgress(std::shared_ptr<Map> map,
 
 void ControlMandiblesTask::suspended(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
     
@@ -91,6 +94,7 @@ void ControlMandiblesTask::suspended(std::shared_ptr<Map> map,
 
 void ControlMandiblesTask::complete(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
 
