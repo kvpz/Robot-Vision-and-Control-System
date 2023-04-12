@@ -1,7 +1,7 @@
 #include "pathcorrectiontask.hpp"
 
 PathCorrectionTask::PathCorrectionTask()
-    : Task(PATHCORRECTION, PATHCORRECTIONTASK_PRIORITY)
+    : Task(TaskType::PATHCORRECTION, PATHCORRECTIONTASK_PRIORITY)
 {
     correcting_position = false;
 }
@@ -76,4 +76,13 @@ void PathCorrectionTask::complete(std::shared_ptr<Map> map,
 {
     nextTaskType = NAVIGATETO;
     nextRobotState = STOP;
+}
+
+void PathCorrectionTask::printTaskInfo()
+{
+    if(DEBUG_PATHCORRECTIONTASK) {
+        Task::printTaskInfo(*this);
+        std::cout << "status: " << statusToString(this->getStatus()) << "\n";
+        std::cout << "\n==========================================\n" << std::endl;
+    }
 }

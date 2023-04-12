@@ -54,6 +54,48 @@ static std::string RobotStateToString(RobotState state)
         return "CLOSING_LEFT_MANDIBLE";
       case CLOSING_RIGHT_MANDIBLE:
         return "CLOSING_RIGHT_MANDIBLE";
+      case OPENING_LEFT_WING:
+        return "OPENING_LEFT_WING";
+      case OPENING_RIGHT_WING:
+        return "OPENING_RIGHT_WING";
+      case CLOSING_LEFT_WING:
+        return "CLOSING_LEFT_WING";
+      case CLOSING_RIGHT_WING:
+        return "CLOSING_RIGHT_WING";
+      case STOP:
+        return "STOP";
+      default:
+        return "error";
+    }
+}
+
+static std::string RobotManipulatorStateToString(RobotState state) 
+{
+    switch(state) {
+      case OPENING_RIGHT_RECEPTACLE:
+        return "OPENING_RIGHT_RECEPTACLE";
+      case OPENING_LEFT_RECEPTACLE:
+        return "OPENING_LEFT_RECEPTACLE";
+      case CLOSING_RIGHT_RECEPTACLE:
+        return "CLOSING_RIGHT_RECEPTACLE";
+      case CLOSING_LEFT_RECEPTACLE:
+        return "CLOSING_LEFT_RECEPTACLE";
+      case OPENING_LEFT_MANDIBLE:
+        return "OPENING_LEFT_MANDIBLE";
+      case OPENING_RIGHT_MANDIBLE:
+        return "OPENING_RIGHT_MANDIBLE";
+      case CLOSING_LEFT_MANDIBLE:
+        return "CLOSING_LEFT_MANDIBLE";
+      case CLOSING_RIGHT_MANDIBLE:
+        return "CLOSING_RIGHT_MANDIBLE";
+      case OPENING_LEFT_WING:
+        return "OPENING_LEFT_WING";
+      case OPENING_RIGHT_WING:
+        return "OPENING_RIGHT_WING";
+      case CLOSING_LEFT_WING:
+        return "CLOSING_LEFT_WING";
+      case CLOSING_RIGHT_WING:
+        return "CLOSING_RIGHT_WING";
       case STOP:
         return "STOP";
       default:

@@ -149,9 +149,8 @@ AttractionColors AttractionColorTask::getAttractionColorMQData(std::shared_ptr<V
 
 void AttractionColorTask::printTaskInfo()
 {
-    if(DEBUG_NAVIGATETOTASK) {
-        //Task::printTaskInfo();
-        //std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
+    if(DEBUG_ATTRACTIONCOLORTASK) {
+        Task::printTaskInfo(*this);
         std::cout << "status: " << statusToString(this->getStatus()) << "\n";
         std::cout << "\n==========================================\n" << std::endl;
     }

@@ -19,7 +19,7 @@ void ControlWingsTask::notStarted(std::shared_ptr<Map> map,
                         std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
-    printTaskInfo();       
+    //printTaskInfo();       
     status = TaskStatus::INPROGRESS;
 }
 
@@ -77,7 +77,7 @@ void ControlWingsTask::inProgress(std::shared_ptr<Map> map,
         }
     }
 
-    printTaskInfo(); //"ControlMandiblesTask::InProgress");        
+    //printTaskInfo(); //"ControlMandiblesTask::InProgress");        
 }
 
 void ControlWingsTask::suspended(std::shared_ptr<Map> map, 
@@ -99,8 +99,7 @@ void ControlWingsTask::complete(std::shared_ptr<Map> map,
 void ControlWingsTask::printTaskInfo() //std::string taskStateName)
 {
     if(DEBUG_CONTROLWINGSTASK) {
-        //Task::printTaskInfo();
-        //std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
+        Task::printTaskInfo(*this);
         std::cout << "status: " << statusToString(this->getStatus()) << "\n";
         std::cout << "action point: " << actionPoint << "\n";
         std::cout << "is robot performing action: " << inActionState << "\n";

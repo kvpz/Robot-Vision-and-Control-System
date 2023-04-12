@@ -5,7 +5,7 @@ DropChipTask::DropChipTask() : Task(DROPCHIP, DROPCHIPTASK_PRIORITY) {}
 DropChipTask::DropChipTask(XYPoint<double> xy, 
                            double endpointOrientation, 
                            bool endpointOrientationRequirement)
-    : Task(DROPCHIP, DROPCHIPTASK_PRIORITY)
+    : Task(TaskType::DROPCHIP, DROPCHIPTASK_PRIORITY)
 {
     payloadLocation = xy;
     this->endpointOrientation = endpointOrientation;
@@ -110,4 +110,15 @@ void DropChipTask::complete(std::shared_ptr<Map> map,
                         RobotState& nextRobotState, TaskType& nextTaskType) 
 {
     
+}
+
+void DropChipTask::printTaskInfo()
+{
+    if(DEBUG_DROPCHIPTOTASK) {
+        Task::printTaskInfo(*this);
+        std::cout << "status: " << statusToString(this->getStatus()) << "\n";
+        std::cout << "payload location: " << payloadLocation << "\n";
+        std::cout << "is robot deploying chips: " << isDeployingPayload << "\n";
+        std::cout << "\n==========================================\n" << std::endl;
+    }
 }

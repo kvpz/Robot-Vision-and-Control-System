@@ -37,3 +37,12 @@ void PickupObjectTask::complete(std::shared_ptr<Map> map,
 {
     
 }
+
+void PickupObjectTask::printTaskInfo() 
+{
+    if(DEBUG_PICKUPOBJECTTASK) {
+        Task::printTaskInfo(*this);
+        std::cout << "status: " << statusToString(this->getStatus()) << "\n";
+        std::cout << "\n==========================================\n" << std::endl;
+    }
+}

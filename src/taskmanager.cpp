@@ -64,7 +64,7 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
                 break;
         } // switch
 
-
+        (*task)->printTaskInfo();
     }
 
     // delete all completed tasks from the high priority list

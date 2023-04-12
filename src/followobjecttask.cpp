@@ -37,3 +37,12 @@ void FollowObjectTask::complete(std::shared_ptr<Map> map,
 {
     
 }
+
+void FollowObjectTask::printTaskInfo()
+{
+    if(DEBUG_FOLLOWOBJECTTASK) {
+        Task::printTaskInfo(*this);
+        std::cout << "status: " << statusToString(this->getStatus()) << "\n";
+        std::cout << "\n==========================================\n" << std::endl;
+    }
+}

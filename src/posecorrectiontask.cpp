@@ -63,3 +63,12 @@ void PoseCorrectionTask::complete(std::shared_ptr<Map> map,
     //task_queue.pop();
     //task_queue.top().setStatus(INPROGRESS);
 }
+
+void PoseCorrectionTask::printTaskInfo()
+{
+    if(DEBUG_POSECORRECTIONTASK) {
+        Task::printTaskInfo(*this);
+        std::cout << "status: " << statusToString(this->getStatus()) << "\n";
+        std::cout << "\n==========================================\n" << std::endl;
+    }
+}

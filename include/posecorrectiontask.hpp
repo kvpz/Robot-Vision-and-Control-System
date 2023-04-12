@@ -30,6 +30,8 @@ public:
                           std::shared_ptr<Navigator> navigator, 
                           std::shared_ptr<VisionData> visionData,
                           RobotState& nextRobotState, TaskType& nextTaskType) override;
+    
+    virtual void printTaskInfo() override;
 
 private:
 

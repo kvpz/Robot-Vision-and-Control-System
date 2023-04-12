@@ -34,6 +34,8 @@ public:
                           std::shared_ptr<VisionData> visionData,
                           RobotState& nextRobotState, TaskType& nextTaskType) override;
 
+    virtual void printTaskInfo() override;
+
 private:
     // Desired object info
     ObjectType desiredObjectType;

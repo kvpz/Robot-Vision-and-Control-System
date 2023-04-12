@@ -176,9 +176,8 @@ void ObjectMappingTask::setObjectGlobalPosition(std::shared_ptr<Map> map,
 
 void ObjectMappingTask::printTaskInfo()
 {
-    if(DEBUG_NAVIGATETOTASK) {
-        //Task::printTaskInfo();
-        //std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
+    if(DEBUG_OBJECTMAPPINGTASK) {
+        Task::printTaskInfo(*this);
         std::cout << "status: " << statusToString(this->getStatus()) << "\n";
         std::cout << "\n==========================================\n" << std::endl;
     }

@@ -166,21 +166,8 @@ void Robot::executeCurrentTask()
           manipulatorState = v;
           runManipulators();
       }
-      
   }
 
-/*
-      // change robot state if it is different from current state
-      if(state != nextRobotState) {
-          state = nextRobotState;
-          run(); // alter robot state if it needs to be in a different
-      }
-
-      if(manipulatorState != nextManipulatorState) {
-          manipulatorState = nextManipulatorState;
-          runManipulators();
-      }
-*/
   // speed control
   if(taskManager->getCurrentTaskType() == POSECORRECTION ||
      taskManager->getCurrentTaskType() == PATHCORRECTION) {
@@ -197,6 +184,7 @@ void Robot::printStatus()
 {
     std::cout << "\n====== Robot Status ======\n";
     std::cout << "State: " << RobotStateToString(state) << "\n";
+    std::cout << "manipulator state: " << RobotManipulatorStateToString(manipulatorState) << "\n";
     std::cout << "current location: ("
               << map->RobotX() << ", "
               << map->RobotY() << ")\n";

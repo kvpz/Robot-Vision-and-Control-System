@@ -207,8 +207,7 @@ void NavigateToTask::complete(std::shared_ptr<Map> map,
 void NavigateToTask::printTaskInfo()
 {
     if(DEBUG_NAVIGATETOTASK) {
-        //Task::printTaskInfo();
-        //std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
+        Task::printTaskInfo(*this);
         std::cout << "status: " << statusToString(this->getStatus()) << "\n";
         std::cout << "endpoint: " << endpoint << "\n";
         std::cout << "endpoint desired orientation: " << endpointDesiredOrientation << "\n";

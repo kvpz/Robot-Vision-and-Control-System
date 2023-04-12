@@ -22,7 +22,7 @@ void ControlMandiblesTask::notStarted(std::shared_ptr<Map> map,
                         std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
-    printTaskInfo(); //"ControlMandiblesTask::InProgress");        
+    //printTaskInfo(); //"ControlMandiblesTask::InProgress");        
     status = TaskStatus::INPROGRESS;
 }
 
@@ -81,7 +81,7 @@ void ControlMandiblesTask::inProgress(std::shared_ptr<Map> map,
         }
     }
 
-    printTaskInfo(); //"ControlMandiblesTask::InProgress");        
+    //printTaskInfo(); //"ControlMandiblesTask::InProgress");        
 }
 
 void ControlMandiblesTask::suspended(std::shared_ptr<Map> map, 
@@ -102,9 +102,8 @@ void ControlMandiblesTask::complete(std::shared_ptr<Map> map,
 
 void ControlMandiblesTask::printTaskInfo() //std::string taskStateName)
 {
-    if(DEBUG_NAVIGATETOTASK) {
-        //Task::printTaskInfo();
-        //std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
+    if(DEBUG_CONTROLMANDIBLESTASK) {
+        Task::printTaskInfo(*this);
         std::cout << "status: " << statusToString(this->getStatus()) << "\n";
         std::cout << "action point: " << actionPoint << "\n";
         std::cout << "action point desired orientation: " << actionPointOrientation << "\n";
