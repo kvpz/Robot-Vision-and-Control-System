@@ -32,7 +32,11 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
         currentTaskType = (*task)->getTaskType();
         currentTaskStatus = (*task)->getStatus();
         RobotState nextRobotState;
-        
+        if(DEBUG_TASKMANAGER) {
+            std::cout << "(TaskManager::executeCurrentTask)" << std::endl;
+            (*task)->printTaskInfo();
+        }
+
         switch((*task)->getStatus()) {
             case TaskStatus::NOTSTARTED:
                 (*task)->notStarted(map, navigator, visionData, nextRobotState);
@@ -63,8 +67,6 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
                 nextRobotStates.push_back(nextRobotState);
                 break;
         } // switch
-
-        (*task)->printTaskInfo();
     }
 
     // delete all completed tasks from the high priority list
@@ -153,25 +155,24 @@ void TaskManager::importTasksFromJSON(std::string filename)
         }
     }
 
-    std::cout << "navigate tasks parsed: " << navigateTasksParsed << std::endl;
-    std::cout << "size of high priority queue: " << high_priority_tasks.size() << std::endl;
-    std::cout << "size of low priority queue: " << low_priority_tasks.size() << std::endl;
+    if(false) {//(DEBUG_TASKMANAGER) {
+        std::cout << "navigate tasks parsed: " << navigateTasksParsed << std::endl;
+        std::cout << "size of high priority queue: " << high_priority_tasks.size() << std::endl;
+        std::cout << "size of low priority queue: " << low_priority_tasks.size() << std::endl;
 
-    std::cout << "====== high priority queue items in order ======" << std::endl;
-    for(const auto& task : high_priority_tasks) {
-        std::cout << " > " << task->getName() << " " << task->getPriority() << std::endl;
-        task->printTaskInfo();
-        //if(task->getTaskType() == TaskType::NAVIGATETO)
-        //    ((std::unique_ptr<NavigateToTask>)(std::move(task))).printTaskInfo();
+        std::cout << "====== high priority queue items in order ======" << std::endl;
+        for(const auto& task : high_priority_tasks) {
+            std::cout << " > " << task->getName() << " " << task->getPriority() << std::endl;
+            //if(task->getTaskType() == TaskType::NAVIGATETO)
+            //    ((std::unique_ptr<NavigateToTask>)(std::move(task))).printTaskInfo();
 
+        }
+
+        std::cout << "====== low priority queue items in order ======" << std::endl;
+        for(const auto& task : low_priority_tasks) {
+            std::cout << " > " << task->getName() << " " << task->getPriority() << std::endl;
+        }
     }
-
-    std::cout << "====== low priority queue items in order ======" << std::endl;
-    for(const auto& task : low_priority_tasks) {
-        std::cout << " > " << task->getName() << " " << task->getPriority() << std::endl;
-        task->printTaskInfo();
-    }
-
 }
 
 
