@@ -19,10 +19,7 @@ struct XYPoint
   inline T getX() const { return x; }
   inline T getY() const { return y; }
 
-  inline void setX(T _x) { 
-    std::cout << "setX " << _x << std::endl;
-    x = _x; 
-  }
+  inline void setX(T _x) { x = _x; }
   inline void setY(T _y) { y = _y; }
 
   // constructors
@@ -30,10 +27,8 @@ struct XYPoint
   XYPoint(T x, T y) : x(x), y(y) {}
 
   // copy constructor
-  XYPoint(const XYPoint& other) : x(other.x), y(other.y) {
-    std::cout << "in XYPoint copy constructor" << "\n";
-    std::cout << *this << std::endl;
-  }
+  XYPoint(const XYPoint& other) : x(other.x), y(other.y) 
+  {}
 
   // assignment operator
   XYPoint& operator=(const XYPoint& other) {

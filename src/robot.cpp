@@ -168,15 +168,24 @@ void Robot::executeCurrentTask()
       }
   }
 
-  // speed control
-  if(taskManager->getCurrentTaskType() == POSECORRECTION ||
-     taskManager->getCurrentTaskType() == PATHCORRECTION) {
-      if(speed != Speed::d)
-        comport->send_command("d");
-  }
-  else {
-    if(speed != Speed::g)
-      comport->send_command("g");
+  for(Task task : taskManager->getHighPriorityTasks()) {
+      std::cout << "(robot.cpp) high priority task: " << task.getName() << std::endl;
+        // speed control
+      if(taskManager->getCurrentTaskType() == POSECORRECTION ||
+        taskManager->getCurrentTaskType() == PATHCORRECTION) {
+          if(speed != Speed::d)
+            comport->send_command("d");
+      }
+      else if(taskManager->getCurrentTaskType() == TaskType::FOLLOWOBJECT) {
+        if(state == RobotState::ROTATE_CCW || state == RobotState::ROTATE_CW) {
+          comport->send_command("c");
+          std::cout << "(robot) speed reduction" << std::endl;
+        }
+      }
+      else {
+        if(speed != Speed::g)
+          comport->send_command("g");
+      }
   }
 }
 

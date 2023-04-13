@@ -38,28 +38,21 @@ void FollowObjectTask::inProgress(std::shared_ptr<Map> map,
     else {
         timeCounter = 0;
         
-        BoundingBox closestDesiredObject({0,0}, {0,0}, OBJECTTYPES::NA, 100000);
+        BoundingBox closestDesiredObject; 
         // iterate through all the objects that were detected
-        int i = 0;
         for(BoundingBox object : visionData->getObjectsDetected()) {
-            //std::cout << "iterating through boundingboxobjects " << ++i << std::endl;
-            //std::cout << "object distance: " << object.getDistanceFromCamera() << "vs" << closestDesiredObject.getDistanceFromCamera() << std::endl;
-            //std::cout << "object types: " << object.getObjectType() << std::endl;
-            // if desired object is detected, choose the closest one
             if(object.getObjectType() == objectType) {
                 if(object.getDistanceFromCamera() < closestDesiredObject.getDistanceFromCamera()) {
                     closestDesiredObject = object;
-                    std::cout << "closest desired object detected" << std::endl;
                 }
             }
         }
-        std::cout << "(followobjecttask) objectType: " << closestDesiredObject.getObjectType().toString() << std::endl;
+
         distanceToClosestDesiredObject = closestDesiredObject.getDistanceFromCamera();
             
         x1 = closestDesiredObject.getXY1().getX();
         x2 = closestDesiredObject.getXY2().getX();
-        std::cout << "(followobjecttask) x1: " << x1 << std::endl;
-        std::cout << "(followobjecttask) x2: " << x2 << std::endl;
+
         if(closestDesiredObject.getCenterXY().getX() < 300) {
             nextRobotState = RobotState::ROTATE_CCW;
         }

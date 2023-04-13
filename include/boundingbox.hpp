@@ -3,7 +3,8 @@
 
 class BoundingBox {
 public:
-    BoundingBox() = default;
+    BoundingBox() : xy1({0,0}), xy2({0,0}), objectType(OBJECTTYPES::NA), distanceFromCamera(100000)
+    {}
     BoundingBox(XYPoint<int> _xy1, XYPoint<int> _xy2, ObjectType _objectType, double distance)
     : xy1(_xy1), xy2(_xy2), objectType(_objectType), distanceFromCamera(distance)
     {}
