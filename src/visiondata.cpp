@@ -1,4 +1,5 @@
 #include "visiondata.hpp"
+#include <string>
 
 VisionData::VisionData()
 : object_detect_mq_name(OBJECTMAPPING_MESSAGE_QUEUE), 
@@ -24,26 +25,31 @@ VisionData::VisionData()
     return an empty multiset. 
 */
 std::multiset<BoundingBox> VisionData::getObjectsDetected()
-{
+{    
     // try reading from the message queue
     Json::Value objectMQData = getObjectMQData();
 
     // collect data for objects that are centered with the robot 
     if(objectMQData != Json::Value::null) {
+        objectsDetected.clear();
+        
         for (Json::Value& object : objectMQData) {
+
             XYPoint<int> xypoint1;
             XYPoint<int> xypoint2;
-            ObjectType objectType(object["object"].asString());
-            xypoint1.setX(object["x1"].asInt());
-            xypoint1.setY(object["y1"].asInt());
-            xypoint2.setX(object["x2"].asInt());
-            xypoint2.setY(object["y2"].asInt());
+            ObjectType objectType(object["object"].asString()); // works fine
+            std::cout << "x1 string: " << object["x1"].asString() << " " << std::stoi(object["x1"].asString()) << std::endl;
+            xypoint1.setX(std::stoi(object["x1"].asString()));
+            xypoint1.setY(std::stoi(object["y1"].asString()));
+            xypoint2.setX(std::stoi(object["x2"].asString()));
+            xypoint2.setX(std::stoi(object["y2"].asString()));
             BoundingBox boundingBox(xypoint1, xypoint2, objectType, object["distance"].asDouble());
-
+            std::cout << "(visiondata) distance: " << object["distance"].asDouble() << std::endl;
             objectsDetected.insert(boundingBox);
+            //std::cout << "(visiondata distance from itr): " << itr->getDistanceFromCamera() << std::endl;
             // add the object to the map only if the robot is facing the object
             // check if the center of the object is near the center of the frame
-            int boundingBoxCenterXY = xypoint1.getX() + ((xypoint2.getX() - xypoint1.getX()) / 2);
+            //int boundingBoxCenterXY = xypoint1.getX() + ((xypoint2.getX() - xypoint1.getX()) / 2);
 
             // map object if it is nearly centered with the robot
             //if(boundingBoxCenterXY < 440 && boundingBoxCenterXY > 400)
@@ -56,9 +62,10 @@ std::multiset<BoundingBox> VisionData::getObjectsDetected()
 
     // return an empty result if last read from message queue happened long ago
     if(std::chrono::system_clock::now() > last_read_from_object_mq + std::chrono::seconds{3}){
-        objectsDetected = std::multiset<BoundingBox>();
+        //objectsDetected = std::multiset<BoundingBox>();
     }
 
+    printTaskInfo();
     return objectsDetected;
 }
 
@@ -152,4 +159,19 @@ char VisionData::getAttractionColorMQData()
     }
     
     return result;
+}
+
+void VisionData::printTaskInfo()
+{
+    if(DEBUG_VISIONDATA) {
+        std::cout << "========= Vision Data Service Info ========\n";
+        std::cout << "objects detected: ";
+        std::cout << "objectsDetected count: " << objectsDetected.size() << std::endl;
+        for(BoundingBox object : objectsDetected) {
+            std::cout << "object type: " << object.getObjectType().toString() << "\n"; 
+            std::cout << "distance from object: " << object.getDistanceFromCamera() << "\n";
+            std::cout << "xy1-x: " << object.getXY1().getX() << "\n";
+        }
+        std::cout << "\n==========================================\n" << std::endl;
+    }
 }

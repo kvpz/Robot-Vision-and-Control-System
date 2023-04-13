@@ -13,7 +13,7 @@
 class FollowObjectTask : public Task
 {
 public:
-    FollowObjectTask();
+    FollowObjectTask(ObjectType);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
@@ -42,10 +42,14 @@ private:
     ObjectType objectType;
 
     // left and right x of the bounding frame around the object
-    unsigned int x1, x2;
+    int x1, x2;
 
     // stop distance before object
     double stopDistance;
+
+    unsigned int timeCounter; // milliseconds
+
+    double distanceToClosestDesiredObject;
 };
 
 #endif

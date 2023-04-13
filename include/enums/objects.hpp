@@ -12,7 +12,8 @@ enum class OBJECTTYPES : int {
 
 struct ObjectType {
 public:
-    ObjectType() = default;
+    ObjectType() : otype(OBJECTTYPES::NA)
+    {}
 
     ObjectType(OBJECTTYPES type) {
       otype = type;
@@ -94,7 +95,10 @@ public:
           default:
             return "error";
         }
+    }
 
+    void setObjectType(OBJECTTYPES ot) {
+        otype = ot;
     }
     
 

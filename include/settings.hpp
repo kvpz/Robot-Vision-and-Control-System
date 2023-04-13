@@ -65,3 +65,6 @@
 
 // Follow objects task settings
 #define DEBUG_FOLLOWOBJECTTASK true
+
+// Vision data settings
+#define DEBUG_VISIONDATA true

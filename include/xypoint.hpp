@@ -13,21 +13,27 @@
 template<typename T = double>
 struct XYPoint
 {
-  T x = 0.0;
-  T y = 0.0;
+  T x;
+  T y;
 
   inline T getX() const { return x; }
   inline T getY() const { return y; }
 
-  inline void setX(T _x) { x = _x; }
+  inline void setX(T _x) { 
+    std::cout << "setX " << _x << std::endl;
+    x = _x; 
+  }
   inline void setY(T _y) { y = _y; }
 
   // constructors
-  XYPoint() = default;
+  XYPoint() : x(0), y(0) {}
   XYPoint(T x, T y) : x(x), y(y) {}
 
   // copy constructor
-  XYPoint(const XYPoint& other) : x(other.x), y(other.y) {}
+  XYPoint(const XYPoint& other) : x(other.x), y(other.y) {
+    std::cout << "in XYPoint copy constructor" << "\n";
+    std::cout << *this << std::endl;
+  }
 
   // assignment operator
   XYPoint& operator=(const XYPoint& other) {

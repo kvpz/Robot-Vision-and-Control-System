@@ -1,0 +1,7 @@
+{
+    "1": {
+        "type": "followobject",
+        "priority": 1,
+        "start_time": "now"
+    }
+}

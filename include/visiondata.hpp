@@ -36,6 +36,8 @@ public:
 
     AttractionColors getAttractionColorDetected();
 
+    void printTaskInfo();
+    
 private:
     
     Json::Value getObjectMQData();

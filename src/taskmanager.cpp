@@ -7,6 +7,7 @@
 #include "objectmappingtask.hpp"
 #include "controlmandiblestask.hpp"
 #include "controlwingstask.hpp"
+#include "followobjecttask.hpp"
 
 /*
     function: void TaskManager::executeCurrentTask
@@ -152,6 +153,9 @@ void TaskManager::importTasksFromJSON(std::string filename)
         }
         else if(taskType == CONTROLWINGS) {
             parseControlWingsTask(taskkey);
+        }
+        else if(taskType == FOLLOWOBJECT) {
+            parseFollowObjectTask(taskkey);
         }
     }
 
@@ -378,6 +382,15 @@ void TaskManager::parseControlWingsTask(boost::property_tree::ptree::value_type 
                                 xypoint, 
                                 actionPointProximityTolerance), startTime);
 }
+
+void TaskManager::parseFollowObjectTask(boost::property_tree::ptree::value_type taskkey)
+{
+    std::string startTime = taskkey.second.get_child("start_time").get_value<std::string>();
+    int priority = taskkey.second.get_child("priority").get_value<int>();
+    ObjectType otype(OBJECTTYPES::YELLOWDUCK);
+    enqueueTask(std::make_unique<FollowObjectTask>(otype), startTime);
+}
+
 
 void TaskManager::handleNotStartedTask(std::shared_ptr<Map> map, 
                                        std::shared_ptr<Navigator> navigator, 
