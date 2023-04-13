@@ -11,22 +11,10 @@ public:
     
     BoundingBox(const BoundingBox& bbox) 
     : xy1(bbox.xy1), xy2(bbox.xy2), objectType(bbox.objectType), distanceFromCamera(bbox.distanceFromCamera)
-    {
-        std::cout << "in copy constructor" << std::endl;
-        std::cout << "(BoundingBox) xy1 " << xy1 << "\n";
-        std::cout << "(BoundingBox) xy2 " << xy2 << "\n";
-        std::cout << "(BoundingBox) objectType " << objectType.toString() << "\n";
-        std::cout << "(BoundingBox) distanceFromCamera " << distanceFromCamera << std::endl;
-
-    }
+    {}
 
     BoundingBox& operator=(const BoundingBox& bbox) 
-    {
-        std::cout << "in copy constructor(=)" << "\n";
-        std::cout << "(BoundingBox=) xy1 " << xy1 << "\n";
-        std::cout << "(BoundingBox=) xy2 " << xy2 << "\n";
-        std::cout << "(BoundingBox=) objectType " << objectType.toString() << "\n";
-        std::cout << "(BoundingBox=) distanceFromCamera " << distanceFromCamera << std::endl;        
+    { 
         if(this != &bbox) {
             xy1 = bbox.xy1;
             xy2 = bbox.xy2;
@@ -73,7 +61,6 @@ private:
 
 struct BoundingBoxCompare {
     bool operator()(const BoundingBox& a, const BoundingBox& b) const {
-        //return a.xy1.getX() < b.xy1.getX();
         return a < b;
     }
 };

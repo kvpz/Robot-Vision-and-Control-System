@@ -37,19 +37,15 @@ std::multiset<BoundingBox> VisionData::getObjectsDetected()
 
             XYPoint<int> xypoint1;
             XYPoint<int> xypoint2;
-            ObjectType objectType(object["object"].asString()); // works fine
-            std::cout << "x1 string: " << object["x1"].asString() << " " << std::stoi(object["x1"].asString()) << std::endl;
+            ObjectType objectType(object["object"].asString()); 
             xypoint1.setX(std::stoi(object["x1"].asString()));
             xypoint1.setY(std::stoi(object["y1"].asString()));
             xypoint2.setX(std::stoi(object["x2"].asString()));
             xypoint2.setX(std::stoi(object["y2"].asString()));
             BoundingBox boundingBox(xypoint1, xypoint2, objectType, object["distance"].asDouble());
-            std::cout << "(visiondata) distance: " << object["distance"].asDouble() << std::endl;
             objectsDetected.insert(boundingBox);
-            //std::cout << "(visiondata distance from itr): " << itr->getDistanceFromCamera() << std::endl;
             // add the object to the map only if the robot is facing the object
             // check if the center of the object is near the center of the frame
-            //int boundingBoxCenterXY = xypoint1.getX() + ((xypoint2.getX() - xypoint1.getX()) / 2);
 
             // map object if it is nearly centered with the robot
             //if(boundingBoxCenterXY < 440 && boundingBoxCenterXY > 400)
