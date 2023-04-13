@@ -3,7 +3,6 @@
 Robot::Robot(double xpos, double ypos, double orientation) 
     : state(STOP)
 { 
-    //attraction_color_mq_name = "/attraction_color_mq";
     comport = std::make_unique<Comms>("/dev/ttyACM0");
     taskManager = std::make_shared<TaskManager>();
     navigator = std::make_unique<Navigator>();
@@ -12,7 +11,6 @@ Robot::Robot(double xpos, double ypos, double orientation)
     map = std::make_unique<Map>();
     map->setRobotCurrentCoordinate(xpos, ypos);
     map->setRobotOrientation(orientation);
-    //attraction_color_mq = mq_open(attraction_color_mq_name, O_CREAT | O_RDWR | O_NONBLOCK, 0666, nullptr);
 
     // mandibles assummed to be closed!
     leftMandibleState = MandibleState::closed;
@@ -43,6 +41,7 @@ void Robot::run()
       case MOVE_BACKWARD:
         move_backward();
         break;
+        
       case OPENING_RIGHT_RECEPTACLE:
         open_right_receptacle();
         break;
@@ -55,6 +54,7 @@ void Robot::run()
       case CLOSING_LEFT_RECEPTACLE:
         close_left_receptacle();
         break;
+
       case OPENING_LEFT_MANDIBLE:
         open_left_mandible();
         break;
@@ -67,6 +67,7 @@ void Robot::run()
       case CLOSING_RIGHT_MANDIBLE:
         close_right_mandible();
         break;
+        
       case STOP:
         stop();
         break;
@@ -88,14 +89,38 @@ void Robot::runManipulators()
         case CLOSING_RIGHT_WING:
           close_right_wing();
           break;
+        case OPENING_RIGHT_RECEPTACLE:
+          open_right_receptacle();
+          break;
+        case OPENING_LEFT_RECEPTACLE:
+          open_left_receptacle();
+          break;
+        case CLOSING_RIGHT_RECEPTACLE:
+          close_right_receptacle();
+          break;
+        case CLOSING_LEFT_RECEPTACLE:
+          close_left_receptacle();
+          break;
+        case OPENING_LEFT_MANDIBLE:
+          open_left_mandible();
+          break;
+        case OPENING_RIGHT_MANDIBLE:
+          open_right_mandible();
+          break;
+        case CLOSING_LEFT_MANDIBLE:
+          close_left_mandible();
+          break;
+        case CLOSING_RIGHT_MANDIBLE:
+          close_right_mandible();
+          break;
     }
 }
 
 // wheel actuation
 void Robot::move_forward()           { comport->send_command("F"); }
 void Robot::move_backward()          { comport->send_command("B"); }
-void Robot::move_left()              { comport->send_command("R"); }
-void Robot::move_right()             { comport->send_command("L"); }
+void Robot::move_left()              { comport->send_command("L"); }
+void Robot::move_right()             { comport->send_command("R"); }
 void Robot::rotate_CW()              { comport->send_command("C"); }
 void Robot::rotate_CCW()             { comport->send_command("Z"); }
 void Robot::stop()                   { comport->send_command("S"); }
@@ -151,7 +176,6 @@ void Robot::executeCurrentTask()
   RobotState nextManipulatorState = manipulatorState;
   std::vector<RobotState> nextRobotStates;
 
-  //TODO: nextRobotState = taskManager->executeCurrentTask(map, navigator);
   taskManager->executeCurrentTask(map, navigator, vision, nextRobotStates);
 
   for(auto v : nextRobotStates) {
@@ -169,7 +193,6 @@ void Robot::executeCurrentTask()
   }
 
   for(Task task : taskManager->getHighPriorityTasks()) {
-      std::cout << "(robot.cpp) high priority task: " << task.getName() << std::endl;
         // speed control
       if(taskManager->getCurrentTaskType() == POSECORRECTION ||
         taskManager->getCurrentTaskType() == PATHCORRECTION) {
@@ -179,7 +202,6 @@ void Robot::executeCurrentTask()
       else if(taskManager->getCurrentTaskType() == TaskType::FOLLOWOBJECT) {
         if(state == RobotState::ROTATE_CCW || state == RobotState::ROTATE_CW) {
           comport->send_command("c");
-          std::cout << "(robot) speed reduction" << std::endl;
         }
       }
       else {

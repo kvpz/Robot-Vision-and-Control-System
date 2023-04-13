@@ -11,7 +11,7 @@
         "type": "navigateto",
         "endpoint": {"x": 25, "y": 80, "yaw": 0 },
         "endpoint_settings":  {"orientation_required": false },
-        "move_direction": "rigth",
+        "move_direction": "right",
         "priority": 2
     },
     "2": {

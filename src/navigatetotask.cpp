@@ -2,7 +2,8 @@
 
 NavigateToTask::NavigateToTask()
 :  destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE), 
-    Task(TaskType::NAVIGATETO, NAVIGATETOTTASK_PRIORITY) 
+    Task(TaskType::NAVIGATETO, NAVIGATETOTTASK_PRIORITY),
+    totalPoseCorrectionsCompleted(0)
 {}
 
 NavigateToTask::NavigateToTask(double endpointOrientation, 
@@ -13,9 +14,9 @@ NavigateToTask::NavigateToTask(double endpointOrientation,
 {
     isEndpointOrientationRequired = endpointOrientationRequirement;
     endpointDesiredOrientation = endpointOrientation;
-
+    totalPoseCorrectionsCompleted = 0;
     if(DEBUG_NAVIGATETOTASK) {
-        printTaskInfo(); //"NavigateToTask::NavigateToTask");        
+        printTaskInfo();       
     }
 }
 
@@ -71,7 +72,7 @@ void NavigateToTask::notStarted(std::shared_ptr<Map> map,
         (1) implement optimal travel direction
     */
     if(DEBUG_NAVIGATETOTASK) {
-       printTaskInfo(); //"NavigateToTask::NavigateToTask");        
+       printTaskInfo();        
     }
 }
 
@@ -85,9 +86,10 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
                                 RobotState& nextRobotState)
 {    
     suspendedCounter = 0;
-
+    lastPathCorrection+=10;
     switch(navigator->isRobotOnPath(map)) {
         case NEAR:
+            
             // fix endpoint if the task requires it
             if(isEndpointOrientationRequired == false) {
                 status = TaskStatus::COMPLETE;
@@ -126,18 +128,21 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
             // NavigateTo task should no longer do path correction after 
             // pose correction has been completed.
             //lastPathCorrection += 10;
-
-            if(totalPoseCorrectionsCompleted > 0) {
+            /*
+            std::cout << "total pose corrections: " << totalPoseCorrectionsCompleted << std::endl;
+            if(totalPoseCorrectionsCompleted > 50) {
+                std::cout << "(navigateto) offpath if statement" << std::endl;
                 status = TaskStatus::COMPLETE;
                 nextRobotState = STOP;
             }
+            */
             //else if(lastPathCorrection > 500) {
-            else {
+            //else {
                 status = TaskStatus::SUSPENDED;
                 newTaskRequest = PATHCORRECTION;
                 nextRobotState = STOP;
                 lastPathCorrection = 0;
-            }
+            //}
             /*
             else {
                 status = TaskStatus::INPROGRESS;
@@ -151,6 +156,7 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
                     nextRobotState = MOVE_RIGHT;
             }
             */
+            
             break;
     }
 
@@ -200,7 +206,7 @@ void NavigateToTask::complete(std::shared_ptr<Map> map,
 
     if(DEBUG_NAVIGATETOTASK) {
         std::cout << "\n======= NavigateToTask::complete =======\n" << std::endl;
-        printTaskInfo(); //"NavigateToTask::complete");
+        printTaskInfo(); 
     }
 }
 

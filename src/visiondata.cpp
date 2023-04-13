@@ -35,13 +35,9 @@ std::multiset<BoundingBox> VisionData::getObjectsDetected()
         
         for (Json::Value& object : objectMQData) {
 
-            XYPoint<int> xypoint1;
-            XYPoint<int> xypoint2;
+            XYPoint<int> xypoint1(std::stoi(object["x1"].asString()), std::stoi(object["y1"].asString()));
+            XYPoint<int> xypoint2(std::stoi(object["x2"].asString()), std::stoi(object["y2"].asString()));
             ObjectType objectType(object["object"].asString()); 
-            xypoint1.setX(std::stoi(object["x1"].asString()));
-            xypoint1.setY(std::stoi(object["y1"].asString()));
-            xypoint2.setX(std::stoi(object["x2"].asString()));
-            xypoint2.setX(std::stoi(object["y2"].asString()));
             BoundingBox boundingBox(xypoint1, xypoint2, objectType, object["distance"].asDouble());
             objectsDetected.insert(boundingBox);
             // add the object to the map only if the robot is facing the object
@@ -58,7 +54,7 @@ std::multiset<BoundingBox> VisionData::getObjectsDetected()
 
     // return an empty result if last read from message queue happened long ago
     if(std::chrono::system_clock::now() > last_read_from_object_mq + std::chrono::seconds{3}){
-        //objectsDetected = std::multiset<BoundingBox>();
+        objectsDetected.clear();
     }
 
     printTaskInfo();

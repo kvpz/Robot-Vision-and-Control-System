@@ -10,7 +10,7 @@
 #define DEBUG_DROPCHIPTOTASK true
 
 // Navigate To task settings
-#define DEBUG_NAVIGATETOTASK true
+#define DEBUG_NAVIGATETOTASK false
 
 // Navigator helper action class settings
 #define NAVDEBUG false
@@ -67,4 +67,4 @@
 #define DEBUG_FOLLOWOBJECTTASK true
 
 // Vision data settings
-#define DEBUG_VISIONDATA true
+#define DEBUG_VISIONDATA false

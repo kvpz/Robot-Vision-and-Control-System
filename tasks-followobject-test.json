@@ -1,7 +1,52 @@
 {
-    "1": {
-        "type": "followobject",
+    "0": {
+        "type": "attractioncolor",
+        "mqname": "/attraction_color_queue",
         "priority": 1,
         "start_time": "now"
+    },
+    "1": {
+        "type": "objectmapping",
+        "start_time": "now"
+    },
+    "2": {
+        "type": "navigateto",
+        "endpoint": {"x": 24, "y": 20, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2,
+        "start_time": "now"
+    },
+    "3": {
+        "type": "navigateto",
+        "endpoint": {"x": 20, "y": 15, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": false },
+        "move_direction": "leftward",
+        "priority": 2,
+        "start_time": "now"
+    },
+    "4": {
+        "type": "navigateto",
+        "endpoint": {"x": 21, "y": 14, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": false },
+        "move_direction": "backward",
+        "priority": 2,
+        "start_time": "now"
+    },
+    "5": {
+        "type": "controlmandibles", 
+        "action_point": {"x": 60, "y": 21, "yaw": 90 },
+        "left": "open",
+        "right": "open",
+        "action_point_tolerance": 22.0,
+        "priority": 3,
+        "start_time": "now"
+    },
+    "6": {
+        "type": "navigateto",
+        "endpoint": {"x": 30, "y": 35, "yaw": 45 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
     }
 }

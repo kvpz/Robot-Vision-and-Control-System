@@ -26,7 +26,6 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
     //std::vector<std::unique_ptr<Task>> tasksToDelete;
     //std::vector<RobotState> robotStates;
 
-    //for(auto& task : high_priority_tasks) {
     for(auto task = high_priority_tasks.begin(); task != high_priority_tasks.end(); ) { 
         // read obj detection data from message queue
         currentTaskPriority = (*task)->getPriority();
@@ -34,7 +33,6 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
         currentTaskStatus = (*task)->getStatus();
         RobotState nextRobotState;
         if(DEBUG_TASKMANAGER) {
-            std::cout << "(TaskManager::executeCurrentTask)" << std::endl;
             (*task)->printTaskInfo();
         }
 
@@ -375,8 +373,6 @@ void TaskManager::parseControlWingsTask(boost::property_tree::ptree::value_type 
     double actionPointProximityTolerance = taskkey.second.get_child("action_point_tolerance").get_value<double>();
     std::string startTime = taskkey.second.get_child("start_time").get_value<std::string>();
     
-    std::cout << "navigate: " << std::endl; 
-
     enqueueTask(std::make_unique<ControlWingsTask>(leftWingDesiredState, 
                                 rightWingDesiredState,
                                 xypoint, 
@@ -434,13 +430,11 @@ void TaskManager::handleCompletedTask(std::shared_ptr<Map> map,
 
         //std::cout << "(handleCompletedTask) current task type is " << taskTypeToString((*i)->getTaskType()) << std::endl;
         if((*i)->getTaskType() == PATHCORRECTION) {
-            std::cout << "(handleCompletedTask) current task type is pathcorrection" << std::endl;
             // find the navigate to task in the high priority queue and change
             // its status to IN PROGRESS from SUSPENDED
             for(auto pqi = high_priority_tasks.begin(); pqi != high_priority_tasks.end(); ++pqi) {
                 if((*pqi)->getTaskType() == NAVIGATETO) {
                     // next task after a pose or path correction task should be a navigateTo task
-                    std::cout << "setting task to in progress" << std::endl;
                     (*pqi)->setStatus(TaskStatus::INPROGRESS);
                     break;
                 }

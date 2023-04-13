@@ -11,13 +11,29 @@
     },
     "2": {
         "type": "navigateto",
-        "endpoint": {"x": 28, "y": 20, "yaw": 90 },
+        "endpoint": {"x": 24, "y": 20, "yaw": 90 },
 	    "endpoint_settings":  {"orientation_required": true },
         "move_direction": "forward",
         "priority": 2,
         "start_time": "now"
     },
     "3": {
+        "type": "navigateto",
+        "endpoint": {"x": 20, "y": 15, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": false },
+        "move_direction": "leftward",
+        "priority": 2,
+        "start_time": "now"
+    },
+    "4": {
+        "type": "navigateto",
+        "endpoint": {"x": 21, "y": 14, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward",
+        "priority": 2,
+        "start_time": "now"
+    },
+    "5": {
         "type": "controlmandibles", 
         "action_point": {"x": 60, "y": 21, "yaw": 90 },
         "left": "open",
