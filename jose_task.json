@@ -1,10 +1,198 @@
 {
     "0": {
-        "type": "navigateto",
-        "endpoint": {"x": 187, "y": 30, "yaw": 315 },
-        "endpoint_settings":  {"orientation_required": true },
-        "move_direction": "forward",
+        "type": "attractioncolor",
+        "mqname": "/attraction_color_queue",
         "priority": 1,
+        "start_time": "now"
+    },
+    "1": {
+        "type": "objectmapping",
+        "start_time": "now"
+    },
+    "2": {
+        "type": "navigateto",
+        "endpoint": {"x": 24, "y": 35, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2,
+        "start_time": "now"
+    },
+    "3": {
+        "type": "navigateto",
+        "endpoint": {"x": 20, "y": 15, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": false },
+        "move_direction": "leftward",
+        "priority": 2
+    },
+    "4": {
+        "type": "navigateto",
+        "endpoint": {"x": 21, "y": 14, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward",
+        "priority": 2
+    },
+    "5": {
+        "type": "controlmandibles", 
+        "action_point": {"x": 60, "y": 21, "yaw": 90 },
+        "left": "open",
+        "right": "open",
+        "action_point_tolerance": 22.0,
+        "priority": 3,
+        "start_time": "now"
+    },
+    "4": {
+        "type": "navigateto",
+        "endpoint": {"x": 30, "y": 35, "yaw": 45 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    "5": {
+        "type": "navigateto",
+        "endpoint": {"x": 36, "y": 45, "yaw": 30 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    "6": {
+        "type": "navigateto",
+        "endpoint": {"x": 40, "y": 45, "yaw": 0 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    "7": {
+        "type": "navigateto",
+        "endpoint": {"x": 200, "y": 40, "yaw": 0 },
+	    "endpoint_settings":  {"orientation_required": false },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    "8": {
+        "type": "navigateto",
+        "endpoint": {"x": 205, "y": 35, "yaw": 315 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    "9": {
+        "type": "navigateto",
+        "endpoint": {"x": 210, "y": 30, "yaw": 315 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    "10": {
+        "type": "navigateto",
+        "endpoint": {"x": 180, "y": 50, "yaw": 315 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward",
+        "priority": 2
+    },
+    "11": {
+        "type": "navigateto",
+        "endpoint": {"x": 160, "y": 40, "yaw": 0 },
+	    "endpoint_settings":  {"orientation_required": false },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    "12": {
+        "type": "navigateto",
+        "endpoint": {"x": 30, "y": 40, "yaw": 130 },
+	    "endpoint_settings":  {"orientation_required": false },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    "13": {
+        "type": "navigateto",
+        "endpoint": {"x": 30, "y": 65, "yaw": 70 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    "14": {
+        "type": "navigateto",
+        "endpoint": {"x": 35, "y": 65, "yaw": 15 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    "15": {
+        "type": "navigateto",
+        "endpoint": {"x": 200, "y": 70, "yaw": 45 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    "16": {
+        "type": "navigateto",
+        "endpoint": {"x": 210, "y": 95, "yaw": 45 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    "17": {
+        "type": "navigateto",
+        "endpoint": {"x": 210, "y": 95, "yaw": 45 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    "18": {
+        "type": "navigateto",
+        "endpoint": {"x": 35, "y": 35, "yaw": 45 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    "19": {
+        "type": "navigateto",
+        "endpoint": {"x": 15, "y": 15, "yaw": 45 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward",
+        "priority": 2
+    },
+    "20": {
+        "type": "dropchip",
+        "endpoint": {"x": 18, "y": 18, "yaw": 45 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward"
+    },
+    "21": {
+        "type": "navigateto",
+        "endpoint": {"x": 60, "y": 60, "yaw": 45 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    "22": {
+        "type": "navigateto",
+        "endpoint": {"x": 20, "y": 105, "yaw": 315 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward",
+        "priority": 2
+    },
+    "23": {
+        "type": "dropchip",
+        "endpoint": {"x": 20, "y": 105, "yaw": 315 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward"
+    },
+    "24": {
+        "type": "navigateto",
+        "endpoint": {"x": 50, "y": 50, "yaw": 315 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward",
+        "priority": 2
+    },
+    "25": {
+        "type": "controlwings", 
+        "action_point": {"x": 35, "y": 65 },
+        "left": "open",
+        "right": "open",
+        "action_point_tolerance": 22.0,
+        "priority": 3,
         "start_time": "now"
     }
 }
+

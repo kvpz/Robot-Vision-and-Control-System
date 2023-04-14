@@ -24,7 +24,8 @@ NavigateToTask::NavigateToTask(XYPoint<double> xy,
                                double endpointOrientation, 
                                bool endpointOrientationRequired, TravelDirection travelDir)
     : isRobotAtEndpoint(false), Task(NAVIGATETO, NAVIGATETOTTASK_PRIORITY), 
-    destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE)
+    destinationOrientationTolerance(ORIENTATION_RANGE_TOLERANCE),
+    totalPoseCorrectionsCompleted(0)
 {    
     endpoint.setX(xy.getX());
     endpoint.setY(xy.getY());
@@ -92,6 +93,7 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
             
             // fix endpoint if the task requires it
             if(isEndpointOrientationRequired == false) {
+                std::cout << "(NavigateToTask::inProgress) NEAR - isEndpointOrientationRequired == false" << std::endl;
                 status = TaskStatus::COMPLETE;
                 nextRobotState = STOP;
                 isRobotAtEndpoint = true;
@@ -107,6 +109,7 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
                 ++totalPoseCorrectionsCompleted;
             }
             else {
+                std::cout << "(NavigateToTask::inProgress) NEAR - else" << std::endl;
                 status = TaskStatus::COMPLETE;
                 nextRobotState = STOP;
             }
@@ -138,10 +141,10 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
             */
             //else if(lastPathCorrection > 500) {
             //else {
-                status = TaskStatus::SUSPENDED;
-                newTaskRequest = PATHCORRECTION;
-                nextRobotState = STOP;
-                lastPathCorrection = 0;
+                //status = TaskStatus::SUSPENDED;
+                //newTaskRequest = PATHCORRECTION;
+                //nextRobotState = STOP;
+                //lastPathCorrection = 0;
             //}
             /*
             else {
@@ -156,6 +159,20 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
                     nextRobotState = MOVE_RIGHT;
             }
             */
+
+            if(totalPoseCorrectionsCompleted > 0) {
+                std::cout << "total pose corrections: " << totalPoseCorrectionsCompleted << std::endl;
+                std::cout << "(NavigateToTask::inProgress) OFF_PATH - totalPoseCorrectionsCompleted > 0" << std::endl;
+                status = TaskStatus::COMPLETE;
+                nextRobotState = STOP;
+            }
+            else {
+                 status = TaskStatus::SUSPENDED;
+                 newTaskRequest = PATHCORRECTION;
+                 nextRobotState = STOP;
+                 lastPathCorrection = 0;
+            }
+
             
             break;
     }

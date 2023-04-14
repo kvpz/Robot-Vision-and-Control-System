@@ -453,7 +453,7 @@ void TaskManager::handleCompletedTask(std::shared_ptr<Map> map,
             scheduleNewTask(nextTaskType, map);
         }
         else {
-            std::cout << "(handleCompletedTask) else ..." << std::endl;
+            std::cout << "(handleCompletedTask else) " << i->get()->getName() << std::endl;
         }
     }
 }

@@ -22,16 +22,14 @@
         "endpoint": {"x": 20, "y": 15, "yaw": 90 },
 	    "endpoint_settings":  {"orientation_required": false },
         "move_direction": "leftward",
-        "priority": 2,
-        "start_time": "now"
+        "priority": 2
     },
     "4": {
         "type": "navigateto",
         "endpoint": {"x": 21, "y": 14, "yaw": 90 },
 	    "endpoint_settings":  {"orientation_required": true },
         "move_direction": "backward",
-        "priority": 2,
-        "start_time": "now"
+        "priority": 2
     },
     "5": {
         "type": "controlmandibles", 
