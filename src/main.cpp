@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) try
 
     // allow time for camera to initialize
     std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-
+/*
     // wait until external LED turns on before starting procedure
     int fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY); // open the serial port
     if (fd == -1) {
@@ -166,7 +166,7 @@ int main(int argc, char* argv[]) try
     }
 
     close(fd); // close the serial port
-
+*/
     while(1) {
       boost::timer::cpu_timer timer;
       if(!robot->hasTasks()) {

@@ -82,10 +82,10 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
                     high_priority_tasks.insert(std::move(low_priority_tasks.front()));
                     // pop from low priority queue
                     low_priority_tasks.pop_front();
+                    std::cout << "(taskmanager) popping " << taskTypeToString(currentTaskType) << std::endl;
                     if(currentTaskType == TaskType::NAVIGATETO)
                         break;
                 }
-
                 //high_priority_tasks.insert(std::move(low_priority_tasks.front()));
                 //low_priority_tasks.pop_front();
             }
@@ -100,7 +100,12 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
             ++task;
         }
     }
-    
+
+    std::cout << "high priority tasks remaining: " << std::endl;
+    for(auto task = high_priority_tasks.begin(); task != high_priority_tasks.end(); ++task) {
+        std::cout << (*task)->getName() << std::endl;
+    }
+    std::cout << std::endl;
     // TODO: add tasks to high priority task data structure
     // tasks should be added to the high priority data structure after iterating
     // through it.

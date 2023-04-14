@@ -1,0 +1,12 @@
+{
+    "0": {
+        "type": "controlwings", 
+        "endpoint_settings":  {"orientation_required": true },
+        "action_point": {"x": 120, "y": 15, "yaw": 90 },
+        "left": "closed",
+        "right": "closed",
+        "action_point_tolerance": 15.0,
+        "priority": 3,
+        "start_time": "now"
+    }
+}

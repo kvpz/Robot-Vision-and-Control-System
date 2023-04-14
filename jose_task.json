@@ -12,17 +12,8 @@
     },
 
     "2": {
-        "type": "navigateto",
-        "endpoint": {"x": 120, "y": 25, "yaw": 90 },
-	    "endpoint_settings":  {"orientation_required": true },
-        "move_direction": "forward",
-        "priority": 2,
-        "start_time": "now"
-    },
-
-    "5": {
         "type": "controlwings", 
-        "action_point": {"x": 25, "y": 40, "yaw": 0 },
+        "action_point": {"x": 25, "y": 25, "yaw": 0 },
         "endpoint_settings":  {"orientation_required": true },
         "left": "open",
         "right": "open",
@@ -31,9 +22,26 @@
         "start_time": "now"
     },
 
+    "3": {
+        "type": "navigateto",
+        "endpoint": {"x": 25, "y": 40, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "leftward",
+        "priority": 2,
+        "start_time": "now"
+    },
+
     "4": {
         "type": "navigateto",
-        "endpoint": {"x": 25, "y": 40, "yaw": 0 },
+        "endpoint": {"x": 25, "y": 35, "yaw": 0 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+
+    "5": {
+        "type": "navigateto",
+        "endpoint": {"x": 120, "y": 45, "yaw": 0 },
 	    "endpoint_settings":  {"orientation_required": true },
         "move_direction": "forward",
         "priority": 2
@@ -60,9 +68,9 @@
         "type": "controlwings", 
         "action_point": {"x": 206, "y": 40, "yaw": 270 },
         "endpoint_settings":  {"orientation_required": true },
-        "left": "close",
-        "right": "close",
-        "action_point_tolerance": 5.0,
+        "left": "closed",
+        "right": "closed",
+        "action_point_tolerance": 15.0,
         "priority": 3
     },
 
@@ -120,8 +128,8 @@
     "15": {
         "type": "controlwings", 
         "action_point": {"x": 206, "y": 75, "yaw": 90},
-        "left": "close",
-        "right": "close",
+        "left": "closed",
+        "right": "closed",
         "endpoint_settings":  {"orientation_required": true },
         "action_point_tolerance": 5.0,
         "priority": 3

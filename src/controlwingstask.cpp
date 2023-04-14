@@ -16,6 +16,10 @@ ControlWingsTask::ControlWingsTask(WingState desiredLeftState,
     this->actionPointProximityTolerance = actionPointProximityTolerance;
     isEndpointOrientationRequired = endpointOrientationRequired;
     desiredEndpointOrientation = endpointOrientation;
+
+    //std::cout << "desired left wing state: " << desiredLeftWingState << std::endl;
+    //std::cout << "desired right wing state: " << desiredRightWingState << std::endl;
+
 }
 
 void ControlWingsTask::notStarted(std::shared_ptr<Map> map, 
@@ -70,6 +74,7 @@ void ControlWingsTask::inProgress(std::shared_ptr<Map> map,
         }
         else if(desiredLeftWingState == WingState::closed &&
                 desiredRightWingState == WingState::closed) {
+            std::cout << "closing control wing state" << std::endl;
             switch(actionStateSteps++) {
                 case 0:
                     // open right mandible on state machine tick
