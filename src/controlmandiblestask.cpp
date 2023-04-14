@@ -4,7 +4,9 @@ ControlMandiblesTask::ControlMandiblesTask(MandibleState desiredLeftState,
                                            MandibleState desiredRightState,
                                            MandibleState currentLeftMandibleState,
                                            MandibleState currentRightMandibleState,
-                                           XYPoint<double> xy, double endpointOrientation,
+                                           XYPoint<double> xy, 
+                                           bool endpoint_orientation_required,
+                                           double endpointOrientation,
                                            double actionPointProximityTolerance)
     : Task(TaskType::CONTROLMANDIBLES, CONTROLMANDIBLESTASK_PRIORITY)
 {
@@ -15,6 +17,7 @@ ControlMandiblesTask::ControlMandiblesTask(MandibleState desiredLeftState,
     inActionState = false;
     actionStateSteps = 0;
     this->actionPointProximityTolerance = actionPointProximityTolerance;
+    isEndpointOrientationRequired = endpoint_orientation_required;
 }
 
 void ControlMandiblesTask::notStarted(std::shared_ptr<Map> map, 
@@ -37,8 +40,9 @@ void ControlMandiblesTask::inProgress(std::shared_ptr<Map> map,
     bool isRobotNearActionPoint = 
         approximately(map->RobotX(), actionPoint.getX(), actionPointProximityTolerance) &&
         approximately(map->RobotY(), actionPoint.getY(), actionPointProximityTolerance);
-
-    if(isRobotNearActionPoint || inActionState)
+    bool isRobotNearActionPointOrientation = 
+        approximately(map->getRobotOrientation(), desiredEndpointOrientation, 10.0);
+    if((isRobotNearActionPoint && isRobotNearActionPointOrientation) || inActionState)
     {
         std::cout << "robot is near action point" << std::endl;
         // start open/close of mandibles

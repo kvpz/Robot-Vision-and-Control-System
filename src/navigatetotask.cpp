@@ -68,10 +68,6 @@ void NavigateToTask::notStarted(std::shared_ptr<Map> map,
     // update task status
     status = TaskStatus::INPROGRESS;
 
-    /*
-        TODO:
-        (1) implement optimal travel direction
-    */
     if(DEBUG_NAVIGATETOTASK) {
        printTaskInfo();        
     }
@@ -87,7 +83,7 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
                                 RobotState& nextRobotState)
 {    
     suspendedCounter = 0;
-    lastPathCorrection+=10;
+    lastPathCorrection += 10;
     switch(navigator->isRobotOnPath(map)) {
         case NEAR:
             
@@ -161,18 +157,16 @@ void NavigateToTask::inProgress(std::shared_ptr<Map> map,
             */
 
             if(totalPoseCorrectionsCompleted > 0) {
-                std::cout << "total pose corrections: " << totalPoseCorrectionsCompleted << std::endl;
-                std::cout << "(NavigateToTask::inProgress) OFF_PATH - totalPoseCorrectionsCompleted > 0" << std::endl;
+                //std::cout << "(NavigateToTask::inProgress) OFF_PATH - totalPoseCorrectionsCompleted > 0" << std::endl;
                 status = TaskStatus::COMPLETE;
                 nextRobotState = STOP;
             }
             else {
-                 status = TaskStatus::SUSPENDED;
-                 newTaskRequest = PATHCORRECTION;
-                 nextRobotState = STOP;
-                 lastPathCorrection = 0;
+                status = TaskStatus::SUSPENDED;
+                newTaskRequest = PATHCORRECTION;
+                nextRobotState = STOP;
+                lastPathCorrection = 0;
             }
-
             
             break;
     }

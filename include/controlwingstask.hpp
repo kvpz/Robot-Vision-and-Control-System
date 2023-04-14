@@ -15,6 +15,8 @@ public:
     ControlWingsTask(WingState desiredLeftState, 
                          WingState desiredRightState,
                          XYPoint<double> xy,
+                         bool endpoint_orientation_required,
+                         double endpointOrientation,
                          double actionPointProximityTolerance);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
@@ -53,6 +55,9 @@ private:
     bool inActionState;
 
     unsigned int actionStateSteps;
+
+    bool isEndpointOrientationRequired;
+    double desiredEndpointOrientation;
 };
 
 #endif

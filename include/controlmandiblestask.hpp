@@ -15,7 +15,9 @@ public:
                          MandibleState desiredRightState,
                          MandibleState currentLeftMandibleState,
                          MandibleState currentRightMandibleState,
-                         XYPoint<double> xy, double endpointOrientation,
+                         XYPoint<double> xy, 
+                         bool endpoint_orientation_requireds,
+                         double endpointOrientation,
                          double actionPointProximityTolerance);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
@@ -55,6 +57,9 @@ private:
     bool inActionState;
 
     unsigned int actionStateSteps;
+
+    bool isEndpointOrientationRequired;
+    double desiredEndpointOrientation;
 };
 
 #endif

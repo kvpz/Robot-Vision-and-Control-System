@@ -7,7 +7,7 @@
 // *********************************
 static bool approximately(double current, double expected, double precision)
 {
-  std::cout << "(approximately) current: " << current << " expected: " << expected << std::endl;
+  //std::cout << "(approximately) current: " << current << " expected: " << expected << std::endl;
   return (current > (expected - precision)) && (current < (expected + precision));
 }
 

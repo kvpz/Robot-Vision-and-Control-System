@@ -75,8 +75,19 @@ void TaskManager::executeCurrentTask(std::shared_ptr<Map> map,
                (*task)->getTaskType() == TaskType::DROPCHIP) {
                 std::cout << "(executingTask) erasing " << (*task)->getName() << " task" << std::endl;
                 task = high_priority_tasks.erase(task);
-                high_priority_tasks.insert(std::move(low_priority_tasks.front()));
-                low_priority_tasks.pop_front();
+
+                // pop from low priority queue to high priority until a navigateTo task is popped
+                while(!low_priority_tasks.empty()) {
+                    TaskType currentTaskType = low_priority_tasks.front()->getTaskType();
+                    high_priority_tasks.insert(std::move(low_priority_tasks.front()));
+                    // pop from low priority queue
+                    low_priority_tasks.pop_front();
+                    if(currentTaskType == TaskType::NAVIGATETO)
+                        break;
+                }
+
+                //high_priority_tasks.insert(std::move(low_priority_tasks.front()));
+                //low_priority_tasks.pop_front();
             }
             else { // pose correction
                 std::cout << "(executingTask) erasing task " 
@@ -259,27 +270,6 @@ void TaskManager::parseNavigateToTask(boost::property_tree::ptree::value_type ta
                                         endpoint_orientation, 
                                         endpoint_orientation_required,
                                         travelDirection), startTime);
-
-    // if(startTime == "now") {
-    //     // add to high priority queue
-    //     high_priority_tasks.insert(std::make_unique<NavigateToTask>(xypoint, 
-    //                                     endpoint_orientation, 
-    //                                     endpoint_orientation_required,
-    //                                     travelDirection));
-    // }
-    // else if(!startTime.empty()) {
-    //     // The start time will be a value in seconds. 
-    //     // The task is placed in a data structure where tasks are
-    //     // sorted by time.
-
-    // }
-    // else {
-    //     // add to lower priority queue if no start time was provided
-    //     low_priority_tasks.emplace_back(std::make_unique<NavigateToTask>(xypoint, 
-    //                                     endpoint_orientation, 
-    //                                     endpoint_orientation_required,
-    //                                     travelDirection));
-    // }
 }
 
 void TaskManager::parseDropChipTask(boost::property_tree::ptree::value_type taskkey) 
@@ -291,6 +281,8 @@ void TaskManager::parseDropChipTask(boost::property_tree::ptree::value_type task
     bool endpoint_orientation_required = taskkey.second.get_child("endpoint_settings").get_child("orientation_required").get_value<bool>();
     TravelDirection travelDirection = stringToTravelDirection(taskkey.second.get_child("move_direction").get_value<std::string>());
     XYPoint xypoint(endpoint_x, endpoint_y);
+    std::string startTime = taskkey.second.get_child("start_time").get_value<std::string>();
+
     low_priority_tasks.emplace_back(std::make_unique<DropChipTask>(xypoint, 
                                     endpoint_orientation, 
                                     endpoint_orientation_required));
@@ -332,34 +324,26 @@ void TaskManager::parseControlMandiblesTask(boost::property_tree::ptree::value_t
     MandibleState leftMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("left").get_value<std::string>());
     MandibleState rightMandibleDesiredState = stringToMandibleState(taskkey.second.get_child("right").get_value<std::string>());
     double actionPointProximityTolerance = taskkey.second.get_child("action_point_tolerance").get_value<double>();
-    std::string startTime = taskkey.second.get_child("start_time").get_value<std::string>();
-    
+    bool endpoint_orientation_required = taskkey.second.get_child("endpoint_settings").get_child("orientation_required").get_value<bool>();
+
+    std::string startTime;
+    try {
+        startTime = taskkey.second.get_child("start_time").get_value<std::string>();
+    }
+    catch(boost::property_tree::ptree_bad_path& e){
+        std::cout << "[ERROR] start_time node not found" << std::endl;
+        startTime = "";
+    }
+
+    int priority = taskkey.second.get_child("priority").get_value<int>();
+
     enqueueTask(std::make_unique<ControlMandiblesTask>(leftMandibleDesiredState, 
                                 rightMandibleDesiredState,
                                 MandibleState::closed,
                                 MandibleState::closed,
-                                xypoint, 
+                                xypoint, endpoint_orientation_required,
                                 endpoint_orientation, actionPointProximityTolerance),
                                 startTime);
-
-    // if(startTime == "now") {
-    //     auto itr = high_priority_tasks.insert(std::make_unique<ControlMandiblesTask>(leftMandibleDesiredState, 
-    //                             rightMandibleDesiredState,
-    //                             MandibleState::closed,
-    //                             MandibleState::closed,
-    //                             xypoint, 
-    //                             endpoint_orientation, actionPointProximityTolerance));
-    //     (*itr)->printTaskInfo();
-    // }
-    // else {
-    //     low_priority_tasks.emplace_back(std::make_unique<ControlMandiblesTask>(leftMandibleDesiredState, 
-    //                             rightMandibleDesiredState,
-    //                             MandibleState::closed,
-    //                             MandibleState::closed,
-    //                             xypoint, 
-    //                             endpoint_orientation, actionPointProximityTolerance));
-    //     low_priority_tasks.back()->printTaskInfo();
-    // }
 }
 
 void TaskManager::parseControlWingsTask(boost::property_tree::ptree::value_type taskkey)
@@ -371,17 +355,35 @@ void TaskManager::parseControlWingsTask(boost::property_tree::ptree::value_type 
     WingState leftWingDesiredState = stringToWingState(taskkey.second.get_child("left").get_value<std::string>());
     WingState rightWingDesiredState = stringToWingState(taskkey.second.get_child("right").get_value<std::string>());
     double actionPointProximityTolerance = taskkey.second.get_child("action_point_tolerance").get_value<double>();
-    std::string startTime = taskkey.second.get_child("start_time").get_value<std::string>();
+    bool endpoint_orientation_required = taskkey.second.get_child("endpoint_settings").get_child("orientation_required").get_value<bool>();
+    double endpoint_orientation = taskkey.second.get_child("action_point").get_child("yaw").get_value<double>();
+    std::string startTime;
+    try {
+        startTime = taskkey.second.get_child("start_time").get_value<std::string>();
+    }
+    catch(boost::property_tree::ptree_bad_path& e){
+        std::cout << "[ERROR] start_time node not found" << std::endl;
+        startTime = "";
+    }
     
     enqueueTask(std::make_unique<ControlWingsTask>(leftWingDesiredState, 
                                 rightWingDesiredState,
                                 xypoint, 
+                                endpoint_orientation_required,
+                                endpoint_orientation,
                                 actionPointProximityTolerance), startTime);
 }
 
 void TaskManager::parseFollowObjectTask(boost::property_tree::ptree::value_type taskkey)
 {
-    std::string startTime = taskkey.second.get_child("start_time").get_value<std::string>();
+    std::string startTime;
+    try {
+        startTime = taskkey.second.get_child("start_time").get_value<std::string>();
+    }
+    catch(boost::property_tree::ptree_bad_path& e){
+        std::cout << "[ERROR] start_time node not found" << std::endl;
+        startTime = "";
+    }
     int priority = taskkey.second.get_child("priority").get_value<int>();
     ObjectType otype(OBJECTTYPES::YELLOWDUCK);
     enqueueTask(std::make_unique<FollowObjectTask>(otype), startTime);
