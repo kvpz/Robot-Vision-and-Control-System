@@ -1,7 +1,7 @@
 #include "robot.hpp"
 
 Robot::Robot(double xpos, double ypos, double orientation) 
-    : state(STOP)
+    : state(RobotState::STOP)
 { 
     comport = std::make_unique<Comms>("/dev/ttyACM0");
     taskManager = std::make_shared<TaskManager>();
@@ -42,6 +42,19 @@ void Robot::run()
         move_backward();
         break;
         
+      case OPENING_LEFT_WING:
+        open_left_wing();
+        break;
+      case OPENING_RIGHT_WING:
+        open_right_wing();
+        break;
+      case CLOSING_LEFT_WING:
+        close_left_wing();
+        break;
+      case CLOSING_RIGHT_WING:
+        close_right_wing();
+        break;
+
       case OPENING_RIGHT_RECEPTACLE:
         open_right_receptacle();
         break;
@@ -200,8 +213,9 @@ void Robot::executeCurrentTask()
             comport->send_command("d");
       }
       else if(taskManager->getCurrentTaskType() == TaskType::FOLLOWOBJECT) {
-        if(state == RobotState::ROTATE_CCW || state == RobotState::ROTATE_CW) {
-          comport->send_command("c");
+        //std::shared_ptr<FollowObjectTask> currentTask = std::make_shared<FollowObjectTask>(task);
+        if(state == RobotState::ROTATE_CCW || state == RobotState::ROTATE_CW) { //} || currentTask->getIsRobotCloseToObject()) {
+          comport->send_command("b");
         }
       }
       else {

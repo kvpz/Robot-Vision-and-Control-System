@@ -5,6 +5,7 @@ FollowObjectTask::FollowObjectTask(ObjectType objectToFollow)
 {
     timeCounter = 0;
     objectType = objectToFollow;
+    isRobotCloseToObject = false;
 }
 
 void FollowObjectTask::notStarted(std::shared_ptr<Map> map, 
@@ -67,7 +68,12 @@ void FollowObjectTask::inProgress(std::shared_ptr<Map> map,
         }
         else if(closestDesiredObject.getDistanceFromCamera() > 20){
             nextRobotState = RobotState::MOVE_FORWARD;
-            // speed adjustments below...
+            if(closestDesiredObject.getDistanceFromCamera() > 40) {
+                    isRobotCloseToObject = false;
+            }
+            else {
+                    isRobotCloseToObject = true;
+            }
         }
         else {
             nextRobotState = RobotState::STOP;

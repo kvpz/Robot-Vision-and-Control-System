@@ -13,7 +13,9 @@
 class FollowObjectTask : public Task
 {
 public:
+    FollowObjectTask() = default;
     FollowObjectTask(ObjectType);
+
 
     virtual void notStarted(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
@@ -36,6 +38,8 @@ public:
                           RobotState& nextRobotState, TaskType& nextTaskType) override;
 
     virtual void printTaskInfo() override;
+
+    //friend bool getIsRobotCloseToObject() { return isRobotCloseToObject; }
     
 private:
     // target object type
@@ -50,6 +54,8 @@ private:
     unsigned int timeCounter; // milliseconds
 
     double distanceToClosestDesiredObject;
+
+    bool isRobotCloseToObject;
 };
 
 #endif

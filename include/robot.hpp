@@ -14,6 +14,7 @@
 #include "enums/mandibles.hpp"
 #include "enums/wings.hpp"
 #include "visiondata.hpp"
+#include "followobjecttask.hpp"
 
 enum class Speed {
     a='a', b,c,d,e,f,g
