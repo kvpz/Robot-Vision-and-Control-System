@@ -11,6 +11,10 @@
 #include "settings.hpp"
 #include <chrono>
 #include <boost/timer/timer.hpp>
+#include <fcntl.h>
+#include <termios.h>
+#include <unistd.h>
+#include <fstream>
 
 double _180_over_PI = 180.0 / M_PI;
 double _PI_over_180 = M_PI / 180.0;
@@ -112,7 +116,56 @@ int main(int argc, char* argv[]) try
     rs2::pipeline_profile profiles = pipe.start(cfg, callback);
 
     // allow time for camera to initialize
-    std::this_thread::sleep_for(std::chrono::milliseconds(2000));			  
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
+    // wait until external LED turns on before starting procedure
+    int fd = open("/dev/ttyACM0", O_RDWR | O_NOCTTY); // open the serial port
+    if (fd == -1) {
+        std::cout << "Failed to open serial port" << std::endl;
+        return 1;
+    }
+
+    struct termios tty;
+    memset(&tty, 0, sizeof tty);
+    if (tcgetattr(fd, &tty) != 0) {
+        std::cout << "Failed to get serial port attributes" << std::endl;
+        return 1;
+    }
+
+        // set serial port settings
+    cfsetospeed(&tty, B115200);
+    cfsetispeed(&tty, B115200);
+    tty.c_cflag &= ~PARENB;
+    tty.c_cflag &= ~CSTOPB;
+    tty.c_cflag &= ~CSIZE;
+    tty.c_cflag |= CS8;
+    tty.c_cflag &= ~CRTSCTS;
+    tty.c_cflag |= CREAD | CLOCAL;
+    tty.c_iflag &= ~(IXON | IXOFF | IXANY);
+    tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+    tty.c_oflag &= ~OPOST;
+
+    if (tcsetattr(fd, TCSANOW, &tty) != 0) {
+        std::cout << "Failed to set serial port attributes" << std::endl;
+        return 1;
+    }
+
+    while (true) {
+        char buf[256];
+        int n = read(fd, buf, 256); // read from serial port
+        if (n > 0) {
+            std::string data(buf, n);
+            std::cout << "Received data: " << data << std::endl;
+            std::size_t i = data.find('S');
+            if(i < 256)
+            {
+                std::cout << "s found at: " << i << std::endl;
+                break;
+            }
+        }
+    }
+
+    close(fd); // close the serial port
 
     while(1) {
       boost::timer::cpu_timer timer;
