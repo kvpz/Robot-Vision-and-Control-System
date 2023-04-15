@@ -4,7 +4,9 @@ ControlMandiblesTask::ControlMandiblesTask(MandibleState desiredLeftState,
                                            MandibleState desiredRightState,
                                            MandibleState currentLeftMandibleState,
                                            MandibleState currentRightMandibleState,
-                                           XYPoint xy, double endpointOrientation,
+                                           XYPoint<double> xy, 
+                                           bool endpoint_orientation_required,
+                                           double endpointOrientation,
                                            double actionPointProximityTolerance)
     : Task(TaskType::CONTROLMANDIBLES, CONTROLMANDIBLESTASK_PRIORITY)
 {
@@ -15,18 +17,21 @@ ControlMandiblesTask::ControlMandiblesTask(MandibleState desiredLeftState,
     inActionState = false;
     actionStateSteps = 0;
     this->actionPointProximityTolerance = actionPointProximityTolerance;
+    isEndpointOrientationRequired = endpoint_orientation_required;
 }
 
 void ControlMandiblesTask::notStarted(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
-    printTaskInfo(); //"ControlMandiblesTask::InProgress");        
+    //printTaskInfo(); //"ControlMandiblesTask::InProgress");        
     status = TaskStatus::INPROGRESS;
 }
 
 void ControlMandiblesTask::inProgress(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState)
 {
     // if robot is at the location this task requires it to be
@@ -35,8 +40,9 @@ void ControlMandiblesTask::inProgress(std::shared_ptr<Map> map,
     bool isRobotNearActionPoint = 
         approximately(map->RobotX(), actionPoint.getX(), actionPointProximityTolerance) &&
         approximately(map->RobotY(), actionPoint.getY(), actionPointProximityTolerance);
-
-    if(isRobotNearActionPoint || inActionState)
+    bool isRobotNearActionPointOrientation = 
+        approximately(map->getRobotOrientation(), desiredEndpointOrientation, 10.0);
+    if((isRobotNearActionPoint && isRobotNearActionPointOrientation) || inActionState)
     {
         std::cout << "robot is near action point" << std::endl;
         // start open/close of mandibles
@@ -79,11 +85,12 @@ void ControlMandiblesTask::inProgress(std::shared_ptr<Map> map,
         }
     }
 
-    printTaskInfo(); //"ControlMandiblesTask::InProgress");        
+    //printTaskInfo(); //"ControlMandiblesTask::InProgress");        
 }
 
 void ControlMandiblesTask::suspended(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
     
@@ -91,6 +98,7 @@ void ControlMandiblesTask::suspended(std::shared_ptr<Map> map,
 
 void ControlMandiblesTask::complete(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType)
 {
 
@@ -98,9 +106,8 @@ void ControlMandiblesTask::complete(std::shared_ptr<Map> map,
 
 void ControlMandiblesTask::printTaskInfo() //std::string taskStateName)
 {
-    if(DEBUG_NAVIGATETOTASK) {
-        //Task::printTaskInfo();
-        //std::cout << "\n====== " << taskStateName << " =======\n" << std::endl;
+    if(DEBUG_CONTROLMANDIBLESTASK) {
+        Task::printTaskInfo(*this);
         std::cout << "status: " << statusToString(this->getStatus()) << "\n";
         std::cout << "action point: " << actionPoint << "\n";
         std::cout << "action point desired orientation: " << actionPointOrientation << "\n";

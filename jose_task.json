@@ -1,10 +1,154 @@
 {
     "0": {
-        "type": "navigateto",
-        "endpoint": {"x": 187, "y": 30, "yaw": 315 },
-        "endpoint_settings":  {"orientation_required": true },
-        "move_direction": "forward",
+        "type": "attractioncolor",
+        "mqname": "/attraction_color_queue",
         "priority": 1,
         "start_time": "now"
+    },
+    
+    "1": {
+        "type": "objectmapping",
+        "start_time": "now"
+    },
+
+    "2": {
+        "type": "controlwings", 
+        "action_point": {"x": 25, "y": 25, "yaw": 0 },
+        "endpoint_settings":  {"orientation_required": true },
+        "left": "open",
+        "right": "open",
+        "action_point_tolerance": 15.0,
+        "priority": 3,
+        "start_time": "now"
+    },
+
+    "3": {
+        "type": "navigateto",
+        "endpoint": {"x": 25, "y": 40, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "leftward",
+        "priority": 2,
+        "start_time": "now"
+    },
+
+    "4": {
+        "type": "navigateto",
+        "endpoint": {"x": 25, "y": 35, "yaw": 0 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+
+    "5": {
+        "type": "navigateto",
+        "endpoint": {"x": 120, "y": 45, "yaw": 0 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+
+    "6": {
+        "type": "navigateto",
+        "endpoint": {"x": 206, "y": 40, "yaw": 270 },
+	    "endpoint_settings":  {"orientation_required": false },
+        "move_direction": "forward",
+        "priority": 2
+    },
+
+
+    "7": {
+        "type": "navigateto",
+        "endpoint": {"x": 206, "y": 25, "yaw": 270 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+
+    "8": {
+        "type": "controlwings", 
+        "action_point": {"x": 206, "y": 40, "yaw": 270 },
+        "endpoint_settings":  {"orientation_required": true },
+        "left": "closed",
+        "right": "closed",
+        "action_point_tolerance": 15.0,
+        "priority": 3
+    },
+
+    "9": {
+        "type": "navigateto",
+        "endpoint": {"x": 206, "y": 40, "yaw": 270 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward",
+        "priority": 2
+    },
+    
+
+    "10": {
+        "type": "controlwings", 
+        "action_point": {"x": 40, "y": 45, "yaw": 90},
+        "endpoint_settings":  {"orientation_required": true },
+        "left": "open",
+        "right": "open",
+        "action_point_tolerance": 5.0,
+        "priority": 3
+    },
+
+    "11": {
+        "type": "navigateto",
+        "endpoint": {"x": 40, "y": 45, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+
+    "12": {
+        "type": "navigateto",
+        "endpoint": {"x": 35, "y": 85, "yaw": 0 },
+	    "endpoint_settings":  {"orientation_required": false },
+        "move_direction": "forward",
+        "priority": 2
+    },
+
+    "13": {
+        "type": "navigateto",
+        "endpoint": {"x": 206, "y": 85, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+    
+    "14": {
+        "type": "navigateto",
+        "endpoint": {"x": 206, "y": 97, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
+    },
+
+    "15": {
+        "type": "controlwings", 
+        "action_point": {"x": 206, "y": 75, "yaw": 90},
+        "left": "closed",
+        "right": "closed",
+        "endpoint_settings":  {"orientation_required": true },
+        "action_point_tolerance": 5.0,
+        "priority": 3
+    },
+
+    "16": {
+        "type": "navigateto",
+        "endpoint": {"x": 206, "y": 75, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "backward",
+        "priority": 2
+    },
+
+    "17": {
+        "type": "navigateto",
+        "endpoint": {"x": 120, "y": 20, "yaw": 90 },
+	    "endpoint_settings":  {"orientation_required": true },
+        "move_direction": "forward",
+        "priority": 2
     }
 }
+

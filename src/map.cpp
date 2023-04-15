@@ -15,7 +15,7 @@ double Map::RobotY() const
     return robotCurrentLocation.getY();
 }
 
-XYPoint Map::getRobotCurrentLocation()
+XYPoint<double> Map::getRobotCurrentLocation()
 {
     return robotCurrentLocation;
 }
@@ -33,7 +33,7 @@ double Map::getDestinationOrientation()
     return destinationOrientation;
 }
 
-XYPoint Map::getNextDestinationXY()
+XYPoint<double> Map::getNextDestinationXY()
 {
     return destinationXY;
 }
@@ -57,7 +57,7 @@ void Map::setDestinationXY(double destx, double desty)
     //isEndpointOrientationRequired = false;
 }
 
-void Map::setDestinationXY(XYPoint xypoint) 
+void Map::setDestinationXY(XYPoint<double> xypoint) 
 {
     destinationXY = xypoint;
     //isEndpointOrientationRequired = false;
@@ -74,7 +74,7 @@ void Map::setIsEndpointOrientationRequired(bool value)
     isEndpointOrientationRequired = value;
 }
 
-bool Map::addObjectDetected(ObjectType objectType, const XYPoint& xypoint)
+bool Map::addObjectDetected(ObjectType objectType, const XYPoint<double>& xypoint)
 {
     bool isObjectInMap = false;
 

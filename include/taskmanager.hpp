@@ -39,6 +39,13 @@ class Task;
     robot's state depending on the current task's state. The robot's state can also have
     an effect on the state of the current task. 
 */
+
+struct TaskComparator {
+    bool operator()(const std::unique_ptr<Task>& a, const std::unique_ptr<Task>& b) const {
+        return (a->getPriority() < b->getPriority());
+    }
+};
+
 class TaskManager
 {
 
@@ -47,6 +54,7 @@ public:
 
     void executeCurrentTask(std::shared_ptr<Map> map, 
                             std::shared_ptr<Navigator> navigator, 
+                            std::shared_ptr<VisionData> visionData,
                             std::vector<RobotState>& nextRobotStates);
 
     void addTask(std::unique_ptr<Task>);
@@ -69,6 +77,15 @@ public:
         return currentTaskStatus;
     }
 
+    std::vector<Task> getHighPriorityTasks()
+    {
+        std::vector<Task> tasks;
+        for(auto i = high_priority_tasks.begin(); i != high_priority_tasks.end(); ++i) {
+            tasks.push_back(*(*i));
+        }
+        return tasks;
+    }
+
     void printHighPriorityTasks();
 
 private:
@@ -77,12 +94,6 @@ private:
     std::condition_variable condition_;
 
     std::unique_ptr<Task> taskFactory(TaskType ttype);
-
-    struct TaskComparator {
-        bool operator()(const std::unique_ptr<Task>& a, const std::unique_ptr<Task>& b) const {
-            return (a->getPriority() < b->getPriority());
-        }
-    };
 
     std::multiset<std::unique_ptr<Task>, TaskComparator> high_priority_tasks;
 
@@ -112,8 +123,11 @@ private:
     void parseAttractionColorTask(boost::property_tree::ptree::value_type taskkey);
     void parseControlMandiblesTask(boost::property_tree::ptree::value_type taskkey);
     void parseControlWingsTask(boost::property_tree::ptree::value_type taskkey);
-
+    void parseFollowObjectTask(boost::property_tree::ptree::value_type taskkey);
+    template<class T> 
+    void enqueueTask(std::unique_ptr<T> task, std::string startTime);
 };
+
 
 
 #endif

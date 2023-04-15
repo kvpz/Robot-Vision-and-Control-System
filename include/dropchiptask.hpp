@@ -15,23 +15,31 @@ class DropChipTask : public Task
 {
 public:
     DropChipTask();
-    DropChipTask(XYPoint xy, 
+    DropChipTask(XYPoint<double> xy, 
                 double endpointOrientation, 
                 bool endpointOrientationRequirement);
 
     virtual void notStarted(std::shared_ptr<Map> map, 
-                            std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) override;
+                            std::shared_ptr<Navigator> navigator, 
+                            std::shared_ptr<VisionData> visionData,
+                            RobotState& nextRobotState) override;
 
     virtual void inProgress(std::shared_ptr<Map> map, 
-                            std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) override;
+                            std::shared_ptr<Navigator> navigator, 
+                            std::shared_ptr<VisionData> visionData,
+                            RobotState& nextRobotState) override;
 
     virtual void suspended(std::shared_ptr<Map> map, 
                            std::shared_ptr<Navigator> navigator, 
+                           std::shared_ptr<VisionData> visionData,
                            RobotState& nextRobotState, TaskType& nextTaskType) override;
 
     virtual void complete(std::shared_ptr<Map> map, 
                           std::shared_ptr<Navigator> navigator, 
+                          std::shared_ptr<VisionData> visionData,
                           RobotState& nextRobotState, TaskType& nextTaskType) override;
+
+    virtual void printTaskInfo() override;
 
 private:
     // intelligence gathering data
@@ -44,7 +52,7 @@ private:
     inline static unsigned greenDeploymentAttempts = 1;
 
     // payload location data
-    XYPoint payloadLocation;
+    XYPoint<double> payloadLocation;
     double endpointOrientation;
     bool endpointOrientationRequirement;
 

@@ -1,4 +1,4 @@
-WARN	:= -pedantic #-W -Wall -Wconversion -pedantic
+WARN	:= #-pedantic #-W -Wall -Wconversion -pedantic
 CC	:= g++ -std=c++2a #g++ -std=c++17
 USRLIBS	:= /usr/lib 
 RSHEADERS := /usr/include/librealsense2
@@ -14,9 +14,9 @@ PROJHEADERS := /home/ieeefiu/Documents/nicito/perrito/include
 
 ALL: main.x
 
-main.x: $(SRC)/main.cpp robot.o map.o task.o navigator.o attractioncolortask.o dropchiptask.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o pickupobjecttask.o objectsearchtask.o followobjecttask.o controlmandiblestask.o controlwingstask.o
+main.x: $(SRC)/main.cpp robot.o map.o task.o navigator.o attractioncolortask.o dropchiptask.o navigatetotask.o pathcorrectiontask.o posecorrectiontask.o taskmanager.o pickupobjecttask.o objectmappingtask.o followobjecttask.o controlmandiblestask.o visiondata.o controlwingstask.o
 	@echo "building target main.x"
-	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lboost_timer -lboost_system -lrealsense2 -o main.x robot.o map.o task.o navigator.o dropchiptask.o navigatetotask.o pathcorrectiontask.o attractioncolortask.o posecorrectiontask.o pickupobjecttask.o objectsearchtask.o followobjecttask.o controlmandiblestask.o controlwingstask.o taskmanager.o -lrt -ljsoncpp
+	$(CC) $(INCLUDE) $(WARN) -pthread ./src/main.cpp -O3 -L$(USRLIBS) -lboost_timer -lboost_system -lrealsense2 -o main.x robot.o map.o task.o navigator.o visiondata.o dropchiptask.o navigatetotask.o pathcorrectiontask.o attractioncolortask.o posecorrectiontask.o pickupobjecttask.o objectmappingtask.o followobjecttask.o controlmandiblestask.o controlwingstask.o taskmanager.o -lrt -ljsoncpp
 
 map.o: $(SRC)/map.cpp $(PROJHEADERS)
 	@echo "building target map.o"
@@ -57,8 +57,8 @@ attractioncolortask.o: $(SRC)/attractioncolortask.cpp $(PROJHEADERS)
 pickupobjecttask.o: $(SRC)/pickupobjecttask.cpp $(PROJHEADERS)
 	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/pickupobjecttask.cpp -O3 -L$(USRLIBS) -lrealsense2 -lrt
 
-objectsearchtask.o: $(SRC)/objectsearchtask.cpp $(PROJHEADERS)
-	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/objectsearchtask.cpp -O3 -L$(USRLIBS) -ljsoncpp -lrealsense2 -lrt
+objectmappingtask.o: $(SRC)/objectmappingtask.cpp $(PROJHEADERS)
+	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/objectmappingtask.cpp -O3 -L$(USRLIBS) -ljsoncpp -lrealsense2 -lrt
 
 followobjecttask.o: $(SRC)/followobjecttask.cpp $(PROJHEADERS)
 	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/followobjecttask.cpp -O3 -L$(USRLIBS) -lrealsense2 -lrt
@@ -68,6 +68,10 @@ controlmandiblestask.o: $(SRC)/controlmandiblestask.cpp $(PROJHEADERS)
 
 controlwingstask.o: $(SRC)/controlwingstask.cpp $(PROJHEADERS)
 	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/controlwingstask.cpp -O3 -L$(USRLIBS) -lrealsense2 
+
+visiondata.o: $(SRC)/visiondata.cpp $(PROJHEADERS)
+	$(CC) -c $(INCLUDE) $(WARN) -pthread ./src/visiondata.cpp -O3 -L$(USRLIBS) -lrealsense2 -lrt -ljsoncpp
+
 
 
 clean:

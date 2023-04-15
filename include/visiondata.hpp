@@ -17,6 +17,10 @@
 #include "boundingbox.hpp"
 #include "settings.hpp"
 #include <memory>
+<<<<<<< HEAD
+=======
+#include <cstring>
+>>>>>>> 2424c7d5a04b32b7fa621708b81a638598d6cbd7
 
 /*
     This class is used to read vision data from vision components
@@ -33,6 +37,7 @@ public:
 
     std::multiset<BoundingBox> getObjectsDetected();
 
+<<<<<<< HEAD
     AttractionColors getAttractionColorMQData();
 
 private:
@@ -44,6 +49,20 @@ private:
 
     // time data was last collected (or assume all data is the latest)
     // 
+=======
+    AttractionColors getAttractionColorDetected();
+
+    void printTaskInfo();
+    
+private:
+    
+    Json::Value getObjectMQData();
+    char getAttractionColorMQData();
+
+    // MQ data storage
+    std::multiset<BoundingBox> objectsDetected;
+    AttractionColors attractionColorDetected;
+>>>>>>> 2424c7d5a04b32b7fa621708b81a638598d6cbd7
 
     // vision message queues
     // object detection message queue
@@ -56,6 +75,10 @@ private:
 
     // last time data was read from the message queue
     std::chrono::system_clock::time_point last_read_from_object_mq;
+<<<<<<< HEAD
+=======
+    std::chrono::system_clock::time_point last_read_from_attraction_mq;
+>>>>>>> 2424c7d5a04b32b7fa621708b81a638598d6cbd7
 };
 
 #endif

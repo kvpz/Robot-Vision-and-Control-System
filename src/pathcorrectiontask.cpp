@@ -1,13 +1,14 @@
 #include "pathcorrectiontask.hpp"
 
 PathCorrectionTask::PathCorrectionTask()
-    : Task(PATHCORRECTION, PATHCORRECTIONTASK_PRIORITY)
+    : Task(TaskType::PATHCORRECTION, PATHCORRECTIONTASK_PRIORITY)
 {
     correcting_position = false;
 }
 
 void PathCorrectionTask::notStarted(std::shared_ptr<Map> map, 
                                     std::shared_ptr<Navigator> navigator, 
+                                    std::shared_ptr<VisionData> visionData,
                                     RobotState& nextRobotState)
 {
     status = TaskStatus::INPROGRESS;
@@ -15,6 +16,7 @@ void PathCorrectionTask::notStarted(std::shared_ptr<Map> map,
 
 void PathCorrectionTask::inProgress(std::shared_ptr<Map> map, 
                                     std::shared_ptr<Navigator> navigator, 
+                                    std::shared_ptr<VisionData> visionData,
                                     RobotState& nextRobotState)
 {        
     // assign robot a task depending on orientation relative to waypoint
@@ -31,6 +33,8 @@ void PathCorrectionTask::inProgress(std::shared_ptr<Map> map,
                 double angularDistanceToEndpoint = navigator->robotAngularDistanceToEndpoint(map, false);
                 if(navigator->getTravelDirection() == TravelDirection::forward && 
                     angularDistanceToEndpoint < ORIENTATION_RANGE_TOLERANCE) {
+                    std::cout << "(pathcorrection::inprogress) setting robot state to ROTATE_CW" << std::endl;
+                    std::cout << "(pathcorrection::inprogress) angular distance to endpoint: " << angularDistanceToEndpoint << std::endl;
                     nextRobotState = ROTATE_CW;
                 }
                 else if (navigator->getTravelDirection() == TravelDirection::forward && 
@@ -39,6 +43,8 @@ void PathCorrectionTask::inProgress(std::shared_ptr<Map> map,
                 }
                 else if(navigator->getTravelDirection() == TravelDirection::backward && 
                     angularDistanceToEndpoint < ORIENTATION_RANGE_TOLERANCE) {
+                    std::cout << "(pathcorrection::inprogress 2) setting robot state to ROTATE_CW" << std::endl;
+                    std::cout << "(pathcorrection::inprogress 2) angular distance to endpoint: " << angularDistanceToEndpoint << std::endl;
                     nextRobotState = ROTATE_CW;
                 }
                 else if (navigator->getTravelDirection() == TravelDirection::backward && 
@@ -60,6 +66,7 @@ void PathCorrectionTask::inProgress(std::shared_ptr<Map> map,
 
 void PathCorrectionTask::suspended(std::shared_ptr<Map> map, 
                                    std::shared_ptr<Navigator> navigator, 
+                                   std::shared_ptr<VisionData> visionData,
                                    RobotState& nextRobotState, TaskType& nextTaskType)
 {
     //correction task cannot be suspended.
@@ -68,8 +75,18 @@ void PathCorrectionTask::suspended(std::shared_ptr<Map> map,
 
 void PathCorrectionTask::complete(std::shared_ptr<Map> map, 
                                   std::shared_ptr<Navigator> navigator, 
+                                  std::shared_ptr<VisionData> visionData,
                                   RobotState& nextRobotState, TaskType& nextTaskType)
 {
     nextTaskType = NAVIGATETO;
     nextRobotState = STOP;
+}
+
+void PathCorrectionTask::printTaskInfo()
+{
+    if(DEBUG_PATHCORRECTIONTASK) {
+        Task::printTaskInfo(*this);
+        std::cout << "status: " << statusToString(this->getStatus()) << "\n";
+        std::cout << "\n==========================================\n" << std::endl;
+    }
 }

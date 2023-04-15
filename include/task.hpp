@@ -12,6 +12,7 @@
 #include "enums/robotState.hpp"
 #include "map.hpp"
 #include "settings.hpp"
+#include "visiondata.hpp"
 
 class Task
 {
@@ -22,19 +23,23 @@ public:
   // task state functions
   virtual void notStarted(std::shared_ptr<Map> map, 
                           std::shared_ptr<Navigator> navigator, 
+                          std::shared_ptr<VisionData> visionData,
                           RobotState& nextRobotState);
 
   virtual void inProgress(std::shared_ptr<Map> map, 
                           std::shared_ptr<Navigator> navigator, 
+                          std::shared_ptr<VisionData> visionData,
                           RobotState& nextRobotState);
 
   virtual void suspended(std::shared_ptr<Map> map, 
                          std::shared_ptr<Navigator> navigator, 
+                         std::shared_ptr<VisionData> visionData,
                          RobotState& nextRobotState, 
                          TaskType& nextTaskType);
 
   virtual void complete(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState,
                         TaskType& nextTaskType);
 

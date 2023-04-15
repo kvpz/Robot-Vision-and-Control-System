@@ -35,6 +35,7 @@ public:
 
 private:
     TravelDirection travelDirection;
+
 };
 
 #endif

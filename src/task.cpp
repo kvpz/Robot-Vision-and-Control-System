@@ -68,6 +68,18 @@ void Task::printTaskInfo(Task& task)
         case CONTROLMANDIBLES:
             std::cout << "\n====== Control Mandibles Task ======\n";
             break;
+        case FOLLOWOBJECT:
+            std::cout << "\n====== Follow Object Task =======\n";
+            break;
+        case PICKUPOBJECT:
+            std::cout << "\n====== Pickup Object Task =======\n";
+            break;
+        case CONTROLWINGS:
+            std::cout << "\n====== Control Wings Task =======\n";
+            break;
+        case OBJECTMAPPING:
+            std::cout << "\n====== Object Mapping Task =======\n";
+            break;
     }
 
 

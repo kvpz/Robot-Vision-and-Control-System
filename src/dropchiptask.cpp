@@ -2,10 +2,10 @@
 
 DropChipTask::DropChipTask() : Task(DROPCHIP, DROPCHIPTASK_PRIORITY) {}
 
-DropChipTask::DropChipTask(XYPoint xy, 
+DropChipTask::DropChipTask(XYPoint<double> xy, 
                            double endpointOrientation, 
                            bool endpointOrientationRequirement)
-    : Task(DROPCHIP, DROPCHIPTASK_PRIORITY)
+    : Task(TaskType::DROPCHIP, DROPCHIPTASK_PRIORITY)
 {
     payloadLocation = xy;
     this->endpointOrientation = endpointOrientation;
@@ -15,7 +15,9 @@ DropChipTask::DropChipTask(XYPoint xy,
 }
 
 void DropChipTask::notStarted(std::shared_ptr<Map> map, 
-                        std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
+                        std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
+                        RobotState& nextRobotState) 
 {
     // get information about nearest attraction from the map
     // if robot is at bottom left of playing field, then it should request information 
@@ -37,7 +39,9 @@ void DropChipTask::notStarted(std::shared_ptr<Map> map,
 }
 
 void DropChipTask::inProgress(std::shared_ptr<Map> map, 
-                        std::shared_ptr<Navigator> navigator, RobotState& nextRobotState) 
+                        std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
+                        RobotState& nextRobotState) 
 {
     // if robot not at the attraction xypoint, create NavigateTo task
     /*if(!navigator->isRobotNearPoint(map)) {
@@ -90,6 +94,7 @@ void DropChipTask::inProgress(std::shared_ptr<Map> map,
 
 void DropChipTask::suspended(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType) 
 {
     // The robot can enter a suspended state if it is not near the deployment endpoint
@@ -101,7 +106,19 @@ void DropChipTask::suspended(std::shared_ptr<Map> map,
 
 void DropChipTask::complete(std::shared_ptr<Map> map, 
                         std::shared_ptr<Navigator> navigator, 
+                        std::shared_ptr<VisionData> visionData,
                         RobotState& nextRobotState, TaskType& nextTaskType) 
 {
     
+}
+
+void DropChipTask::printTaskInfo()
+{
+    if(DEBUG_DROPCHIPTOTASK) {
+        Task::printTaskInfo(*this);
+        std::cout << "status: " << statusToString(this->getStatus()) << "\n";
+        std::cout << "payload location: " << payloadLocation << "\n";
+        std::cout << "is robot deploying chips: " << isDeployingPayload << "\n";
+        std::cout << "\n==========================================\n" << std::endl;
+    }
 }
