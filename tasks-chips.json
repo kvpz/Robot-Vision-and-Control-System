@@ -15,7 +15,7 @@
     },
     "3": {
         "type": "controlmandible",
-        "priority": 4,
+        "priority": 3,
         "action_point": {"x": 30, "y": 30, "yaw": 90},
         "left": "open",
         "right": "open",
@@ -26,16 +26,16 @@
         "endpoint": {"x": , "y": , "yaw": },
         "endpoint_settings": {"orientation_required": false},
         "move_direction": "forward",
-        "priority": 5,
+        "priority": 4,
         "start_time": "now"
     },
     "5": {
         "type": "dropchip",
-        "priority": 6
+        "priority": 5
     },
     "6": {
         "type": "controlmandible",
-        "priority": 7,
+        "priority": 6,
         "action_point": {"x": , "y": , "yaw": },
         "left": "open",
         "right": "open"
@@ -45,7 +45,7 @@
         "endpoint": {"x": , "y": , "yaw": },
         "endpoint_settings": {"orientation_required": false},
         "move_direction": "forward",
-        "priority": 8,
+        "priority": 7,
         "start_time": "now"
     },
     "8": {
@@ -53,7 +53,7 @@
         "endpoint": {"x": , "y": , "yaw": },
         "endpoint_settings": {"orientation_required": false},
         "move_direction": "forward",
-        "priority": 9,
+        "priority": 8,
         "start_time": "now"
     }
 }

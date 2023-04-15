@@ -11,7 +11,7 @@
 #include "utility.hpp"
 
 struct XYPointComparator {
-    bool operator()(const XYPoint& xy1, const XYPoint& xy2) const {
+    bool operator()(const XYPoint<double>& xy1, const XYPoint<double>& xy2) const {
         //bool isXDiffNear = approximately(xy1.getX(), xy2.getX(), 3.0);
         //bool isYDiffNear = approximately(xy1.getY(), xy2.getY(), 3.0);
         /*
@@ -59,13 +59,13 @@ public:
 
     double RobotY() const;
 
-    XYPoint getRobotCurrentLocation();
+    XYPoint<double> getRobotCurrentLocation();
 
     double getRobotOrientation() const;
 
     double getDestinationOrientation();
 
-    XYPoint getNextDestinationXY();
+    XYPoint<double> getNextDestinationXY();
     
     AttractionColors getBottomLeftAttractionColor() {
         return bottomLeftAttractionColor;
@@ -87,7 +87,7 @@ public:
     void setRobotOrientation(double o);
 
     void setDestinationXY(double destx, double desty);
-    void setDestinationXY(XYPoint xypoint);
+    void setDestinationXY(XYPoint<double> xypoint);
 
     void setDestinationDesiredOrientation(double theta);
 
@@ -103,10 +103,10 @@ public:
         topLeftAttractionColor = attractionColor;
     }
 
-    bool addObjectDetected(ObjectType, const XYPoint&);   
+    bool addObjectDetected(ObjectType, const XYPoint<double>&);   
     //void deleteObject(XYPoint);
 
-    std::multimap<XYPoint, ObjectType, XYPointComparator> getOccupancyGrid() { return occupancyGrid; }
+    std::multimap<XYPoint<double>, ObjectType, XYPointComparator> getOccupancyGrid() { return occupancyGrid; }
     //std::unordered_multimap<ObjectType, XYPoint> getObjectMap() { return objectMap; }
 
     void printOccupancyGrid() 
@@ -127,18 +127,18 @@ public:
 
 private:
     // robot current position data
-    XYPoint robotCurrentLocation;
+    XYPoint<double> robotCurrentLocation;
     double robotCurrentOrientation;
 
     // destination position data
-    XYPoint destinationXY;
+    XYPoint<double> destinationXY;
     double destinationOrientation;
     bool isEndpointOrientationRequired;
     
-    std::map<size_t, XYPoint> pointsVisited;
+    std::map<size_t, XYPoint<double>> pointsVisited;
 
-    std::multimap<XYPoint, ObjectType, XYPointComparator> occupancyGrid;
-    std::unordered_multimap<ObjectType, XYPoint, ObjectTypeHash, ObjectTypeEqual> objectMap;
+    std::multimap<XYPoint<double>, ObjectType, XYPointComparator> occupancyGrid;
+    std::unordered_multimap<ObjectType, XYPoint<double>, ObjectTypeHash, ObjectTypeEqual> objectMap;
 
     // data about areas of interest
     AttractionColors bottomLeftAttractionColor;

@@ -1,4 +1,5 @@
 #include "task.hpp"
+#include "visiondata.hpp"
 
 Task::Task() 
  : status(TaskStatus::NOTSTARTED),
@@ -12,14 +13,20 @@ Task::Task(TaskType ttype, unsigned int priority)
 }
 
 void Task::notStarted(std::shared_ptr<Map> map, 
-                      std::shared_ptr<Navigator> navigator, RobotState& nextRobotState){}
+                      std::shared_ptr<Navigator> navigator, 
+                      std::shared_ptr<VisionData> visionData,
+                      RobotState& nextRobotState){}
 void Task::inProgress(std::shared_ptr<Map> map, 
-                      std::shared_ptr<Navigator> navigator, RobotState& nextRobotState){}
+                      std::shared_ptr<Navigator> navigator, 
+                      std::shared_ptr<VisionData> visionData,
+                      RobotState& nextRobotState){}
 void Task::suspended(std::shared_ptr<Map> map, 
                      std::shared_ptr<Navigator> navigator, 
+                     std::shared_ptr<VisionData> visionData,
                      RobotState& nextRobotState, TaskType& nextTaskType){}
 void Task::complete(std::shared_ptr<Map> map, 
                     std::shared_ptr<Navigator> navigator, 
+                    std::shared_ptr<VisionData> visionData,
                     RobotState& nextRobotState, TaskType& nextTaskType){}
 
 // setters
@@ -73,5 +80,6 @@ void Task::printTaskInfo(Task& task)
 
 void Task::printTaskInfo()
 {
+    std::cout << "no task info available" << std::endl;
     //printTaskInfo(*this);
 }

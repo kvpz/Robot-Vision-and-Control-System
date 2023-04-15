@@ -5,8 +5,8 @@ RSHEADERS := /usr/include/librealsense2
 INCLUDE = -I$(RSHEADERS) -I$(PROJHEADERS) -I/usr/include/jsoncpp
 
 # IEEE Intel NUC specifics
-SRC = /home/ieeefiu/Documents/perrito/src
-PROJHEADERS := /home/ieeefiu/Documents/perrito/include
+SRC = /home/ieeefiu/Documents/nicito/perrito/src
+PROJHEADERS := /home/ieeefiu/Documents/nicito/perrito/include
 
 # Kevin computer specifics
 #SRC = /home/kevin/Documents/perrito/src
