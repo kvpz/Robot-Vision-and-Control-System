@@ -1,4 +1,4 @@
-# AMIRA Robot Vision and Control System
+# Robot Vision and Control System
 
 ## 1. Task Scheduler
 A task in the task scheduler is designed to perform the following:
