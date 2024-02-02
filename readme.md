@@ -32,7 +32,13 @@ Objects of interest are: yellow ducks and green, red, or white cylinders.
 
 
 ## Tightly coupled projects
+The following projects contain code that ran within the Intel NUC and Raspberry Pi Pico that worked in conjunction to control the autonomous mobile robot.
+
 https://github.com/dmosquera1/PCA9685-RPico-Cpp-Library 
-
+* This C++ library was created to serve as a software interface for the [Adafruit 16-Channel 12-bit PWM/Servo Driver - I2C interface - PCA9685](https://www.adafruit.com/product/815). The purpose of the multi-channel PWM servo driver is to control servos which move end-effectors attached to the autonomous mobile robot. The PWM controller board was used to control four end-effector servo motors (EMAX ES08MA Ii 12g Mini Metal Gear Analog Servo). 
+ 
 https://github.com/john-wick1999/arm_controller
+* The scripts in this project were developed for controlling the Hiwonder xArm 1S with 6DoF. The scripts were executed when the robot was tasked with picking up or dropping off objects. The scripts are capable of receiving the coordinates of an object's calculated position relative to the front of the robot and then bend the robot's joints so the gripper can reach the object.
 
+https://github.com/kvpz/rs-opencv
+* This project contains scripts, particularly detect.py, that were used to receive video streams from the Intel Realsense D435i RGB / depth camera sensors. The python script was used to detect objects using a YOLOv5 machine learning model trained to detect ducks and white, green, or red cylinders and report the detected objects and their distance from the D435i camera to the robot vision and control program.
